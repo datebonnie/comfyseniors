@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-cs-lavender-mist text-cs-body font-sans text-base leading-[1.65];
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply text-cs-blue-dark;
+  }
+
+  h1 {
+    @apply font-display text-hero-mobile font-normal md:text-hero;
+  }
+
+  h2 {
+    @apply font-sans font-semibold text-[28px];
+  }
+
+  h3 {
+    @apply font-sans font-semibold text-[20px];
+  }
+}
+
+@layer components {
+  .label {
+    @apply font-sans font-semibold text-[11px] uppercase tracking-label;
+  }
+}

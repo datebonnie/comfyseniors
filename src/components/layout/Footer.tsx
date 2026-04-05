@@ -1,0 +1,70 @@
+import Link from "next/link";
+
+const footerLinks = {
+  Directory: [
+    { href: "/search", label: "Find Care" },
+    { href: "/match", label: "Care Match Quiz" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/about", label: "About Us" },
+  ],
+  "Care Types": [
+    { href: "/care-types/assisted-living", label: "Assisted Living" },
+    { href: "/care-types/memory-care", label: "Memory Care" },
+    { href: "/care-types/independent-living", label: "Independent Living" },
+    { href: "/care-types/nursing-home", label: "Nursing Home" },
+    { href: "/care-types/home-care", label: "Home Care" },
+  ],
+  "For Facilities": [
+    { href: "/for-facilities", label: "Get Listed" },
+    { href: "/for-facilities/dashboard", label: "Facility Dashboard" },
+  ],
+};
+
+export default function Footer() {
+  return (
+    <footer className="bg-cs-blue-dark">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Top section: links grid */}
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="text-[20px] font-semibold text-white">
+              ComfySeniors
+            </Link>
+            <p className="mt-3 text-sm leading-relaxed text-[#8B9EC7]">
+              New Jersey&apos;s most honest senior care directory.
+            </p>
+            <p className="mt-4 text-sm font-medium text-cs-lavender">
+              We never sell your number &mdash; ever.
+            </p>
+          </div>
+
+          {/* Link columns */}
+          {Object.entries(footerLinks).map(([heading, links]) => (
+            <div key={heading}>
+              <h4 className="label mb-3 text-white">{heading}</h4>
+              <ul className="flex flex-col gap-2">
+                {links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-[#8B9EC7] transition-colors hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
+          <span>&copy; {new Date().getFullYear()} ComfySeniors.com. All rights reserved.</span>
+          <span>Made in New Jersey for New Jersey families.</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
