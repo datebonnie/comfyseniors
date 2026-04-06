@@ -4,71 +4,131 @@ import { useState } from "react";
 import PageWrapper from "@/components/layout/PageWrapper";
 import { QuizProgress, QuizStep, MatchResults } from "@/components/match";
 
-/* ─── Quiz step definitions ─── */
+/* ─── 10-question quiz ─── */
 
 const STEPS = [
   {
     question: "Who needs care?",
     options: [
       { value: "parent", label: "My parent" },
-      { value: "spouse", label: "My spouse" },
+      { value: "spouse", label: "My spouse or partner" },
       { value: "myself", label: "Myself" },
-      { value: "other", label: "Someone else" },
+      { value: "other", label: "Another family member or friend" },
     ],
   },
   {
-    question: "What type of care are you looking for?",
+    question: "How old is the person who needs care?",
     options: [
-      { value: "not sure", label: "Not sure yet" },
-      { value: "assisted living", label: "Assisted Living" },
-      { value: "memory care", label: "Memory Care" },
-      { value: "independent", label: "Independent Living" },
-      { value: "nursing home", label: "Nursing Home" },
-      { value: "home care", label: "Home Care" },
+      { value: "under 65", label: "Under 65" },
+      { value: "65-74", label: "65 – 74" },
+      { value: "75-84", label: "75 – 84" },
+      { value: "85+", label: "85 or older" },
     ],
   },
   {
-    question: "Where in New Jersey?",
+    question: "What is their biggest daily challenge right now?",
+    options: [
+      { value: "mostly independent", label: "They're mostly independent — just want community and convenience" },
+      { value: "daily activities", label: "They need help with bathing, dressing, or meals" },
+      { value: "memory issues", label: "Memory loss, confusion, or wandering" },
+      { value: "medical needs", label: "Complex medical needs — wounds, IVs, or 24/7 nursing" },
+      { value: "mobility", label: "Mobility issues — falls, wheelchair, or bed-bound" },
+      { value: "staying home", label: "They want to stay home but need help during the day" },
+    ],
+  },
+  {
+    question: "Do they need help with medications?",
+    options: [
+      { value: "no", label: "No — they manage medications on their own" },
+      { value: "reminders", label: "Yes — they need reminders or someone to organize pills" },
+      { value: "administered", label: "Yes — medications need to be given by trained staff" },
+      { value: "complex", label: "Yes — injections, IVs, or complex medication schedules" },
+    ],
+  },
+  {
+    question: "Have they been diagnosed with Alzheimer's or dementia?",
+    options: [
+      { value: "no", label: "No" },
+      { value: "early stage", label: "Yes — early stage (mild forgetfulness)" },
+      { value: "moderate", label: "Yes — moderate (needs supervision, gets confused)" },
+      { value: "advanced", label: "Yes — advanced (needs 24/7 specialized care)" },
+    ],
+  },
+  {
+    question: "How soon is care needed?",
+    options: [
+      { value: "immediately", label: "Right now — it's urgent" },
+      { value: "1-3 months", label: "Within the next 1 – 3 months" },
+      { value: "3-6 months", label: "Within 3 – 6 months" },
+      { value: "planning ahead", label: "Just planning ahead — no rush" },
+    ],
+  },
+  {
+    question: "What is the zip code where you're looking for care?",
     hasInput: true,
-    inputPlaceholder: "City or zip code",
+    inputPlaceholder: "Enter NJ zip code (e.g. 07011)",
     options: [],
-    secondaryLabel: "Search radius",
-    secondaryOptions: [
-      { value: "5", label: "5 miles" },
-      { value: "10", label: "10 miles" },
-      { value: "25", label: "25 miles" },
-    ],
   },
   {
-    question: "What is your monthly budget?",
+    question: "What is the monthly budget for care?",
     options: [
-      { value: "under $3K", label: "Under $3,000/mo" },
-      { value: "$3-5K", label: "$3,000 \u2013 $5,000/mo" },
-      { value: "$5-8K", label: "$5,000 \u2013 $8,000/mo" },
-      { value: "over $8K", label: "Over $8,000/mo" },
-      { value: "not sure", label: "Not sure" },
+      { value: "under $3K", label: "Under $3,000/month" },
+      { value: "$3-5K", label: "$3,000 – $5,000/month" },
+      { value: "$5-8K", label: "$5,000 – $8,000/month" },
+      { value: "$8-12K", label: "$8,000 – $12,000/month" },
+      { value: "over $12K", label: "Over $12,000/month" },
+      { value: "not sure", label: "Not sure yet" },
     ],
   },
   {
     question: "How will care be paid for?",
     options: [
-      { value: "private pay", label: "Private pay" },
+      { value: "private pay", label: "Private pay (savings, family funds)" },
+      { value: "long-term care insurance", label: "Long-term care insurance" },
       { value: "Medicare", label: "Medicare" },
       { value: "Medicaid", label: "Medicaid" },
-      { value: "long-term care insurance", label: "Long-term care insurance" },
-      { value: "not sure", label: "Not sure" },
+      { value: "VA benefits", label: "VA / military benefits" },
+      { value: "not sure", label: "Not sure — need help figuring this out" },
+    ],
+  },
+  {
+    question: "What matters most to your family?",
+    options: [
+      { value: "clean record", label: "Clean inspection record — safety first" },
+      { value: "close to family", label: "Close to family — location matters most" },
+      { value: "affordability", label: "Affordability — best care within our budget" },
+      { value: "quality of life", label: "Quality of life — activities, dining, community" },
+      { value: "medical expertise", label: "Medical expertise — skilled nursing and rehab" },
+      { value: "cultural fit", label: "Cultural or language-specific care" },
     ],
   },
 ];
 
 interface QuizAnswers {
   relationship: string;
-  careType: string;
-  location: string;
-  radius: string;
+  age: string;
+  dailyChallenge: string;
+  medications: string;
+  dementia: string;
+  urgency: string;
+  zipCode: string;
   budget: string;
   insurance: string;
+  priority: string;
 }
+
+const ANSWER_KEYS: (keyof QuizAnswers)[] = [
+  "relationship",
+  "age",
+  "dailyChallenge",
+  "medications",
+  "dementia",
+  "urgency",
+  "zipCode",
+  "budget",
+  "insurance",
+  "priority",
+];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MatchResult = any;
@@ -77,22 +137,18 @@ export default function MatchPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({
     relationship: "",
-    careType: "",
-    location: "",
-    radius: "10",
+    age: "",
+    dailyChallenge: "",
+    medications: "",
+    dementia: "",
+    urgency: "",
+    zipCode: "",
     budget: "",
     insurance: "",
+    priority: "",
   });
   const [status, setStatus] = useState<"quiz" | "loading" | "results">("quiz");
   const [matches, setMatches] = useState<MatchResult[]>([]);
-
-  const ANSWER_KEYS: (keyof QuizAnswers)[] = [
-    "relationship",
-    "careType",
-    "location",
-    "budget",
-    "insurance",
-  ];
 
   function handleSelect(value: string) {
     const key = ANSWER_KEYS[step];
@@ -141,20 +197,16 @@ export default function MatchPage() {
 
   function buildSearchUrl(): string {
     const params = new URLSearchParams();
-    if (answers.careType && answers.careType !== "not sure") {
-      const typeMap: Record<string, string> = {
-        "assisted living": "Assisted Living",
-        "memory care": "Memory Care",
-        independent: "Independent Living",
-        "nursing home": "Nursing Home",
-        "home care": "Home Care",
-      };
-      const mapped = typeMap[answers.careType];
-      if (mapped) params.set("type", mapped);
-    }
-    if (answers.location) params.set("city", answers.location);
+
+    // Infer care type from answers
+    const careType = inferCareType(answers);
+    if (careType) params.set("type", careType);
+
+    if (answers.zipCode) params.set("q", answers.zipCode);
     if (answers.insurance === "Medicaid") params.set("medicaid", "true");
     if (answers.insurance === "Medicare") params.set("medicare", "true");
+    if (answers.priority === "clean record") params.set("clean", "true");
+
     return `/search?${params.toString()}`;
   }
 
@@ -162,11 +214,15 @@ export default function MatchPage() {
     setStep(0);
     setAnswers({
       relationship: "",
-      careType: "",
-      location: "",
-      radius: "10",
+      age: "",
+      dailyChallenge: "",
+      medications: "",
+      dementia: "",
+      urgency: "",
+      zipCode: "",
       budget: "",
       insurance: "",
+      priority: "",
     });
     setStatus("quiz");
     setMatches([]);
@@ -184,7 +240,7 @@ export default function MatchPage() {
             <div className="mb-2 text-center">
               <span className="label text-cs-lavender">Care Match Quiz</span>
               <p className="mt-1 text-sm text-cs-muted">
-                No signup required. Find your best options in 60 seconds.
+                No signup required. 10 questions to find your best match.
               </p>
             </div>
 
@@ -196,17 +252,11 @@ export default function MatchPage() {
               selected={answers[currentKey]}
               onSelect={handleSelect}
               hasInput={currentStepDef.hasInput}
-              inputValue={currentKey === "location" ? answers.location : ""}
+              inputValue={currentKey === "zipCode" ? answers.zipCode : ""}
               onInputChange={(v) =>
-                setAnswers((prev) => ({ ...prev, location: v }))
+                setAnswers((prev) => ({ ...prev, zipCode: v }))
               }
               inputPlaceholder={currentStepDef.inputPlaceholder}
-              secondaryLabel={currentStepDef.secondaryLabel}
-              secondaryOptions={currentStepDef.secondaryOptions}
-              secondarySelected={answers.radius}
-              onSecondarySelect={(v) =>
-                setAnswers((prev) => ({ ...prev, radius: v }))
-              }
             />
 
             {/* Navigation */}
@@ -219,16 +269,15 @@ export default function MatchPage() {
                 &larr; Back
               </button>
 
-              {/* Show Next/Get Results for input steps or final step */}
               {(currentStepDef.hasInput || step === STEPS.length - 1) && (
                 <button
                   onClick={handleNext}
                   disabled={
                     currentStepDef.hasInput
-                      ? !answers.location.trim()
+                      ? !answers.zipCode.trim()
                       : !answers[currentKey]
                   }
-                  className="rounded-lg bg-cs-blue px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark disabled:opacity-40"
+                  className="rounded-btn bg-cs-blue px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark disabled:opacity-40"
                 >
                   {step === STEPS.length - 1 ? "Get my matches" : "Next \u2192"}
                 </button>
@@ -245,7 +294,7 @@ export default function MatchPage() {
               Finding your best matches...
             </p>
             <p className="mt-2 text-sm text-cs-muted">
-              Our AI is comparing your answers with New Jersey facilities.
+              Analyzing your answers against 1,000+ New Jersey facilities.
             </p>
           </div>
         )}
@@ -268,4 +317,41 @@ export default function MatchPage() {
       </section>
     </PageWrapper>
   );
+}
+
+/** Infer the best care type from quiz answers */
+function inferCareType(answers: QuizAnswers): string | null {
+  // Memory care if dementia is moderate or advanced
+  if (answers.dementia === "moderate" || answers.dementia === "advanced") {
+    return "Memory Care";
+  }
+
+  // Nursing home if complex medical or bed-bound
+  if (
+    answers.dailyChallenge === "medical needs" ||
+    answers.medications === "complex"
+  ) {
+    return "Nursing Home";
+  }
+
+  // Home care if they want to stay home
+  if (answers.dailyChallenge === "staying home") {
+    return "Home Care";
+  }
+
+  // Independent living if mostly independent
+  if (answers.dailyChallenge === "mostly independent") {
+    return "Independent Living";
+  }
+
+  // Assisted living for daily activity help, mobility, or early dementia
+  if (
+    answers.dailyChallenge === "daily activities" ||
+    answers.dailyChallenge === "mobility" ||
+    answers.dementia === "early stage"
+  ) {
+    return "Assisted Living";
+  }
+
+  return null;
 }
