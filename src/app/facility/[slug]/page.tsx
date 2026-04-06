@@ -71,8 +71,51 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
     // Defaults already set above
   }
 
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: facility.name,
+    description: facility.description || `Senior care facility in ${facility.city}, NJ`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: facility.address,
+      addressLocality: facility.city,
+      addressRegion: "NJ",
+      postalCode: facility.zip,
+      addressCountry: "US",
+    },
+    ...(facility.phone && { telephone: facility.phone }),
+    ...(facility.website && { url: facility.website }),
+    ...(facility.lat && facility.lng && {
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: facility.lat,
+        longitude: facility.lng,
+      },
+    }),
+    ...(stats.reviewCount > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: stats.avgRating,
+        reviewCount: stats.reviewCount,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
+    ...(facility.price_min && {
+      priceRange: facility.price_max
+        ? `$${facility.price_min} - $${facility.price_max}/month`
+        : `From $${facility.price_min}/month`,
+    }),
+  };
+
   return (
     <PageWrapper>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <div className="gap-8 lg:grid lg:grid-cols-3">
           {/* ─── Main content (2/3) ─── */}
