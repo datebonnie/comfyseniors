@@ -30,6 +30,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${cormorant.variable} ${jakarta.variable}`}>
+      <head>
+        <script
+          defer
+          data-domain="comfyseniors.com"
+          src="https://plausible.io/js/script.js"
+        />
+      </head>
       <body className="antialiased">{children}</body>
     </html>
   );

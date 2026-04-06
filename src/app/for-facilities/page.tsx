@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageWrapper from "@/components/layout/PageWrapper";
 import Button from "@/components/ui/Button";
+import StripeButton from "@/components/ui/StripeButton";
 
 export const metadata: Metadata = {
   title: "For Facilities — ComfySeniors | Get Listed in NJ's Senior Care Directory",
@@ -271,10 +272,19 @@ export default function ForFacilitiesPage() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-8">
-                <Button className="w-full" size="lg">
-                  Upgrade to Featured
-                </Button>
+              <div className="mt-8 space-y-2">
+                <StripeButton
+                  plan="annual"
+                  className="w-full rounded-btn bg-cs-blue px-7 py-3 text-base font-medium text-white transition-colors hover:bg-cs-blue-dark"
+                >
+                  Upgrade to Featured — $200/mo
+                </StripeButton>
+                <StripeButton
+                  plan="monthly"
+                  className="w-full rounded-btn border border-cs-border px-7 py-2.5 text-sm font-medium text-cs-body transition-colors hover:bg-cs-blue-light"
+                >
+                  Or $300/mo billed monthly
+                </StripeButton>
               </div>
             </div>
           </div>
