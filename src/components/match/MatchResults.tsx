@@ -12,6 +12,7 @@ interface MatchedFacility {
   care_types: CareType[];
   city: string | null;
   county: string | null;
+  zip: string | null;
   price_min: number | null;
   price_max: number | null;
   citation_count: number;
@@ -89,7 +90,7 @@ export default function MatchResults({
                 </Link>
 
                 <p className="mt-1 text-sm text-cs-muted">
-                  {[match.facility.city, match.facility.county, "NJ"]
+                  {[match.facility.city, "NJ", match.facility.zip]
                     .filter(Boolean)
                     .join(", ")}
                 </p>

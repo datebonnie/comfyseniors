@@ -34,7 +34,7 @@ export default function FacilityHeader({
 
       {/* Location */}
       <p className="mt-2 text-cs-muted">
-        {[facility.city, facility.county, "NJ"].filter(Boolean).join(", ")}
+        {[facility.city, "NJ", facility.zip].filter(Boolean).join(", ")}
       </p>
 
       {/* Rating */}

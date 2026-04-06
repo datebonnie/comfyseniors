@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   let query = supabase
     .from("facilities")
     .select(
-      "id, name, slug, care_types, city, county, price_min, price_max, citation_count, accepts_medicaid, accepts_medicare, description"
+      "id, name, slug, care_types, city, county, zip, price_min, price_max, citation_count, accepts_medicaid, accepts_medicare, description"
     )
     .limit(20);
 
