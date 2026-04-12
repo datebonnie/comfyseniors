@@ -137,7 +137,7 @@ export default function ForFacilitiesPage() {
                   ))}
               </ul>
               <div className="mt-8">
-                <Button variant="ghost" className="w-full">
+                <Button href="/for-facilities/login" variant="ghost" className="w-full">
                   Claim your free listing
                 </Button>
               </div>
@@ -390,12 +390,18 @@ export default function ForFacilitiesPage() {
             Join 16,000+ facilities already listed on ComfySeniors across 25 states.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button className="rounded-btn bg-white px-7 py-3 text-base font-medium text-cs-blue-dark transition-colors hover:bg-cs-blue-light">
+            <a
+              href="/for-facilities/login"
+              className="rounded-btn bg-white px-7 py-3 text-base font-medium text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
+            >
               Claim your free listing
-            </button>
-            <button className="rounded-btn border border-[#8B9EC7] px-7 py-3 text-base font-medium text-white transition-colors hover:bg-white/10">
+            </a>
+            <a
+              href="#pricing"
+              className="rounded-btn border border-[#8B9EC7] px-7 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
+            >
               Upgrade to Pro or Enterprise
-            </button>
+            </a>
           </div>
         </div>
       </section>

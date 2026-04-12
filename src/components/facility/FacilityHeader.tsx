@@ -2,6 +2,7 @@ import type { Facility } from "@/types";
 import CareTypeBadge from "@/components/ui/CareTypeBadge";
 import StarRating from "@/components/ui/StarRating";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
+import NotVerifiedLabel from "@/components/ui/NotVerifiedLabel";
 
 interface FacilityHeaderProps {
   facility: Facility;
@@ -23,7 +24,7 @@ export default function FacilityHeader({
             Featured
           </span>
         )}
-        {facility.is_verified && <VerifiedBadge size="md" />}
+        {facility.is_verified ? <VerifiedBadge size="md" /> : <NotVerifiedLabel size="md" />}
         {facility.care_types?.map((type) => (
           <CareTypeBadge key={type} type={type} />
         ))}
