@@ -22,9 +22,6 @@ export default function Nav() {
             <span className="text-cs-blue">Comfy</span>
             <span className="text-cs-lavender">Seniors</span>
           </span>
-          <span className="hidden text-[11px] font-medium text-cs-muted sm:inline">
-            .com
-          </span>
         </Link>
 
         {/* Desktop links + CTA */}
