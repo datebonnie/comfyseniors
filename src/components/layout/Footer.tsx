@@ -6,6 +6,7 @@ const footerLinks = {
     { href: "/match", label: "Care Match Quiz" },
     { href: "/faq", label: "FAQ" },
     { href: "/about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
   ],
   "Care Types": [
     { href: "/care-types/assisted-living", label: "Assisted Living" },
