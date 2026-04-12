@@ -1,97 +1,152 @@
 import { getUserFacility } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import StripeButton from "@/components/ui/StripeButton";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 export default async function BillingPage() {
   const facility = await getUserFacility();
   if (!facility) redirect("/for-facilities/dashboard");
+
+  const isPro = facility.is_verified && !facility.is_featured;
+  const isEnterprise = facility.is_featured;
+  const isFree = !isPro && !isEnterprise;
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="font-display text-2xl text-cs-blue-dark">Billing</h1>
         <p className="mt-1 text-sm text-cs-muted">
-          Manage your subscription and featured listing status.
+          Manage your subscription and plan.
         </p>
       </div>
 
       {/* Current plan */}
       <div className="mb-8 max-w-xl rounded-card border border-cs-border bg-white p-6">
         <h2 className="mb-2 font-semibold text-cs-blue-dark">Current plan</h2>
-        {facility.is_featured ? (
+        {isEnterprise ? (
           <div>
-            <span className="inline-block rounded-full bg-cs-blue px-3 py-1 text-sm font-semibold text-white">
-              Featured
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="inline-block rounded-full bg-cs-blue px-3 py-1 text-sm font-semibold text-white">
+                Enterprise
+              </span>
+              <VerifiedBadge size="sm" />
+            </div>
             <p className="mt-3 text-sm text-cs-body">
-              Your facility appears at the top of search results with a
-              &ldquo;Featured&rdquo; badge. Families see you first.
+              Your facility has top placement in search results, a Featured
+              badge, Verified badge, and a dedicated account manager.
             </p>
-            <p className="mt-2 text-xs text-cs-muted">
-              To manage your subscription or cancel, contact{" "}
-              <a
-                href="mailto:hello@comfyseniors.com"
-                className="text-cs-blue hover:underline"
-              >
-                hello@comfyseniors.com
-              </a>
+          </div>
+        ) : isPro ? (
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="inline-block rounded-full bg-cs-lavender px-3 py-1 text-sm font-semibold text-white">
+                Pro
+              </span>
+              <VerifiedBadge size="sm" />
+            </div>
+            <p className="mt-3 text-sm text-cs-body">
+              Your facility has a Verified badge, enhanced profile, and direct
+              family inquiries. Upgrade to Enterprise for top search placement.
             </p>
           </div>
         ) : (
           <div>
             <span className="inline-block rounded-full border border-cs-border px-3 py-1 text-sm font-medium text-cs-muted">
-              Free listing
+              Basic (Free)
             </span>
             <p className="mt-3 text-sm text-cs-body">
-              Your facility is listed with basic information. Upgrade to
-              Featured for top placement, enhanced profile, and direct
-              family inquiries.
+              Your facility is listed with basic information. Upgrade to Pro for
+              a Verified badge and enhanced profile, or Enterprise for maximum
+              visibility.
             </p>
           </div>
         )}
+
+        <p className="mt-3 text-xs text-cs-muted">
+          To manage your subscription or cancel, contact{" "}
+          <a href="mailto:facilities@comfyseniors.com" className="text-cs-blue hover:underline">
+            facilities@comfyseniors.com
+          </a>
+        </p>
       </div>
 
-      {/* Upgrade section */}
-      {!facility.is_featured && (
-        <div className="max-w-xl rounded-card border-2 border-cs-blue bg-cs-blue-light p-6">
-          <h2 className="mb-2 font-semibold text-cs-blue-dark">
-            Upgrade to Featured
-          </h2>
-          <p className="text-sm text-cs-body">
-            Get seen first by NJ families searching for care.
-          </p>
+      {/* Upgrade options */}
+      {(isFree || isPro) && (
+        <div className="grid max-w-xl gap-4">
+          {isFree && (
+            <div className="rounded-card border-2 border-cs-lavender bg-cs-lavender-light p-6">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-cs-blue-dark">
+                  Upgrade to Pro
+                </h3>
+                <VerifiedBadge size="sm" />
+              </div>
+              <p className="mt-2 text-sm text-cs-body">
+                Get a Verified badge, enhanced profile, and direct family inquiries.
+              </p>
+              <ul className="mt-3 space-y-1.5">
+                <li className="flex items-center gap-2 text-sm text-cs-body">
+                  <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                  Verified badge — families see your info is confirmed
+                </li>
+                <li className="flex items-center gap-2 text-sm text-cs-body">
+                  <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                  Enhanced profile with details
+                </li>
+                <li className="flex items-center gap-2 text-sm text-cs-body">
+                  <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                  Direct inquiry button
+                </li>
+              </ul>
+              <div className="mt-5">
+                <StripeButton
+                  plan="pro_annual"
+                  className="w-full rounded-btn bg-cs-lavender px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cs-lavender/90"
+                >
+                  Upgrade to Pro — $10/mo (early adopter)
+                </StripeButton>
+              </div>
+            </div>
+          )}
 
-          <ul className="mt-4 space-y-2">
-            {[
-              "Top of search results",
-              "\"Featured\" badge on your listing",
-              "Direct inquiry button",
-              "Enhanced profile with details",
-              "Priority in Care Match Quiz results",
-            ].map((feature) => (
-              <li
-                key={feature}
-                className="flex items-center gap-2 text-sm text-cs-body"
-              >
-                <span className="inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
-                {feature}
+          <div className="rounded-card border-2 border-cs-blue bg-cs-blue-light p-6">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-cs-blue-dark">
+                {isPro ? "Upgrade to Enterprise" : "Go Enterprise"}
+              </h3>
+              <span className="label rounded-full bg-cs-blue px-2 py-0.5 text-[10px] text-white">
+                Best Value
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-cs-body">
+              Maximum visibility with top placement, Featured badge, and dedicated support.
+            </p>
+            <ul className="mt-3 space-y-1.5">
+              <li className="flex items-center gap-2 text-sm text-cs-body">
+                <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                Everything in Pro
               </li>
-            ))}
-          </ul>
-
-          <div className="mt-6 space-y-2">
-            <StripeButton
-              plan="annual"
-              className="w-full rounded-btn bg-cs-blue px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
-            >
-              Upgrade — $200/mo (billed annually)
-            </StripeButton>
-            <StripeButton
-              plan="monthly"
-              className="w-full rounded-btn border border-cs-border px-6 py-2.5 text-sm font-medium text-cs-body transition-colors hover:bg-white"
-            >
-              Or $300/mo billed monthly
-            </StripeButton>
+              <li className="flex items-center gap-2 text-sm text-cs-body">
+                <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                Top of search results + Featured badge
+              </li>
+              <li className="flex items-center gap-2 text-sm text-cs-body">
+                <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                Priority in Care Match Quiz
+              </li>
+              <li className="flex items-center gap-2 text-sm text-cs-body">
+                <span className="h-[6px] w-[6px] rounded-full bg-cs-green-ok" />
+                Analytics dashboard + dedicated account manager
+              </li>
+            </ul>
+            <div className="mt-5">
+              <StripeButton
+                plan="enterprise_annual"
+                className="w-full rounded-btn bg-cs-blue px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
+              >
+                Get Enterprise — $100/mo (early adopter)
+              </StripeButton>
+            </div>
           </div>
         </div>
       )}
@@ -104,12 +159,8 @@ export default async function BillingPage() {
         <p className="text-sm text-cs-body">
           When a family referred through ComfySeniors becomes a resident at
           your facility, a one-time placement fee equal to one month&apos;s
-          rent applies. This is tracked through referral codes — mark
-          conversions in the{" "}
-          <a
-            href="/for-facilities/dashboard/inquiries"
-            className="text-cs-blue hover:underline"
-          >
+          rent applies. Track referral codes in the{" "}
+          <a href="/for-facilities/dashboard/inquiries" className="text-cs-blue hover:underline">
             Inquiries
           </a>{" "}
           tab.

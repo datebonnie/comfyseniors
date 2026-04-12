@@ -1,6 +1,7 @@
 import type { Facility } from "@/types";
 import CareTypeBadge from "@/components/ui/CareTypeBadge";
 import StarRating from "@/components/ui/StarRating";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 interface FacilityHeaderProps {
   facility: Facility;
@@ -22,6 +23,7 @@ export default function FacilityHeader({
             Featured
           </span>
         )}
+        {facility.is_verified && <VerifiedBadge size="md" />}
         {facility.care_types?.map((type) => (
           <CareTypeBadge key={type} type={type} />
         ))}
@@ -34,7 +36,7 @@ export default function FacilityHeader({
 
       {/* Location */}
       <p className="mt-2 text-cs-muted">
-        {[facility.city, "NJ", facility.zip].filter(Boolean).join(", ")}
+        {[facility.city, facility.state, facility.zip].filter(Boolean).join(", ")}
       </p>
 
       {/* Rating */}

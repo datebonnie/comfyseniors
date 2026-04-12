@@ -5,6 +5,7 @@ import CitationBadge from "./CitationBadge";
 import PriceDisplay from "./PriceDisplay";
 import StarRating from "./StarRating";
 import Button from "./Button";
+import VerifiedBadge from "./VerifiedBadge";
 
 interface FacilityCardProps {
   facility: FacilityWithStats;
@@ -24,6 +25,7 @@ export default function FacilityCard({
     price_max,
     citation_count,
     is_featured,
+    is_verified,
     zip,
     description,
     avg_rating,
@@ -49,6 +51,7 @@ export default function FacilityCard({
             Featured
           </span>
         )}
+        {is_verified && <VerifiedBadge />}
         {bestForLabel && (
           <span className="label inline-block rounded-full bg-cs-lavender/10 px-2.5 py-1 text-[11px] text-cs-lavender">
             ★ {bestForLabel}
