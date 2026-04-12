@@ -97,7 +97,7 @@ export default async function HomePage() {
       <section className="bg-cs-blue-light py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <p className="label mb-3 text-cs-lavender">
-            Senior care directory
+            America&apos;s senior care directory
           </p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
             Find Care. Feel Comfortable.
