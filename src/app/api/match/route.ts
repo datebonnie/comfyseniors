@@ -44,96 +44,82 @@ export async function POST(req: NextRequest) {
     inferredCareType = "Assisted Living";
   }
 
-  // ─── Build Supabase query ───
+  // ─── Progressive search: start strict, broaden until results ───
   const supabase = createClient();
-  let query = supabase
-    .from("facilities")
-    .select(
-      "id, name, slug, care_types, city, county, zip, price_min, price_max, beds, citation_count, accepts_medicaid, accepts_medicare, description, amenities, languages"
-    )
-    .limit(30);
+  const selectFields =
+    "id, name, slug, care_types, city, county, zip, price_min, price_max, beds, citation_count, accepts_medicaid, accepts_medicare, description, amenities, languages";
 
-  // Filter by inferred care type
-  if (inferredCareType) {
-    query = query.contains("care_types", [inferredCareType]);
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let facilities: any[] | null = null;
 
-  // Filter by zip code
-  if (zipCode) {
-    query = query.eq("zip", zipCode);
-  }
-
-  // Filter by budget
-  if (budget && budget !== "not sure") {
-    const budgetMap: Record<string, number> = {
-      "under $3K": 3000,
-      "$3-5K": 5000,
-      "$5-8K": 8000,
-      "$8-12K": 12000,
-      "over $12K": 20000,
-    };
-    const max = budgetMap[budget];
-    if (max && budget !== "over $12K") {
-      query = query.lte("price_min", max);
-    }
-  }
-
-  // Filter by insurance
-  if (insurance === "Medicaid") {
-    query = query.eq("accepts_medicaid", true);
-  } else if (insurance === "Medicare") {
-    query = query.eq("accepts_medicare", true);
-  }
-
-  // Filter by clean record if that's the priority
-  if (priority === "clean record") {
-    query = query.eq("citation_count", 0);
-  }
-
-  let { data: facilities } = await query;
-
-  // If zip code gave no results, broaden to city or county
-  if ((!facilities || facilities.length === 0) && zipCode) {
-    // Try to find facilities in nearby zip codes (first 3 digits match)
-    const zipPrefix = zipCode.slice(0, 3);
-    let broadQuery = supabase
+  // Attempt 1: Exact zip + care type
+  if (zipCode && inferredCareType) {
+    const { data } = await supabase
       .from("facilities")
-      .select(
-        "id, name, slug, care_types, city, county, zip, price_min, price_max, beds, citation_count, accepts_medicaid, accepts_medicare, description, amenities, languages"
-      )
-      .ilike("zip", `${zipPrefix}%`)
+      .select(selectFields)
+      .eq("zip", zipCode)
+      .contains("care_types", [inferredCareType])
       .limit(30);
-
-    if (inferredCareType) {
-      broadQuery = broadQuery.contains("care_types", [inferredCareType]);
-    }
-
-    const { data: broadResults } = await broadQuery;
-    facilities = broadResults;
+    if (data && data.length > 0) facilities = data;
   }
 
-  // If still no results, drop all filters except care type
-  if (!facilities || facilities.length === 0) {
-    let fallbackQuery = supabase
+  // Attempt 2: Exact zip, any care type
+  if (!facilities && zipCode) {
+    const { data } = await supabase
       .from("facilities")
-      .select(
-        "id, name, slug, care_types, city, county, zip, price_min, price_max, beds, citation_count, accepts_medicaid, accepts_medicare, description, amenities, languages"
-      )
+      .select(selectFields)
+      .eq("zip", zipCode)
+      .limit(30);
+    if (data && data.length > 0) facilities = data;
+  }
+
+  // Attempt 3: Zip prefix (e.g. 076xx) + care type
+  if (!facilities && zipCode && inferredCareType) {
+    const prefix = zipCode.slice(0, 3);
+    const { data } = await supabase
+      .from("facilities")
+      .select(selectFields)
+      .ilike("zip", `${prefix}%`)
+      .contains("care_types", [inferredCareType])
+      .limit(30);
+    if (data && data.length > 0) facilities = data;
+  }
+
+  // Attempt 4: Zip prefix, any care type
+  if (!facilities && zipCode) {
+    const prefix = zipCode.slice(0, 3);
+    const { data } = await supabase
+      .from("facilities")
+      .select(selectFields)
+      .ilike("zip", `${prefix}%`)
+      .limit(30);
+    if (data && data.length > 0) facilities = data;
+  }
+
+  // Attempt 5: Just care type, statewide
+  if (!facilities && inferredCareType) {
+    const { data } = await supabase
+      .from("facilities")
+      .select(selectFields)
+      .contains("care_types", [inferredCareType])
+      .limit(30);
+    if (data && data.length > 0) facilities = data;
+  }
+
+  // Attempt 6: No filters at all — just get some facilities
+  if (!facilities) {
+    const { data } = await supabase
+      .from("facilities")
+      .select(selectFields)
+      .order("is_featured", { ascending: false })
       .limit(20);
-
-    if (inferredCareType) {
-      fallbackQuery = fallbackQuery.contains("care_types", [inferredCareType]);
-    }
-
-    const { data: fallbackResults } = await fallbackQuery;
-    facilities = fallbackResults;
+    facilities = data;
   }
 
   if (!facilities || facilities.length === 0) {
     return NextResponse.json({
       matches: [],
-      message:
-        "We couldn't find facilities matching your criteria. Try broadening your search.",
+      message: "We couldn't find any facilities. Please try again.",
     });
   }
 
@@ -158,7 +144,7 @@ A family completed our 10-question care assessment:
 
 Based on these answers, we inferred they need: ${inferredCareType || "general senior care"}
 
-Here are the matching facilities in their area (JSON):
+Here are the available facilities in their area (JSON):
 ${JSON.stringify(facilities, null, 2)}
 
 Analyze the family's specific situation and rank the top 3-5 best-fitting facilities. Consider:
