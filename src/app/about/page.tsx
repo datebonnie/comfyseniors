@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 export const metadata: Metadata = {
   title: "About Us — ComfySeniors | New Jersey Senior Care Directory",
   description:
-    "Why we built ComfySeniors: real prices, real inspection records, and zero phone harvesting. The honest alternative to A Place for Mom.",
+    "Why we built ComfySeniors: real prices, real inspection records, and zero phone harvesting. The honest alternative to referral-based directories.",
 };
 
 const promises = [
@@ -134,8 +134,8 @@ export default function AboutPage() {
                     facility, we charge that facility a one-time placement fee
                     equal to <strong>one month&apos;s rent</strong>. That&apos;s
                     it. The industry standard is 100&ndash;150% of first
-                    month&apos;s rent — A Place for Mom charges facilities up to
-                    150%. We charge 100%, nothing more.
+                    month&apos;s rent — most major referral directories charge
+                    facilities up to 150%. We charge 100%, nothing more.
                   </p>
                   <p className="mt-1 text-sm">
                     At current New Jersey assisted living rates of

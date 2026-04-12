@@ -305,7 +305,7 @@ export default function ForFacilitiesPage() {
                 referred becomes a resident, we charge a one-time placement fee
                 equal to <strong>one month&apos;s rent</strong>. The industry
                 standard is 100&ndash;150% of first month&apos;s rent &mdash; A
-                Place for Mom charges up to 150%. We charge 100%, nothing more.
+                major referral directories charge up to 150%. We charge 100%, nothing more.
               </p>
               <p>
                 At current NJ assisted living rates of $5,000&ndash;$8,000/month,
