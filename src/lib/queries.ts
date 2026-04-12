@@ -67,10 +67,10 @@ export async function searchFacilities(
     .from("facilities")
     .select("*", { count: "exact" });
 
-  // Text search on name, city, description
+  // Text search on name, city, zip, county, description
   if (filters.q) {
     query = query.or(
-      `name.ilike.%${filters.q}%,city.ilike.%${filters.q}%,description.ilike.%${filters.q}%`
+      `name.ilike.%${filters.q}%,city.ilike.%${filters.q}%,zip.ilike.%${filters.q}%,county.ilike.%${filters.q}%,description.ilike.%${filters.q}%`
     );
   }
 
