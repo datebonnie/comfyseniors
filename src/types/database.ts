@@ -130,6 +130,7 @@ export interface FacilityWithStats extends Facility {
 /** Search filter parameters — maps 1:1 with URL search params */
 export interface SearchFilters {
   q?: string;
+  state?: string;
   careTypes?: CareType[];
   county?: string;
   city?: string;

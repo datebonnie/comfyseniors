@@ -13,9 +13,9 @@ import {
 } from "@/lib/queries";
 
 export const metadata: Metadata = {
-  title: "Find Senior Care in New Jersey — ComfySeniors",
+  title: "Find Senior Care — ComfySeniors",
   description:
-    "Search and compare every licensed senior care facility in New Jersey. Filter by care type, price, location, and inspection record.",
+    "Search and compare every licensed senior care facility. Filter by care type, price, location, and inspection record.",
 };
 
 const PER_PAGE = 20;

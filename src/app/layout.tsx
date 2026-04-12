@@ -19,13 +19,13 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://comfyseniors.com"),
-  title: "ComfySeniors — New Jersey's Most Honest Senior Care Directory",
+  title: "ComfySeniors — America's Most Honest Senior Care Directory",
   description:
-    "Find every licensed senior care facility in New Jersey with real prices, state inspection records, and unfiltered reviews. No pressure. No lead selling.",
+    "Find every licensed senior care facility in the US with real prices, state inspection records, and unfiltered reviews. No pressure. No lead selling.",
   openGraph: {
-    title: "ComfySeniors — New Jersey's Most Honest Senior Care Directory",
+    title: "ComfySeniors — America's Most Honest Senior Care Directory",
     description:
-      "Every licensed NJ senior care facility with real prices, state inspection records, and unfiltered reviews. We never sell your number.",
+      "Every licensed senior care facility with real prices, state inspection records, and unfiltered reviews. We never sell your number.",
     url: "https://comfyseniors.com",
     siteName: "ComfySeniors",
     type: "website",
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ComfySeniors — NJ's Most Honest Senior Care Directory",
+    title: "ComfySeniors — America's Most Honest Senior Care Directory",
     description:
-      "Real prices. Real records. No pressure. Every licensed NJ senior care facility.",
+      "Real prices. Real records. No pressure. Every licensed senior care facility.",
     site: "@comfyseniors",
     creator: "@comfyseniors",
   },

@@ -58,7 +58,7 @@ export default function Footer() {
               ComfySeniors
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-[#8B9EC7]">
-              New Jersey&apos;s most honest senior care directory.
+              America&apos;s most honest senior care directory.
             </p>
             <p className="mt-4 text-sm font-medium text-cs-lavender">
               We never sell your number &mdash; ever.
@@ -108,7 +108,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
           <span>&copy; {new Date().getFullYear()} ComfySeniors.com. All rights reserved.</span>
-          <span>Made in New Jersey for New Jersey families.</span>
+          <span>Made in New Jersey for American families.</span>
         </div>
       </div>
     </footer>

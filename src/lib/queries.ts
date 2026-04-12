@@ -56,9 +56,9 @@ export async function getFacilityCount(): Promise<number> {
 // Search
 // ────────────────────────────────────────────
 
-/** Detect if a query looks like a NJ zip code (5 digits starting with 0) */
-function isNjZipCode(q: string): boolean {
-  return /^0[789]\d{3}$/.test(q.trim());
+/** Detect if a query looks like a US zip code (5 digits) */
+function isZipCode(q: string): boolean {
+  return /^\d{5}$/.test(q.trim());
 }
 
 export async function searchFacilities(
@@ -69,7 +69,7 @@ export async function searchFacilities(
   const result = await searchFacilitiesInternal(filters, page, perPage);
 
   // Fallback: if zero results and query is a NJ zip code, broaden to 3-digit prefix
-  if (result.count === 0 && filters.q && isNjZipCode(filters.q)) {
+  if (result.count === 0 && filters.q && isZipCode(filters.q)) {
     const prefix = filters.q.trim().slice(0, 3);
     const broadFilters: SearchFilters = { ...filters, q: prefix };
     return searchFacilitiesInternal(broadFilters, page, perPage);
@@ -90,6 +90,11 @@ async function searchFacilitiesInternal(
   let query = supabase
     .from("facilities")
     .select("*", { count: "exact" });
+
+  // State filter
+  if (filters.state) {
+    query = query.eq("state", filters.state);
+  }
 
   // Text search on name, city, zip, county, description
   if (filters.q) {

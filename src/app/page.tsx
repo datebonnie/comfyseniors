@@ -27,7 +27,7 @@ const careTypes: { type: CareType; slug: string }[] = [
 ];
 
 const trustItems = [
-  "700+ NJ facilities listed",
+  "Thousands of facilities listed",
   "Real prices shown",
   "We never sell your number",
   "State inspection records included",
@@ -61,7 +61,7 @@ const differentiators = [
     desc: "We never collect, store, or sell your phone number or email.",
   },
   {
-    title: "State inspection records",
+    title: "Federal inspection records",
     desc: "Every facility shows its citation history from the NJ Dept of Health.",
   },
   {
@@ -87,7 +87,7 @@ export default async function HomePage() {
 
   const trustDisplay = trustItems.map((text) =>
     text.includes("700+") && facilityCount > 0
-      ? `${facilityCount}+ NJ facilities listed`
+      ? `${facilityCount.toLocaleString()}+ facilities listed`
       : text
   );
 
@@ -97,15 +97,14 @@ export default async function HomePage() {
       <section className="bg-cs-blue-light py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <p className="label mb-3 text-cs-lavender">
-            New Jersey senior care directory
+            Senior care directory
           </p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
             Find Care. Feel Comfortable.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-[1.65] text-cs-body">
-            Every licensed NJ senior care facility &mdash; real prices, state
-            inspection records, and we never sell your number. Browse at your own
-            pace.
+            Every licensed senior care facility &mdash; real prices, inspection
+            records, and we never sell your number. Browse at your own pace.
           </p>
           <div className="mx-auto mt-8 max-w-xl">
             <SearchBar size="lg" />
@@ -179,7 +178,7 @@ export default async function HomePage() {
             <div className="mb-8 text-center">
               <span className="label text-cs-lavender">Featured facilities</span>
               <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-                Trusted senior care in New Jersey
+                Trusted senior care facilities
               </h2>
             </div>
 
@@ -257,10 +256,10 @@ export default async function HomePage() {
       <section className="bg-cs-blue-light py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-3 font-display text-xl font-normal text-cs-blue-dark sm:text-2xl">
-            Are you a senior care facility in NJ?
+            Are you a senior care facility?
           </h2>
           <p className="mb-6 text-cs-muted">
-            Get listed free on New Jersey&apos;s most honest senior care
+            Get listed free on America&apos;s most honest senior care
             directory.
           </p>
           <Button href="/for-facilities" size="lg">
