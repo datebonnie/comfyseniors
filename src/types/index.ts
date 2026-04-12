@@ -7,4 +7,6 @@ export type {
   FAQQuestion,
   FacilityWithStats,
   SearchFilters,
+  InspectionDeficiency,
+  CountyBenchmark,
 } from "./database";

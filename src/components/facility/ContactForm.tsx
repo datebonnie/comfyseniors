@@ -16,6 +16,7 @@ export default function ContactForm({
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle"
   );
+  const [code, setCode] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,6 +28,7 @@ export default function ContactForm({
     const result = await sendFacilityInquiry(formData);
 
     if (result.success) {
+      setCode(result.code ?? null);
       setStatus("sent");
     } else {
       setStatus("error");
@@ -35,11 +37,29 @@ export default function ContactForm({
 
   if (status === "sent") {
     return (
-      <div className="rounded-lg border border-cs-green-ok/30 bg-cs-green-ok/5 p-4 text-center">
-        <p className="font-medium text-cs-green-ok">Message sent!</p>
-        <p className="mt-1 text-sm text-cs-muted">
+      <div className="rounded-lg border border-cs-green-ok/30 bg-cs-green-ok/5 p-4">
+        <p className="text-center font-medium text-cs-green-ok">
+          Message sent!
+        </p>
+        <p className="mt-1 text-center text-sm text-cs-muted">
           Your inquiry has been sent to {facilityName}.
         </p>
+
+        {code && (
+          <div className="mt-4 rounded-lg border border-cs-blue bg-cs-blue-light p-3">
+            <p className="label text-center text-cs-lavender">
+              Your reference code
+            </p>
+            <p className="mt-1 text-center font-mono text-xl font-semibold tracking-wider text-cs-blue-dark">
+              {code}
+            </p>
+            <p className="mt-2 text-center text-xs leading-relaxed text-cs-muted">
+              Mention this code when you visit or call the facility.
+              <br />
+              It protects you from being contacted by anyone else.
+            </p>
+          </div>
+        )}
       </div>
     );
   }

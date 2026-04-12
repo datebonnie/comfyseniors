@@ -1,0 +1,47 @@
+interface ValueScoreProps {
+  score: number | null;
+  size?: "sm" | "md" | "lg";
+}
+
+export default function ValueScore({ score, size = "md" }: ValueScoreProps) {
+  if (score === null || score === undefined) return null;
+
+  const label =
+    score >= 80
+      ? "Excellent"
+      : score >= 65
+        ? "Very Good"
+        : score >= 50
+          ? "Good"
+          : score >= 35
+            ? "Fair"
+            : "Needs Review";
+
+  const color =
+    score >= 80
+      ? "bg-green-100 text-green-800 border-green-300"
+      : score >= 65
+        ? "bg-cs-blue-light text-cs-blue border-cs-border-blue"
+        : score >= 50
+          ? "bg-yellow-100 text-yellow-800 border-yellow-300"
+          : score >= 35
+            ? "bg-orange-100 text-orange-800 border-orange-300"
+            : "bg-red-100 text-red-800 border-red-300";
+
+  const sizeClasses =
+    size === "lg"
+      ? "text-2xl font-display px-4 py-2"
+      : size === "md"
+        ? "text-base font-semibold px-3 py-1.5"
+        : "text-sm font-semibold px-2.5 py-1";
+
+  return (
+    <div
+      className={`inline-flex items-center gap-2 rounded-btn border ${color} ${sizeClasses}`}
+    >
+      <span className="font-bold">{score}</span>
+      <span className="text-xs opacity-75">/ 100</span>
+      {size !== "sm" && <span className="ml-1 text-xs font-medium">{label}</span>}
+    </div>
+  );
+}

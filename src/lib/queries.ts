@@ -5,6 +5,8 @@ import type {
   FAQQuestion,
   Review,
   SearchFilters,
+  InspectionDeficiency,
+  CountyBenchmark,
 } from "@/types";
 
 // ────────────────────────────────────────────
@@ -275,6 +277,65 @@ export async function getSimilarFacilities(
   if (!data || data.length === 0) return [];
 
   return attachReviewStats(data as Facility[]);
+}
+
+// ────────────────────────────────────────────
+// Enrichment Data (Phase B)
+// ────────────────────────────────────────────
+
+/** Get all inspection deficiencies for a facility, sorted by date */
+export async function getFacilityDeficiencies(
+  facilityId: string
+): Promise<InspectionDeficiency[]> {
+  const supabase = createClient();
+
+  try {
+    const { data } = await supabase
+      .from("inspection_deficiencies")
+      .select("*")
+      .eq("facility_id", facilityId)
+      .order("survey_date", { ascending: false });
+
+    return (data as InspectionDeficiency[]) ?? [];
+  } catch {
+    return [];
+  }
+}
+
+/** Get county cost benchmarks for a specific county and care type */
+export async function getCountyBenchmark(
+  county: string,
+  careType: string
+): Promise<CountyBenchmark | null> {
+  const supabase = createClient();
+
+  try {
+    const { data } = await supabase
+      .from("county_benchmarks")
+      .select("*")
+      .eq("county", county)
+      .eq("care_type", careType)
+      .maybeSingle();
+
+    return (data as CountyBenchmark) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Get facilities by slugs (for comparison tool) */
+export async function getFacilitiesBySlugs(
+  slugs: string[]
+): Promise<Facility[]> {
+  if (slugs.length === 0) return [];
+  const supabase = createClient();
+
+  const { data } = await supabase
+    .from("facilities")
+    .select("*")
+    .in("slug", slugs);
+
+  return (data as Facility[]) ?? [];
 }
 
 // ────────────────────────────────────────────

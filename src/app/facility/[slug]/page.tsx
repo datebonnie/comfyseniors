@@ -8,13 +8,23 @@ import {
   FacilityTabs,
   ContactSidebar,
   SimilarFacilities,
+  DeficiencyViewer,
+  ValueScore,
+  BenchmarkDisplay,
+  StaffTurnover,
+  InspectionTimeline,
+  CostCalculator,
+  TourQuestions,
 } from "@/components/facility";
 import {
   getFacilityBySlug,
   getFacilityReviews,
   getReviewStats,
   getSimilarFacilities,
+  getFacilityDeficiencies,
+  getCountyBenchmark,
 } from "@/lib/queries";
+import type { InspectionDeficiency, CountyBenchmark } from "@/types";
 
 interface FacilityPageProps {
   params: { slug: string };
@@ -60,12 +70,19 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
   let reviews: Awaited<ReturnType<typeof getFacilityReviews>> = [];
   let stats: Awaited<ReturnType<typeof getReviewStats>> = { avgRating: 0, reviewCount: 0 };
   let similar: Awaited<ReturnType<typeof getSimilarFacilities>> = [];
+  let deficiencies: InspectionDeficiency[] = [];
+  let benchmark: CountyBenchmark | null = null;
 
   try {
-    [reviews, stats, similar] = await Promise.all([
+    const primaryCareType = facility.care_types?.[0];
+    [reviews, stats, similar, deficiencies, benchmark] = await Promise.all([
       getFacilityReviews(facility.id),
       getReviewStats(facility.id),
       getSimilarFacilities(facility, 3),
+      getFacilityDeficiencies(facility.id),
+      facility.county && primaryCareType
+        ? getCountyBenchmark(facility.county, primaryCareType)
+        : Promise.resolve(null),
     ]);
   } catch {
     // Defaults already set above
@@ -110,6 +127,9 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
     }),
   };
 
+  const hasNursingData =
+    facility.rn_turnover !== null && facility.rn_turnover !== undefined;
+
   return (
     <PageWrapper>
       <script
@@ -127,7 +147,15 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
               reviewCount={stats.reviewCount}
             />
 
-            {/* Price block — ALWAYS above the fold */}
+            {/* Value Score badge */}
+            {facility.value_score !== null &&
+              facility.value_score !== undefined && (
+                <div className="mt-4">
+                  <ValueScore score={facility.value_score} size="lg" />
+                </div>
+              )}
+
+            {/* Price block */}
             <div className="mt-6 rounded-lg border border-cs-border bg-cs-blue-light p-5 sm:p-6">
               <PriceDisplay
                 priceMin={facility.price_min}
@@ -136,13 +164,66 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
               />
             </div>
 
-            {/* Inspection block — ALWAYS visible */}
+            {/* County benchmark */}
+            {benchmark && (
+              <div className="mt-4">
+                <BenchmarkDisplay
+                  facilityPriceMin={facility.price_min}
+                  benchmark={benchmark}
+                />
+              </div>
+            )}
+
+            {/* Inspection block — summary */}
             <div className="mt-4">
               <InspectionBlock
                 citation_count={facility.citation_count}
                 last_inspection={facility.last_inspection}
                 inspection_url={facility.inspection_url}
                 inspection_summary={facility.inspection_summary}
+              />
+            </div>
+
+            {/* Staff turnover (nursing homes only) */}
+            {hasNursingData && (
+              <div className="mt-4">
+                <StaffTurnover
+                  rnTurnover={facility.rn_turnover}
+                  totalTurnover={facility.total_staff_turnover}
+                />
+              </div>
+            )}
+
+            {/* Detailed citation viewer */}
+            {deficiencies.length > 0 && (
+              <div className="mt-4 rounded-lg border border-cs-border bg-white p-5 sm:p-6">
+                <h3 className="mb-4 font-sans text-base font-medium text-cs-blue-dark">
+                  Detailed inspection findings
+                </h3>
+                <DeficiencyViewer deficiencies={deficiencies} />
+              </div>
+            )}
+
+            {/* Inspection timeline */}
+            {deficiencies.length > 0 && (
+              <div className="mt-4">
+                <InspectionTimeline deficiencies={deficiencies} />
+              </div>
+            )}
+
+            {/* Tour questions — personalized */}
+            <div className="mt-4">
+              <TourQuestions
+                facilityName={facility.name}
+                deficiencies={deficiencies}
+              />
+            </div>
+
+            {/* Move-in cost calculator */}
+            <div className="mt-4">
+              <CostCalculator
+                priceMin={facility.price_min}
+                priceMax={facility.price_max}
               />
             </div>
 

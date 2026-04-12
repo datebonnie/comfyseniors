@@ -44,7 +44,38 @@ export interface Facility {
   is_verified: boolean;
   lat: number | null;
   lng: number | null;
+  rn_turnover: number | null;
+  total_staff_turnover: number | null;
+  overall_rating: number | null;
+  health_inspection_rating: number | null;
+  staffing_rating: number | null;
+  qm_rating: number | null;
+  value_score: number | null;
   created_at: string;
+  updated_at: string;
+}
+
+export interface InspectionDeficiency {
+  id: string;
+  facility_id: string;
+  survey_date: string | null;
+  tag_number: string | null;
+  category: string | null;
+  description: string | null;
+  severity: string | null;
+  is_complaint: boolean;
+  is_corrected: boolean;
+  correction_date: string | null;
+  created_at: string;
+}
+
+export interface CountyBenchmark {
+  county: string;
+  care_type: string;
+  avg_price_min: number | null;
+  avg_price_max: number | null;
+  median_price: number | null;
+  facility_count: number | null;
   updated_at: string;
 }
 
@@ -64,6 +95,9 @@ export interface Lead {
   facility_id: string;
   inquiry_type: string | null;
   message: string | null;
+  code: string | null;
+  converted_at: string | null;
+  conversion_notes: string | null;
   created_at: string;
 }
 

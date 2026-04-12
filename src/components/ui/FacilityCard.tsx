@@ -28,7 +28,11 @@ export default function FacilityCard({
     description,
     avg_rating,
     review_count,
+    value_score,
   } = facility;
+
+  // "Best for" label based on data
+  const bestForLabel = getBestForLabel(facility);
 
   return (
     <div
@@ -43,6 +47,11 @@ export default function FacilityCard({
         {is_featured && (
           <span className="label inline-block rounded-full bg-cs-blue px-2.5 py-1 text-[11px] text-white">
             Featured
+          </span>
+        )}
+        {bestForLabel && (
+          <span className="label inline-block rounded-full bg-cs-lavender/10 px-2.5 py-1 text-[11px] text-cs-lavender">
+            ★ {bestForLabel}
           </span>
         )}
         {care_types?.map((type) => (
@@ -63,17 +72,27 @@ export default function FacilityCard({
         {[city, "NJ", zip].filter(Boolean).join(", ")}
       </p>
 
-      {/* Rating + Price row */}
+      {/* Value score + Rating row */}
+      {(value_score !== null && value_score !== undefined) || review_count > 0 ? (
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          {value_score !== null && value_score !== undefined && (
+            <div className="inline-flex items-center gap-1 text-xs">
+              <span className="label text-cs-lavender">Value</span>
+              <span className="font-bold text-cs-blue-dark">{value_score}</span>
+              <span className="text-cs-muted">/100</span>
+            </div>
+          )}
+          {review_count > 0 && (
+            <StarRating rating={avg_rating} reviewCount={review_count} />
+          )}
+        </div>
+      ) : null}
+
+      {/* Price + citation row */}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
         <PriceDisplay priceMin={price_min} priceMax={price_max} />
         <CitationBadge count={citation_count} />
       </div>
-
-      {review_count > 0 && (
-        <div className="mt-2">
-          <StarRating rating={avg_rating} reviewCount={review_count} />
-        </div>
-      )}
 
       {/* Description */}
       {description && (
@@ -82,12 +101,34 @@ export default function FacilityCard({
         </p>
       )}
 
-      {/* CTA */}
-      <div className="mt-4">
+      {/* CTAs */}
+      <div className="mt-4 flex flex-wrap gap-2">
         <Button href={`/facility/${slug}`} variant="ghost" size="sm">
           View facility
         </Button>
       </div>
     </div>
   );
+}
+
+/** Derive a simple "best for" label from facility data */
+function getBestForLabel(facility: FacilityWithStats): string | null {
+  const { value_score, citation_count, overall_rating, price_min } = facility;
+
+  if (citation_count === 0 && (overall_rating ?? 0) >= 4) {
+    return "Clean record, top rated";
+  }
+  if ((value_score ?? 0) >= 85) {
+    return "Best value";
+  }
+  if (citation_count === 0) {
+    return "Clean inspection record";
+  }
+  if ((overall_rating ?? 0) >= 5) {
+    return "Top rated";
+  }
+  if (price_min && price_min < 4000) {
+    return "Budget-friendly";
+  }
+  return null;
 }
