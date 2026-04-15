@@ -51,7 +51,7 @@ export async function sendFacilityInquiry(
     // Look up facility for Resend relay
     const { data: facility } = await supabase
       .from("facilities")
-      .select("email, name")
+      .select("email, name, is_verified, is_featured")
       .eq("id", facilityId)
       .single();
 
@@ -101,15 +101,22 @@ export async function sendFacilityInquiry(
         general_inquiry: "General Inquiry",
       };
 
+      const isVerifiedMember = facility.is_verified || facility.is_featured;
+
+      const billingNote = isVerifiedMember
+        ? `As a Verified member, no placement fee applies. This lead is yours free.`
+        : `This inquiry came through ComfySeniors.com. If this family becomes
+a resident, a one-time placement fee (one month's rent) applies.
+Mark this referral code as converted in your dashboard within 30 days.
+Upgrade to Verified ($297/mo) to eliminate placement fees entirely.`;
+
       const emailBody = `New inquiry for ${facility.name}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 REFERRAL CODE: ${code}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-This inquiry came through ComfySeniors.com. If this family becomes
-a resident, mark this referral code as converted in your facility
-dashboard within 30 days to enable proper billing.
+${billingNote}
 
 Type: ${subjectMap[inquiryType] || inquiryType}
 

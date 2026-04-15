@@ -1,48 +1,50 @@
 import type { Metadata } from "next";
 import PageWrapper from "@/components/layout/PageWrapper";
-import Button from "@/components/ui/Button";
 import StripeButton from "@/components/ui/StripeButton";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
+import NotVerifiedLabel from "@/components/ui/NotVerifiedLabel";
 
 export const metadata: Metadata = {
-  title: "For Facilities — ComfySeniors | Get Listed in America's Senior Care Directory",
+  title: "For Facilities — ComfySeniors | Get Verified",
   description:
-    "List your senior care facility on ComfySeniors.com. Get found by families searching for honest, transparent care options. Basic, Pro, and Enterprise plans available.",
+    "Get verified on America's most honest senior care directory. Direct family leads, zero placement fees, and full reputation tools for $297/month.",
 };
 
-const valueProps = [
+const pillars = [
   {
-    title: "Families trust transparency",
-    desc: "ComfySeniors shows real prices, real reviews, and real inspection records. Families who find you here already trust the information — which means higher-quality inquiries.",
+    title: "Your listing works FOR you",
+    items: [
+      "Verified badge — removes the \"Not Verified\" warning families see right now",
+      "Enhanced profile — photos, detailed description, amenities, custom content",
+      "Inspection response — add your context next to any citations",
+      "Priority placement in search results for your city and care type",
+    ],
   },
   {
-    title: "No lead selling, ever",
-    desc: "We don't sell family contact information to five competing facilities. When a family reaches out to you through ComfySeniors, that inquiry is yours alone.",
+    title: "Direct family leads, zero referral fees",
+    items: [
+      "Direct inquiry button on your page — families contact you, not a call center",
+      "Every inquiry tracked with a referral code — you see every lead",
+      "Zero placement fees — no $5,000–$8,000 charge when someone moves in",
+      "One resident from ComfySeniors pays for 17+ months of membership",
+    ],
   },
   {
-    title: "Every facility gets listed",
-    desc: "We list every licensed facility — paying or not. If your facility isn't listed, families will wonder why. Facilities that choose not to be listed must have something to hide.",
+    title: "Reputation management",
+    items: [
+      "Respond to reviews publicly — show families you listen",
+      "Tour question preview — see what families will ask before they visit",
+      "Analytics dashboard — page views, clicks, and inquiries over 30 days",
+    ],
   },
   {
-    title: "Direct family inquiries",
-    desc: "Families contact you directly through our anonymous relay. No middleman, no sales calls, no shared leads. Just real families reaching out on their own terms.",
+    title: "Competitive intelligence",
+    items: [
+      "See how your pricing compares to county averages",
+      "Value score vs. competitors in your area",
+      "See what families in your city are searching for",
+    ],
   },
-];
-
-const planFeatures = [
-  { feature: "Basic facility listing", basic: true, pro: true, enterprise: true },
-  { feature: "Real prices displayed", basic: true, pro: true, enterprise: true },
-  { feature: "Inspection records shown", basic: true, pro: true, enterprise: true },
-  { feature: "Family reviews published", basic: true, pro: true, enterprise: true },
-  { feature: "Care type badges", basic: true, pro: true, enterprise: true },
-  { feature: "Verified badge", basic: false, pro: true, enterprise: true },
-  { feature: "Enhanced profile (photos, details)", basic: false, pro: true, enterprise: true },
-  { feature: "Direct inquiry button", basic: false, pro: true, enterprise: true },
-  { feature: "Priority in search results", basic: false, pro: false, enterprise: true },
-  { feature: "\"Featured\" badge on listing", basic: false, pro: false, enterprise: true },
-  { feature: "Priority in Care Match Quiz", basic: false, pro: false, enterprise: true },
-  { feature: "Analytics dashboard", basic: false, pro: false, enterprise: true },
-  { feature: "Dedicated account manager", basic: false, pro: false, enterprise: true },
 ];
 
 export default function ForFacilitiesPage() {
@@ -53,354 +55,250 @@ export default function ForFacilitiesPage() {
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <p className="label mb-3 text-cs-lavender">For senior care facilities</p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            Comfortable being found by American Families?
+            One empty bed costs you $6,000 a month.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-[1.65] text-cs-body">
-            ComfySeniors is where families go for honest information about
-            senior care. Every licensed facility gets listed — the only
-            question is whether yours stands out.
+            ComfySeniors puts your facility in front of families actively
+            searching for care — for less than $10 a day. No placement fees.
+            No referral commissions. Just families finding you directly.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button href="#pricing" size="lg">
-              See pricing
-            </Button>
-            <Button href="#pricing" variant="ghost" size="lg">
-              Claim your free listing
-            </Button>
+          <div className="mt-8">
+            <StripeButton
+              plan="verified_monthly"
+              className="rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
+            >
+              Get Verified — $297/month
+            </StripeButton>
+            <p className="mt-3 text-sm text-cs-muted">
+              Cancel anytime. No contracts. No setup fees.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ─── VALUE PROPS ─── */}
-      <section className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* ─── THE PROBLEM ─── */}
+      <section className="bg-white py-14 sm:py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
+            Right now, this is what families see when they find you.
+          </h2>
+          <div className="mt-6 flex items-center gap-3">
+            <NotVerifiedLabel size="md" />
+            <span className="text-sm text-cs-muted">
+              &ldquo;Warning: Not verified&rdquo; — on every page, every search
+              result, every card.
+            </span>
+          </div>
+          <p className="mt-6 text-cs-body leading-relaxed">
+            Your facility is already listed on ComfySeniors. Families in your
+            area are already seeing your page. The question is: are they seeing
+            a &ldquo;Not Verified&rdquo; warning — or a{" "}
+            <span className="inline-flex translate-y-0.5"><VerifiedBadge size="sm" /></span>{" "}
+            badge that tells them your information is accurate and up to date?
+          </p>
+        </div>
+      </section>
+
+      {/* ─── THE OFFER ─── */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center">
-            <span className="label text-cs-lavender">Why list on ComfySeniors</span>
+            <span className="label text-cs-lavender">
+              Everything you get for $297/month
+            </span>
             <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              America&apos;s most trusted senior care directory.
+              The ComfySeniors Verified membership.
             </h2>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {valueProps.map((prop) => (
+          <div className="grid gap-6 sm:grid-cols-2">
+            {pillars.map((pillar) => (
               <div
-                key={prop.title}
-                className="rounded-r-pill border-l-[3px] border-cs-lavender bg-cs-lavender-mist p-5 sm:p-6"
+                key={pillar.title}
+                className="rounded-card border border-cs-border bg-white p-6"
               >
-                <h3 className="text-[14px] font-semibold text-cs-blue-dark">
-                  {prop.title}
+                <h3 className="mb-4 font-sans text-base font-semibold text-cs-blue-dark">
+                  {pillar.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-cs-muted">
-                  {prop.desc}
-                </p>
+                <ul className="space-y-2.5">
+                  {pillar.items.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-2 text-sm text-cs-body"
+                    >
+                      <span className="mt-1.5 inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── PRICING ─── */}
-      <section id="pricing" className="py-16 sm:py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <span className="label text-cs-lavender">Pricing</span>
-            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              Simple, transparent plans.
+      {/* ─── THE MATH ─── */}
+      <section className="bg-white py-14 sm:py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-card border-2 border-cs-blue bg-cs-blue-light p-6 sm:p-8">
+            <h2 className="font-display text-2xl font-normal text-cs-blue-dark">
+              The math that makes this obvious.
             </h2>
-            <p className="mt-3 text-cs-muted">
-              Every facility gets a free listing. Upgrade for verification,
-              enhanced profiles, and top placement.
-            </p>
-          </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* BASIC — Free */}
-            <div className="rounded-card border border-cs-border bg-white p-6 sm:p-8">
-              <h3 className="font-sans text-lg font-semibold text-cs-blue-dark">
-                Basic
-              </h3>
-              <p className="mt-1 text-sm text-cs-muted">
-                Every licensed facility
-              </p>
-              <p className="mt-4 font-display text-4xl text-cs-blue-dark">
-                $0
-                <span className="text-base font-sans text-cs-muted"> / forever</span>
-              </p>
-              <ul className="mt-6 space-y-2.5">
-                {planFeatures
-                  .filter((f) => f.basic)
-                  .map((f) => (
-                    <li key={f.feature} className="flex items-center gap-2 text-sm text-cs-body">
-                      <span className="inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
-                      {f.feature}
-                    </li>
-                  ))}
-              </ul>
-              <div className="mt-8">
-                <Button href="/for-facilities/login" variant="ghost" className="w-full">
-                  Claim your free listing
-                </Button>
-              </div>
-            </div>
-
-            {/* PRO — $25/mo */}
-            <div className="rounded-card border-2 border-cs-lavender bg-white p-6 sm:p-8">
-              <div className="mb-4 flex items-center gap-2">
-                <h3 className="font-sans text-lg font-semibold text-cs-blue-dark">
-                  Pro
-                </h3>
-                <VerifiedBadge />
-              </div>
-              <p className="text-sm text-cs-muted">
-                Verified listing with enhanced profile
-              </p>
-
-              <div className="mt-4 space-y-1">
-                <p className="font-display text-4xl text-cs-lavender">
-                  $10
-                  <span className="text-base font-sans text-cs-muted"> / month</span>
-                </p>
-                <p className="text-xs font-semibold text-cs-lavender">
-                  Early adopter price — first 1,000 facilities only
-                </p>
-                <p className="text-xs text-cs-muted">
-                  Regular price: $25/month
-                </p>
-              </div>
-
-              <ul className="mt-6 space-y-2.5">
-                {planFeatures
-                  .filter((f) => f.pro)
-                  .map((f) => (
-                    <li key={f.feature} className="flex items-center gap-2 text-sm text-cs-body">
-                      <span className="inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
-                      {f.feature}
-                    </li>
-                  ))}
-              </ul>
-              <div className="mt-8 space-y-2">
-                <StripeButton
-                  plan="pro_annual"
-                  className="w-full rounded-btn bg-cs-lavender px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-cs-lavender/90"
-                >
-                  Get Pro — $10/mo
-                </StripeButton>
-                <StripeButton
-                  plan="pro_monthly"
-                  className="w-full rounded-btn border border-cs-border px-6 py-2 text-xs font-medium text-cs-muted transition-colors hover:bg-cs-lavender-mist"
-                >
-                  Or $25/mo after early adopter slots fill
-                </StripeButton>
-              </div>
-            </div>
-
-            {/* ENTERPRISE — $250/mo */}
-            <div className="rounded-card border-2 border-cs-blue bg-white p-6 sm:p-8">
-              <div className="mb-4 flex items-center gap-2">
-                <h3 className="font-sans text-lg font-semibold text-cs-blue-dark">
-                  Enterprise
-                </h3>
-                <span className="label rounded-full bg-cs-blue px-2.5 py-0.5 text-[10px] text-white">
-                  Best Value
+            <div className="mt-6 space-y-5">
+              <div className="flex items-start gap-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cs-blue font-semibold text-white">
+                  1
                 </span>
+                <div>
+                  <p className="font-semibold text-cs-blue-dark">
+                    Every empty bed costs you $5,000–$15,000/month
+                  </p>
+                  <p className="mt-1 text-sm text-cs-body">
+                    That&apos;s lost revenue every single month a bed sits unfilled.
+                  </p>
+                </div>
               </div>
-              <p className="text-sm text-cs-muted">
-                Maximum visibility and dedicated support
+
+              <div className="flex items-start gap-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cs-blue font-semibold text-white">
+                  2
+                </span>
+                <div>
+                  <p className="font-semibold text-cs-blue-dark">
+                    Referral services charge $5,000–$8,000 per move-in
+                  </p>
+                  <p className="mt-1 text-sm text-cs-body">
+                    Every time someone moves in through a referral service,
+                    you lose a month&apos;s rent in fees.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cs-blue font-semibold text-white">
+                  3
+                </span>
+                <div>
+                  <p className="font-semibold text-cs-blue-dark">
+                    ComfySeniors Verified: $297/month. Zero placement fees.
+                  </p>
+                  <p className="mt-1 text-sm text-cs-body">
+                    If we help you fill just one bed per year, that&apos;s a{" "}
+                    <strong>20x return on investment</strong>. And you keep
+                    every dollar of that first month&apos;s rent.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 rounded-btn bg-cs-blue p-5 text-center">
+              <p className="text-2xl font-semibold text-white">
+                $297/month &lt; one day of an empty bed.
               </p>
-
-              <div className="mt-4 space-y-1">
-                <p className="font-display text-4xl text-cs-blue">
-                  $100
-                  <span className="text-base font-sans text-cs-muted"> / month</span>
-                </p>
-                <p className="text-xs font-semibold text-cs-blue">
-                  Early adopter price — first 1,000 facilities only
-                </p>
-                <p className="text-xs text-cs-muted">
-                  Regular price: $250/month
-                </p>
-              </div>
-
-              <ul className="mt-6 space-y-2.5">
-                {planFeatures.map((f) => (
-                  <li key={f.feature} className="flex items-center gap-2 text-sm text-cs-body">
-                    <span className="inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
-                    {f.feature}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8 space-y-2">
-                <StripeButton
-                  plan="enterprise_annual"
-                  className="w-full rounded-btn bg-cs-blue px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
-                >
-                  Get Enterprise — $100/mo
-                </StripeButton>
-                <StripeButton
-                  plan="enterprise_monthly"
-                  className="w-full rounded-btn border border-cs-border px-6 py-2 text-xs font-medium text-cs-muted transition-colors hover:bg-cs-blue-light"
-                >
-                  Or $250/mo after early adopter slots fill
-                </StripeButton>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── COMPARISON TABLE ─── */}
-      <section className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <span className="label text-cs-lavender">Compare plans</span>
-            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              Feature comparison
-            </h2>
-          </div>
+      {/* ─── FREE vs VERIFIED ─── */}
+      <section className="py-14 sm:py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <h2 className="mb-8 text-center font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
+            Free listing vs. Verified.
+          </h2>
 
           <div className="overflow-hidden rounded-card border border-cs-border bg-white">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-cs-border bg-cs-lavender-mist">
-                  <th className="px-5 py-4 text-left font-semibold text-cs-blue-dark">
-                    Feature
-                  </th>
+                  <th className="px-5 py-4 text-left font-semibold text-cs-blue-dark" />
                   <th className="px-4 py-4 text-center font-semibold text-cs-muted">
-                    Basic
-                  </th>
-                  <th className="px-4 py-4 text-center font-semibold text-cs-lavender">
-                    Pro
+                    <div className="flex flex-col items-center gap-1">
+                      <NotVerifiedLabel size="sm" />
+                      <span>Free</span>
+                    </div>
                   </th>
                   <th className="px-4 py-4 text-center font-semibold text-cs-blue">
-                    Enterprise
+                    <div className="flex flex-col items-center gap-1">
+                      <VerifiedBadge size="sm" />
+                      <span>$297/mo</span>
+                    </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {planFeatures.map((row, i) => (
-                  <tr
-                    key={row.feature}
-                    className={i < planFeatures.length - 1 ? "border-b border-cs-border" : ""}
-                  >
-                    <td className="px-5 py-3.5 text-cs-body">{row.feature}</td>
-                    <td className="px-4 py-3.5 text-center">
-                      {row.basic ? (
+                {[
+                  ["Basic listing", true, true],
+                  ["Prices + inspection records shown", true, true],
+                  ["\"Not Verified\" warning", true, false],
+                  ["Verified badge", false, true],
+                  ["Enhanced profile + photos", false, true],
+                  ["Inspection response", false, true],
+                  ["Priority in search results", false, true],
+                  ["Direct family inquiries", false, true],
+                  ["Zero placement fees", false, true],
+                  ["Review responses", false, true],
+                  ["Analytics dashboard", false, true],
+                  ["Competitive intelligence", false, true],
+                  ["Placement fee on move-in", "$5K–$8K", "$0"],
+                ].map(([feature, free, verified], i) => (
+                  <tr key={i} className="border-b border-cs-border last:border-0">
+                    <td className="px-5 py-3 text-cs-body">{feature}</td>
+                    <td className="px-4 py-3 text-center">
+                      {free === true ? (
                         <span className="inline-block h-[7px] w-[7px] rounded-full bg-cs-green-ok" />
-                      ) : (
+                      ) : free === false ? (
                         <span className="text-cs-muted">&mdash;</span>
+                      ) : (
+                        <span className="text-xs font-semibold text-cs-red-alert">{free}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3.5 text-center">
-                      {row.pro ? (
+                    <td className="px-4 py-3 text-center">
+                      {verified === true ? (
                         <span className="inline-block h-[7px] w-[7px] rounded-full bg-cs-green-ok" />
-                      ) : (
+                      ) : verified === false ? (
                         <span className="text-cs-muted">&mdash;</span>
+                      ) : (
+                        <span className="text-xs font-semibold text-cs-green-ok">{verified}</span>
                       )}
-                    </td>
-                    <td className="px-4 py-3.5 text-center">
-                      <span className="inline-block h-[7px] w-[7px] rounded-full bg-cs-green-ok" />
                     </td>
                   </tr>
                 ))}
-                <tr className="border-t border-cs-border bg-cs-lavender-mist">
-                  <td className="px-5 py-4 font-semibold text-cs-blue-dark">
-                    Price
-                  </td>
-                  <td className="px-4 py-4 text-center font-semibold text-cs-blue-dark">
-                    Free
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    <span className="font-semibold text-cs-lavender">$10/mo</span>
-                    <br />
-                    <span className="text-[10px] text-cs-muted">early adopter</span>
-                  </td>
-                  <td className="px-4 py-4 text-center">
-                    <span className="font-semibold text-cs-blue">$100/mo</span>
-                    <br />
-                    <span className="text-[10px] text-cs-muted">early adopter</span>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      {/* ─── VERIFIED BADGE SECTION ─── */}
-      <section className="py-14 sm:py-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-pill border border-cs-blue bg-cs-blue-light p-6 sm:p-8">
-            <div className="flex items-center gap-3">
-              <VerifiedBadge size="md" />
-              <h3 className="font-display text-xl font-normal text-cs-blue-dark">
-                The Verified Badge
-              </h3>
-            </div>
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-cs-body">
-              <p>
-                Pro and Enterprise facilities earn a <strong>Verified</strong> badge
-                on their listing. This badge tells families that all information
-                displayed — pricing, contact details, services, and descriptions —
-                has been confirmed accurate and is actively maintained.
-              </p>
-              <p>
-                In a market where outdated and misleading information is common,
-                verification is a powerful trust signal. Families consistently
-                choose verified facilities over unverified ones.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── PLACEMENT FEE DISCLOSURE ─── */}
-      <section className="bg-white py-14 sm:py-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-pill border border-cs-border bg-cs-lavender-mist p-6 sm:p-8">
-            <h3 className="font-display text-xl font-normal text-cs-blue-dark">
-              Placement fees &mdash; fully transparent
-            </h3>
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-cs-body">
-              <p>
-                For <strong>private-pay facilities</strong>: when a family we
-                referred becomes a resident, we charge a one-time placement fee
-                equal to <strong>one month&apos;s rent</strong>. The industry
-                standard is 100&ndash;150%. We charge 100%, nothing more.
-              </p>
-              <p>
-                For <strong>Medicare/Medicaid facilities</strong>: flat monthly
-                listing fee only. No placement fees.
-              </p>
-              <p className="font-medium text-cs-blue-dark">
-                Every major directory charges placement fees. We just tell you
-                exactly what ours are.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── FINAL CTA ─── */}
+      {/* ─── CTA ─── */}
       <section className="bg-cs-blue-dark py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-normal text-white sm:text-[32px]">
-            Ready to be found?
+            One bed. That&apos;s all it takes.
           </h2>
           <p className="mt-3 text-[#8B9EC7]">
-            Join 16,000+ facilities already listed on ComfySeniors across 25 states.
+            If ComfySeniors helps you fill one bed this year, you&apos;ve made
+            back your entire membership 20x over. And you&apos;ll never pay a
+            placement fee.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8">
+            <StripeButton
+              plan="verified_monthly"
+              className="rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
+            >
+              Get Verified — $297/month
+            </StripeButton>
+            <p className="mt-3 text-sm text-[#8B9EC7]">
+              Cancel anytime. No contracts. No setup fees.
+            </p>
+          </div>
+          <div className="mt-6">
             <a
               href="/for-facilities/login"
-              className="rounded-btn bg-white px-7 py-3 text-base font-medium text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
+              className="text-sm text-[#8B9EC7] underline transition-colors hover:text-white"
             >
-              Claim your free listing
-            </a>
-            <a
-              href="#pricing"
-              className="rounded-btn border border-[#8B9EC7] px-7 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
-            >
-              Upgrade to Pro or Enterprise
+              Already verified? Log in to your dashboard
             </a>
           </div>
         </div>

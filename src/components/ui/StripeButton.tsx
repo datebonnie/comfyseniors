@@ -2,14 +2,8 @@
 
 import { useState } from "react";
 
-type PlanId =
-  | "pro_monthly"
-  | "pro_annual"
-  | "enterprise_monthly"
-  | "enterprise_annual";
-
 interface StripeButtonProps {
-  plan: PlanId;
+  plan: "verified_monthly" | "verified_annual";
   className?: string;
   children: React.ReactNode;
 }
