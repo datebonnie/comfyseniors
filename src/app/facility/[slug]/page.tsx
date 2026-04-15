@@ -45,7 +45,7 @@ export async function generateMetadata({
   }
 
   const careLabel = facility.care_types?.[0] ?? "Senior Care";
-  const location = [facility.city, "NJ"].filter(Boolean).join(", ");
+  const location = [facility.city, facility.state].filter(Boolean).join(", ");
 
   return {
     title: `${facility.name} — ${careLabel} in ${location} | ComfySeniors`,
@@ -98,7 +98,7 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
       "@type": "PostalAddress",
       streetAddress: facility.address,
       addressLocality: facility.city,
-      addressRegion: "NJ",
+      addressRegion: facility.state,
       postalCode: facility.zip,
       addressCountry: "US",
     },

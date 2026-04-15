@@ -22,6 +22,7 @@ export default function FacilityCard({
     slug,
     care_types,
     city,
+    state,
     price_min,
     price_max,
     citation_count,
@@ -73,7 +74,7 @@ export default function FacilityCard({
 
       {/* Location */}
       <p className="mt-1 text-sm text-cs-muted">
-        {[city, "NJ", zip].filter(Boolean).join(", ")}
+        {[city, state, zip].filter(Boolean).join(", ")}
       </p>
 
       {/* Value score + Rating row */}

@@ -11,6 +11,7 @@ interface MatchedFacility {
   slug: string;
   care_types: CareType[];
   city: string | null;
+  state: string;
   county: string | null;
   zip: string | null;
   price_min: number | null;
@@ -90,7 +91,7 @@ export default function MatchResults({
                 </Link>
 
                 <p className="mt-1 text-sm text-cs-muted">
-                  {[match.facility.city, "NJ", match.facility.zip]
+                  {[match.facility.city, match.facility.state, match.facility.zip]
                     .filter(Boolean)
                     .join(", ")}
                 </p>
