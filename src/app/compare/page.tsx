@@ -11,7 +11,7 @@ import type { Facility } from "@/types";
 export const metadata: Metadata = {
   title: "Compare Senior Care Facilities — ComfySeniors",
   description:
-    "Side-by-side comparison of up to 3 New Jersey senior care facilities. See prices, inspection records, and key details at a glance.",
+    "Side-by-side comparison of up to 3 senior care facilities. See prices, inspection records, and key details at a glance.",
 };
 
 interface ComparePageProps {

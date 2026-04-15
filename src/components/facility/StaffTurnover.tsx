@@ -3,7 +3,7 @@ interface StaffTurnoverProps {
   totalTurnover: number | null;
 }
 
-// NJ state averages from CMS
+// National averages from CMS
 const NJ_AVG_RN_TURNOVER = 38.5;
 const NJ_AVG_TOTAL_TURNOVER = 51.2;
 
@@ -17,18 +17,18 @@ export default function StaffTurnover({
     const diff = value - avg;
     if (diff > 10) {
       return {
-        text: `${Math.round(diff)}% above NJ avg`,
+        text: `${Math.round(diff)}% above national avg`,
         color: "text-orange-800 bg-orange-100",
       };
     }
     if (diff < -10) {
       return {
-        text: `${Math.round(Math.abs(diff))}% below NJ avg`,
+        text: `${Math.round(Math.abs(diff))}% below national avg`,
         color: "text-green-800 bg-green-100",
       };
     }
     return {
-      text: "Near NJ avg",
+      text: "Near national avg",
       color: "text-cs-blue bg-cs-blue-light",
     };
   }
@@ -97,7 +97,7 @@ export default function StaffTurnover({
       </div>
 
       <p className="mt-3 text-xs text-cs-muted">
-        NJ averages: RN {NJ_AVG_RN_TURNOVER}% / total {NJ_AVG_TOTAL_TURNOVER}%.
+        National averages: RN {NJ_AVG_RN_TURNOVER}% / total {NJ_AVG_TOTAL_TURNOVER}%.
         Source: CMS.
       </p>
     </div>

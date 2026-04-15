@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 export const metadata: Metadata = {
   title: "Contact Us — ComfySeniors",
   description:
-    "Get in touch with ComfySeniors. Questions about senior care in New Jersey, facility listings, or partnerships.",
+    "Get in touch with ComfySeniors. Questions about senior care, facility listings, or partnerships.",
 };
 
 export default function ContactPage() {
@@ -32,7 +32,7 @@ export default function ContactPage() {
                 For families
               </h2>
               <p className="text-sm text-cs-body">
-                Have a question about finding care in New Jersey? Try our FAQ
+                Have a question about finding care? Try our FAQ
                 or AI answer engine first — they cover most common questions
                 instantly.
               </p>

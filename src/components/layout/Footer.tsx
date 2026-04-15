@@ -109,7 +109,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
           <span>&copy; {new Date().getFullYear()} ComfySeniors.com. All rights reserved.</span>
-          <span>Made in New Jersey for American families.</span>
+          <span>Made for American families.</span>
         </div>
       </div>
     </footer>

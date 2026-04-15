@@ -36,9 +36,9 @@ export async function POST(req: NextRequest) {
 
     // Extract potential city/location from question
     const cityMatch = q.match(
-      /\b(?:in|near|around|at)\s+([a-z\s]+?)(?:\s*,|\s+nj|\s+new jersey|\?|$)/i
+      /\b(?:in|near|around|at)\s+([a-z\s]+?)(?:\s*,|\?|$)/i
     );
-    const zipMatch = q.match(/\b(0[789]\d{3})\b/);
+    const zipMatch = q.match(/\b(\d{5})\b/);
 
     // Extract care type mentions
     const careTypeKeywords: Record<string, string> = {
@@ -126,7 +126,7 @@ ${withPrices.length > 0 ? `- Price range across all: $${Math.min(...withPrices.m
 Sample facilities (first 10):
 ${facilities.slice(0, 10).map((f) => `  - ${f.name} (${f.city}, ${f.zip}) — ${(f.care_types || []).join(", ")} — $${f.price_min?.toLocaleString() || "?"}-$${f.price_max?.toLocaleString() || "?"}/mo — ${f.citation_count} citations — Medicaid: ${f.accepts_medicaid ? "Yes" : "No"}`).join("\n")}`;
       } else {
-        dataContext = "\n\nNOTE: No facilities matched the specific location/filters in the question. Answer based on general NJ knowledge.";
+        dataContext = "\n\nNOTE: No facilities matched the specific location/filters in the question. Answer based on general US senior care knowledge.";
       }
     }
 
@@ -141,7 +141,7 @@ ${facilities.slice(0, 10).map((f) => `  - ${f.name} (${f.city}, ${f.zip}) — ${
 
       if (count) {
         dataContext += `\n\nOVERALL DATABASE STATS:
-- Total ${mentionedCareType || "senior care"} facilities in NJ: ${count}`;
+- Total ${mentionedCareType || "senior care"} facilities: ${count}`;
       }
     }
 
@@ -174,17 +174,17 @@ ${facilities.slice(0, 10).map((f) => `  - ${f.name} (${f.city}, ${f.zip}) — ${
     const stream = anthropic.messages.stream({
       model: "claude-sonnet-4-6-20250514",
       max_tokens: 800,
-      system: `You are the AI assistant for ComfySeniors.com, New Jersey's most honest senior care directory. You have access to real data from our database of 1,000+ licensed NJ facilities.
+      system: `You are the AI assistant for ComfySeniors.com, America's most honest senior care directory. You have access to real data from our database of 20,000+ licensed facilities nationwide.
 
 Rules:
 - Answer in plain English. Define any healthcare term you use.
-- Be specific to New Jersey where relevant.
+- Be specific to the user's location where relevant.
 - When you have database data, USE IT — cite specific numbers, counts, and prices from the data provided.
 - If asked about a specific city or zip code, reference the actual facilities and stats from our database.
 - If asked "how many," give the exact count from the data.
 - If asked about costs, give the actual price ranges from our data.
 - Never make up facility names or data. Only reference what's in the provided data.
-- If no data was provided or the data doesn't answer the question, say so honestly and give general NJ guidance.
+- If no data was provided or the data doesn't answer the question, say so honestly and give general US senior care guidance.
 - Keep answers under 250 words.
 - End with a helpful next step when appropriate (e.g., "You can search for these on ComfySeniors.com" or "Use our Care Match Quiz to find your best options").
 - Never pressure families. No urgency tactics.`,

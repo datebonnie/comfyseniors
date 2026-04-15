@@ -52,7 +52,7 @@ export default async function DashboardOverview() {
           {facility.name}
         </h1>
         <p className="mt-1 text-sm text-cs-muted">
-          {facility.city}, NJ {facility.zip}
+          {facility.city}, {facility.state} {facility.zip}
           {facility.is_featured && (
             <span className="ml-2 rounded-full bg-cs-blue px-2 py-0.5 text-[10px] font-semibold text-white">
               Featured

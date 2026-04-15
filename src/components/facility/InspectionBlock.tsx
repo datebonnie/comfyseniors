@@ -54,7 +54,7 @@ export default function InspectionBlock({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-cs-blue transition-colors hover:text-cs-blue-dark"
           >
-            View full NJ Dept of Health report
+            View full state inspection report
             <svg
               width="14"
               height="14"

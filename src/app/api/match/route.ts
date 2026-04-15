@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
   const anthropic = new Anthropic({ apiKey });
 
   const prompt = `You are a senior care matching assistant for ComfySeniors.com,
-a New Jersey senior care directory.
+America's senior care directory.
 
 A family completed our 10-question care assessment:
 

@@ -3,7 +3,7 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import Button from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "About Us — ComfySeniors | New Jersey Senior Care Directory",
+  title: "About Us — ComfySeniors | America's Most Honest Senior Care Directory",
   description:
     "Why we built ComfySeniors: real prices, real inspection records, and zero phone harvesting. The honest alternative to referral-based directories.",
 };
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const promises = [
   "We show real prices on every listing.",
   "We never share your contact info with anyone.",
-  "We list every licensed NJ facility — paying or not.",
+  "We list every licensed facility — paying or not.",
   "We publish every review — positive and negative.",
   "We show state inspection records on every page.",
 ];
@@ -35,7 +35,7 @@ export default function AboutPage() {
             About ComfySeniors
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-cs-muted">
-            New Jersey&apos;s most honest senior care directory. Built for
+            America&apos;s most honest senior care directory. Built for
             families, not facilities.
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function AboutPage() {
                     facilities up to 150%. We charge 100%, nothing more.
                   </p>
                   <p className="mt-1 text-sm">
-                    At current New Jersey assisted living rates of
+                    At current assisted living rates of
                     $5,000&ndash;$8,000 per month, that means a typical
                     ComfySeniors placement fee is{" "}
                     <strong>$5,000&ndash;$8,000</strong> — paid by the facility,
@@ -218,7 +218,7 @@ export default function AboutPage() {
           <p className="mb-6 text-cs-body leading-relaxed">
             ComfySeniors was built by people who went through the same
             frustrating search you&apos;re going through now. We looked for
-            honest information about senior care in New Jersey and found an
+            honest information about senior care and found an
             industry designed to harvest our data instead of help our families.
           </p>
           <p className="text-cs-body leading-relaxed">
@@ -234,7 +234,7 @@ export default function AboutPage() {
             Ready to find the right care?
           </h2>
           <p className="mb-6 text-cs-muted">
-            Browse every licensed facility in New Jersey — no account needed.
+            Browse every licensed facility in the United States — no account needed.
           </p>
           <Button href="/search" size="lg">
             Start searching

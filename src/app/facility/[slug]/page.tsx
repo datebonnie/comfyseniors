@@ -93,7 +93,7 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: facility.name,
-    description: facility.description || `Senior care facility in ${facility.city}, NJ`,
+    description: facility.description || `Senior care facility in ${facility.city}, ${facility.state || ""}`,
     address: {
       "@type": "PostalAddress",
       streetAddress: facility.address,

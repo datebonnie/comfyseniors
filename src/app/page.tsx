@@ -13,9 +13,9 @@ import {
 } from "@/lib/queries";
 
 export const metadata: Metadata = {
-  title: "ComfySeniors — New Jersey's Most Honest Senior Care Directory",
+  title: "ComfySeniors — America's Most Honest Senior Care Directory",
   description:
-    "Find every licensed senior care facility in New Jersey with real prices, state inspection records, and unfiltered reviews. No pressure. No lead selling.",
+    "Find every licensed senior care facility with real prices, state inspection records, and unfiltered reviews. No pressure. No lead selling.",
 };
 
 const careTypes: { type: CareType; slug: string }[] = [
@@ -63,7 +63,7 @@ const differentiators = [
   },
   {
     title: "Federal inspection records",
-    desc: "Every facility shows its citation history from the NJ Dept of Health.",
+    desc: "Every facility shows its citation history from federal and state health departments.",
   },
   {
     title: "Unfiltered reviews",

@@ -99,8 +99,8 @@ export async function generateMetadata({
   if (!config) return { title: "Care Type — ComfySeniors" };
 
   return {
-    title: `${config.label} in New Jersey — Facilities & Pricing | ComfySeniors`,
-    description: `Find licensed ${config.label.toLowerCase()} facilities in New Jersey. Compare prices, reviews, and state inspection records. ${config.description.slice(0, 100)}`,
+    title: `${config.label} — Facilities & Pricing | ComfySeniors`,
+    description: `Find licensed ${config.label.toLowerCase()} facilities nationwide. Compare prices, reviews, and state inspection records. ${config.description.slice(0, 100)}`,
   };
 }
 
@@ -163,7 +163,7 @@ export default async function CareTypePage({ params }: CareTypePageProps) {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="label mb-2 text-cs-lavender">Care type guide</p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            {config.label} in New Jersey
+            {config.label} Nationwide
           </h1>
           <p className="mt-4 max-w-2xl text-cs-body leading-relaxed">
             {config.description}
@@ -189,14 +189,14 @@ export default async function CareTypePage({ params }: CareTypePageProps) {
               <span className="text-2xl font-semibold text-cs-blue">
                 {cityCounts.size}
               </span>
-              <span className="ml-1 text-sm text-cs-muted">NJ cities</span>
+              <span className="ml-1 text-sm text-cs-muted">cities</span>
             </div>
           </div>
 
           <div className="mt-6 max-w-xl">
             <SearchBar
               defaultValue=""
-              placeholder={`Search ${config.label.toLowerCase()} in NJ...`}
+              placeholder={`Search ${config.label.toLowerCase()}...`}
             />
           </div>
         </div>
@@ -265,7 +265,7 @@ export default async function CareTypePage({ params }: CareTypePageProps) {
       <section className="border-t border-cs-border bg-white py-10 sm:py-14">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-6 font-display text-xl font-normal text-cs-blue-dark">
-            Other care types in New Jersey
+            Other care types
           </h2>
           <div className="flex flex-wrap gap-2">
             {Object.entries(CARE_TYPE_MAP)

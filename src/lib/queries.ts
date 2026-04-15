@@ -68,7 +68,7 @@ export async function searchFacilities(
 ): Promise<{ data: FacilityWithStats[]; count: number }> {
   const result = await searchFacilitiesInternal(filters, page, perPage);
 
-  // Fallback: if zero results and query is a NJ zip code, broaden to 3-digit prefix
+  // Fallback: if zero results and query is a zip code, broaden to 3-digit prefix
   if (result.count === 0 && filters.q && isZipCode(filters.q)) {
     const prefix = filters.q.trim().slice(0, 3);
     const broadFilters: SearchFilters = { ...filters, q: prefix };

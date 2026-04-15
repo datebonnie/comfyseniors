@@ -82,7 +82,7 @@ export default function AIAnswerBox() {
   return (
     <div className="rounded-pill border border-cs-border bg-white p-5 sm:p-6">
       <h3 className="mb-1 font-sans text-base font-semibold text-cs-blue-dark">
-        Ask anything about senior care in NJ
+        Ask anything about senior care
       </h3>
       <p className="mb-4 text-sm text-cs-muted">
         Get an instant AI-powered answer. No signup required.
@@ -93,7 +93,7 @@ export default function AIAnswerBox() {
           type="text"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="e.g. Does Medicare cover assisted living in NJ?"
+          placeholder="e.g. Does Medicare cover assisted living?"
           className="w-full rounded-btn border border-cs-border bg-cs-lavender-mist px-4 py-2.5 text-sm text-cs-body outline-none placeholder:text-cs-muted/60 focus:border-cs-blue focus:ring-2 focus:ring-cs-blue/10"
         />
         <button

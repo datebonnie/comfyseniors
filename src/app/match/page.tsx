@@ -66,7 +66,7 @@ const STEPS = [
   {
     question: "What is the zip code where you're looking for care?",
     hasInput: true,
-    inputPlaceholder: "Enter NJ zip code (e.g. 07011)",
+    inputPlaceholder: "Enter your zip code",
     options: [],
   },
   {
@@ -294,7 +294,7 @@ export default function MatchPage() {
               Finding your best matches...
             </p>
             <p className="mt-2 text-sm text-cs-muted">
-              Analyzing your answers against 1,000+ New Jersey facilities.
+              Analyzing your answers against 20,000+ facilities nationwide.
             </p>
           </div>
         )}

@@ -4,9 +4,9 @@ import FAQPageClient from "@/components/faq/FAQPageClient";
 import { createClient } from "@/lib/supabase";
 
 export const metadata: Metadata = {
-  title: "Senior Care FAQ — ComfySeniors | New Jersey",
+  title: "Senior Care FAQ — ComfySeniors",
   description:
-    "Answers to common questions about senior care in New Jersey: costs, Medicare, Medicaid, inspections, and how to find the right facility.",
+    "Answers to common questions about senior care: costs, Medicare, Medicaid, inspections, and how to find the right facility.",
 };
 
 async function getAllFAQs() {
@@ -48,7 +48,7 @@ export default async function FAQPage() {
           </h1>
           <p className="mt-3 text-lg text-cs-muted">
             Plain-English answers to the most common questions about senior care
-            in New Jersey.
+            in the United States.
           </p>
         </div>
       </section>

@@ -101,8 +101,8 @@ export async function generateMetadata({
   const cityName = titleCase(slugToCity(params["city-slug"]));
 
   return {
-    title: `Senior Care in ${cityName}, NJ — Facilities & Pricing | ComfySeniors`,
-    description: `Find licensed senior care facilities in ${cityName}, New Jersey. Compare assisted living, nursing homes, and home care with real prices and inspection records.`,
+    title: `Senior Care in ${cityName} — Facilities & Pricing | ComfySeniors`,
+    description: `Find licensed senior care facilities in ${cityName}. Compare assisted living, nursing homes, and home care with real prices and inspection records.`,
   };
 }
 
@@ -163,15 +163,15 @@ export default async function CityPage({ params }: CityPageProps) {
       <section className="bg-cs-blue-light py-12 sm:py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="label mb-2 text-cs-lavender">
-            {county ? `${county} County, NJ` : "New Jersey"}
+            {county ? `${county} County` : ""}
           </p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            Senior Care in {cityName}, NJ
+            Senior Care in {cityName}
           </h1>
           <p className="mt-3 text-cs-body">
             {facilities.length} licensed senior care{" "}
-            {facilities.length === 1 ? "facility" : "facilities"} in {cityName},{" "}
-            New Jersey.
+            {facilities.length === 1 ? "facility" : "facilities"} in the {cityName}{" "}
+            area.
           </p>
 
           {/* Zip codes */}
