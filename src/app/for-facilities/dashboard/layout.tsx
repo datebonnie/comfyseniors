@@ -6,6 +6,7 @@ import Nav from "@/components/layout/Nav";
 const dashboardLinks = [
   { href: "/for-facilities/dashboard", label: "Overview", icon: "grid" },
   { href: "/for-facilities/dashboard/inquiries", label: "Inquiries", icon: "inbox" },
+  { href: "/for-facilities/dashboard/referrals", label: "Referrals", icon: "gift" },
   { href: "/for-facilities/dashboard/profile", label: "Profile", icon: "edit" },
   { href: "/for-facilities/dashboard/billing", label: "Billing", icon: "card" },
 ];
