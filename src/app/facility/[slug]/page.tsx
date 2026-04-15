@@ -238,6 +238,9 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
             <ContactSidebar
               id={facility.id}
               name={facility.name}
+              slug={facility.slug}
+              city={facility.city}
+              state={facility.state}
               phone={facility.phone}
               website={facility.website}
               email={facility.email}
