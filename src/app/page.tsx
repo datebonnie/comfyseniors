@@ -24,6 +24,7 @@ const careTypes: { type: CareType; slug: string }[] = [
   { type: "Independent Living", slug: "Independent Living" },
   { type: "Nursing Home", slug: "Nursing Home" },
   { type: "Home Care", slug: "Home Care" },
+  { type: "Hospice", slug: "Hospice" },
 ];
 
 const trustItems = [

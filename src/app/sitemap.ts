@@ -68,6 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "independent-living",
     "nursing-home",
     "home-care",
+    "hospice",
   ].map((slug) => ({
     url: `${baseUrl}/care-types/${slug}`,
     lastModified: new Date(),

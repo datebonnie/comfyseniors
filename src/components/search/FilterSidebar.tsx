@@ -10,6 +10,7 @@ const CARE_TYPES: CareType[] = [
   "Independent Living",
   "Nursing Home",
   "Home Care",
+  "Hospice",
 ];
 
 const SORT_OPTIONS = [

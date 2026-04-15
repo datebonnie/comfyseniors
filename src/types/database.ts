@@ -8,7 +8,8 @@ export type CareType =
   | "Memory Care"
   | "Independent Living"
   | "Nursing Home"
-  | "Home Care";
+  | "Home Care"
+  | "Hospice";
 
 export interface Facility {
   id: string;

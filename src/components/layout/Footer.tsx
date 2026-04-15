@@ -14,6 +14,7 @@ const footerLinks = {
     { href: "/care-types/independent-living", label: "Independent Living" },
     { href: "/care-types/nursing-home", label: "Nursing Home" },
     { href: "/care-types/home-care", label: "Home Care" },
+    { href: "/care-types/hospice", label: "Hospice" },
   ],
   "For Facilities": [
     { href: "/for-facilities", label: "Get Listed" },

@@ -11,6 +11,7 @@ const styleMap: Record<CareType, string> = {
   "Independent Living": "bg-[#E0F2FE] text-[#075985]",
   "Nursing Home": "bg-[#F0F4FF] text-[#3B5BA5]",
   "Home Care": "bg-[#F3F0FF] text-[#4C3899]",
+  "Hospice": "bg-[#FDF2F8] text-[#9D174D]",
 };
 
 export default function CareTypeBadge({

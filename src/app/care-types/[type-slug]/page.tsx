@@ -38,6 +38,11 @@ const CARE_TYPE_MAP: Record<string, { label: CareType; description: string }> = 
     description:
       "Home care agencies provide in-home assistance for seniors who want to age in place. Services include personal care, companionship, meal preparation, medication reminders, light housekeeping, and transportation.",
   },
+  "hospice": {
+    label: "Hospice",
+    description:
+      "Hospice care provides comfort, dignity, and support for people with terminal illnesses and their families. Services include pain management, emotional counseling, spiritual care, and family support — delivered at home, in a hospice facility, or in a hospital.",
+  },
 };
 
 async function getCareTypeFacilities(careType: CareType) {
