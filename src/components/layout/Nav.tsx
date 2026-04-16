@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 const navLinks = [
@@ -17,7 +18,14 @@ export default function Nav() {
     <nav className="sticky top-0 z-50 border-b border-cs-border bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-baseline gap-0.5">
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="ComfySeniors"
+            width={28}
+            height={28}
+            className="h-7 w-7"
+          />
           <span className="text-[19px] font-semibold">
             <span className="text-cs-blue">Comfy</span>
             <span className="text-cs-lavender">Seniors</span>
