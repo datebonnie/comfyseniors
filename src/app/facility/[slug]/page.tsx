@@ -15,6 +15,7 @@ import {
   InspectionTimeline,
   CostCalculator,
   TourQuestions,
+  ViewCounter,
 } from "@/components/facility";
 import {
   getFacilityBySlug,
@@ -234,7 +235,11 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
           </div>
 
           {/* ─── Sidebar (1/3) ─── */}
-          <div className="mt-8 lg:mt-0">
+          <div className="mt-8 space-y-4 lg:mt-0">
+            <ViewCounter
+              facilityId={facility.id}
+              isVerified={facility.is_verified || facility.is_featured}
+            />
             <ContactSidebar
               id={facility.id}
               name={facility.name}

@@ -13,3 +13,4 @@ export { default as InspectionTimeline } from "./InspectionTimeline";
 export { default as CostCalculator } from "./CostCalculator";
 export { default as TourQuestions } from "./TourQuestions";
 export { default as ShareButton } from "./ShareButton";
+export { default as ViewCounter } from "./ViewCounter";
