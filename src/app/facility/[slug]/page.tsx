@@ -16,6 +16,7 @@ import {
   CostCalculator,
   TourQuestions,
   ViewCounter,
+  PhotoGallery,
 } from "@/components/facility";
 import {
   getFacilityBySlug,
@@ -147,6 +148,16 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
               avgRating={stats.avgRating}
               reviewCount={stats.reviewCount}
             />
+
+            {/* Photo gallery (Verified facilities) */}
+            {facility.photos && facility.photos.length > 0 && (
+              <div className="mt-5">
+                <PhotoGallery
+                  photos={facility.photos}
+                  facilityName={facility.name}
+                />
+              </div>
+            )}
 
             {/* Value Score badge */}
             {facility.value_score !== null &&

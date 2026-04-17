@@ -14,3 +14,4 @@ export { default as CostCalculator } from "./CostCalculator";
 export { default as TourQuestions } from "./TourQuestions";
 export { default as ShareButton } from "./ShareButton";
 export { default as ViewCounter } from "./ViewCounter";
+export { default as PhotoGallery } from "./PhotoGallery";

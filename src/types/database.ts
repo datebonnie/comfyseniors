@@ -39,6 +39,7 @@ export interface Facility {
   languages: string[] | null;
   description: string | null;
   amenities: string[] | null;
+  photos: string[] | null;
   is_featured: boolean;
   featured_since: string | null;
   featured_expires: string | null;
