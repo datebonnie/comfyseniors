@@ -107,8 +107,21 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
           <span>&copy; {new Date().getFullYear()} ComfySeniors.com. All rights reserved.</span>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <Link href="/terms" className="transition-colors hover:text-white">
+              Terms of Service
+            </Link>
+            <span aria-hidden="true" className="text-[#2D3E6A]">&middot;</span>
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              Privacy Policy
+            </Link>
+            <span aria-hidden="true" className="text-[#2D3E6A]">&middot;</span>
+            <Link href="/legal" className="transition-colors hover:text-white">
+              Legal
+            </Link>
+          </div>
           <span>Made for American families.</span>
         </div>
       </div>
