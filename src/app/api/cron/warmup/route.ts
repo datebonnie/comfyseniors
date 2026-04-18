@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { unsubscribeUrl } from "@/lib/unsubscribe-token";
 
 /**
  * Domain warmup cron — sends 10 varied emails per day from
@@ -265,11 +266,25 @@ export async function GET(req: NextRequest) {
     const body = BODY_TEMPLATES[bodyIdx];
 
     try {
+      // Build List-Unsubscribe headers if the secret is configured.
+      // If not, warmup still sends — but WITHOUT matching production's
+      // header pattern, so you lose some reputation-building value.
+      const headers: Record<string, string> = {};
+      try {
+        const unsubUrl = unsubscribeUrl(WARMUP_RECIPIENT);
+        headers["List-Unsubscribe"] =
+          `<${unsubUrl}>, <mailto:unsubscribe@comfyseniors.com?subject=unsubscribe>`;
+        headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
+      } catch {
+        // UNSUBSCRIBE_SECRET not set — send without headers rather than fail
+      }
+
       await resend.emails.send({
         from: `ComfySeniors <${fromEmail}>`,
         to: WARMUP_RECIPIENT,
         subject,
         text: body,
+        headers: Object.keys(headers).length > 0 ? headers : undefined,
       });
       results.push({ ok: true, subject });
     } catch (err) {

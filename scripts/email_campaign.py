@@ -19,16 +19,51 @@ import sys
 import time
 import json
 import os
+import hmac
+import hashlib
+import base64
 import requests
 from datetime import datetime
 from supabase_client import select
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY") or ""
+UNSUBSCRIBE_SECRET = os.getenv("UNSUBSCRIBE_SECRET") or ""
 FROM_EMAIL = "hello@comfyseniors.com"
 SITE_URL = "https://comfyseniors.com"
 
 # Track sent emails to avoid duplicates
 SENT_LOG = os.path.join(os.path.dirname(__file__), "email_sent_log.json")
+
+
+def sign_unsubscribe_token(email: str) -> str:
+    """HMAC-SHA256 of lowercased email, base64url-encoded, truncated to 16 bytes.
+    MUST match the logic in src/lib/unsubscribe-token.ts exactly."""
+    if not UNSUBSCRIBE_SECRET:
+        raise RuntimeError("UNSUBSCRIBE_SECRET missing — add it to .env.local")
+    normalized = email.strip().lower().encode("utf-8")
+    mac = hmac.new(UNSUBSCRIBE_SECRET.encode("utf-8"), normalized, hashlib.sha256).digest()[:16]
+    return base64.urlsafe_b64encode(mac).rstrip(b"=").decode("ascii")
+
+
+def unsubscribe_url(email: str) -> str:
+    token = sign_unsubscribe_token(email)
+    from urllib.parse import quote
+    return f"{SITE_URL}/unsubscribe?e={quote(email)}&t={token}"
+
+
+def load_unsubscribes() -> set:
+    """Pull every unsubscribed email from Supabase. Called once per campaign run."""
+    all_rows = []
+    for offset in range(0, 1_000_000, 1000):
+        batch = select("email_unsubscribes", {
+            "select": "email",
+            "limit": "1000",
+            "offset": str(offset),
+        })
+        all_rows.extend(batch)
+        if len(batch) < 1000:
+            break
+    return {r["email"].strip().lower() for r in all_rows if r.get("email")}
 
 
 def load_sent_log() -> set:
@@ -113,6 +148,8 @@ To update your listing information, reply to this email or log in at
 {SITE_URL}/for-facilities/login
 """
 
+    unsub_url = unsubscribe_url(facility["email"])
+
     return {
         "from": f"ComfySeniors <{FROM_EMAIL}>",
         "to": facility["email"],
@@ -120,6 +157,10 @@ To update your listing information, reply to this email or log in at
         "text": body.strip(),
         "headers": {
             "X-Entity-Ref-ID": facility["id"],
+            # RFC 2369 + RFC 8058: Gmail, Yahoo, Apple Mail show a native
+            # "Unsubscribe" button at the top of the inbox when these are set.
+            "List-Unsubscribe": f"<{unsub_url}>, <mailto:unsubscribe@comfyseniors.com?subject=unsubscribe>",
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         },
     }
 
@@ -165,18 +206,24 @@ def load_facilities(state: str = None, limit: int = None) -> list:
 def main():
     args = sys.argv[1:]
 
-    if not RESEND_API_KEY:
-        # Try loading from .env.local
-        env_path = os.path.join(os.path.dirname(__file__), "..", ".env.local")
-        if os.path.exists(env_path):
-            with open(env_path) as f:
-                for line in f:
-                    if line.startswith("RESEND_API_KEY="):
-                        globals()["RESEND_API_KEY"] = line.strip().split("=", 1)[1]
-                        break
+    # Load secrets from .env.local if not already in env
+    env_path = os.path.join(os.path.dirname(__file__), "..", ".env.local")
+    if os.path.exists(env_path):
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("RESEND_API_KEY=") and not RESEND_API_KEY:
+                    globals()["RESEND_API_KEY"] = line.split("=", 1)[1]
+                elif line.startswith("UNSUBSCRIBE_SECRET=") and not UNSUBSCRIBE_SECRET:
+                    globals()["UNSUBSCRIBE_SECRET"] = line.split("=", 1)[1]
 
     if not RESEND_API_KEY:
         print("ERROR: RESEND_API_KEY not set. Add it to .env.local")
+        sys.exit(1)
+
+    if not UNSUBSCRIBE_SECRET:
+        print("ERROR: UNSUBSCRIBE_SECRET not set. Add it to .env.local")
+        print("Generate with: python -c \"import secrets; print(secrets.token_urlsafe(32))\"")
         sys.exit(1)
 
     # Parse args
@@ -223,16 +270,27 @@ def main():
         print("  python email_campaign.py --all")
         sys.exit(0)
 
-    # Load facilities
+    # Load facilities + unsubscribe list
     facilities = load_facilities(state=state, limit=limit)
     sent_log = load_sent_log()
+    unsubscribed = load_unsubscribes()
 
-    # Filter out already sent
-    to_send = [f for f in facilities if f["id"] not in sent_log]
+    # Filter: skip already-sent AND skip unsubscribed addresses
+    to_send = [
+        f for f in facilities
+        if f["id"] not in sent_log
+        and (f.get("email") or "").strip().lower() not in unsubscribed
+    ]
 
-    print(f"Facilities with email: {len(facilities)}")
-    print(f"Already sent: {len(facilities) - len(to_send)}")
-    print(f"To send: {len(to_send)}")
+    skipped_unsub = sum(
+        1 for f in facilities
+        if (f.get("email") or "").strip().lower() in unsubscribed
+    )
+
+    print(f"Facilities with email:     {len(facilities)}")
+    print(f"Already sent:              {len(facilities) - len(to_send) - skipped_unsub}")
+    print(f"Unsubscribed (skipped):    {skipped_unsub}")
+    print(f"To send:                   {len(to_send)}")
 
     if not to_send:
         print("Nothing to send.")
