@@ -73,9 +73,6 @@ Happy to answer questions — just reply to this email.
 
 — The ComfySeniors team
 https://comfyseniors.com
-
-P.S. If you'd rather not be listed at all, reply "remove" and we'll take
-your facility off the directory within one business day.
 ```
 
 **Why this works:**
@@ -84,7 +81,6 @@ your facility off the directory within one business day.
 - Leads with the FREE claim — low-ask entry point.
 - Explains placement fee honestly — builds trust, pre-empts objection.
 - Anchors $297/mo against $5K-$8K placement fee (Hormozi value stack).
-- Ends with opt-out — signals we're not going to spam. Ironically increases trust and response rate.
 
 ---
 
@@ -134,10 +130,6 @@ https://comfyseniors.com/for-facilities
 Questions? Just reply.
 
 — ComfySeniors team
-
-P.S. If you only want the free claim and skip Verified, that's fine
-too. Inquiries will still flow to you — just at standard placement-fee
-terms.
 ```
 
 **Why this works:**
@@ -145,7 +137,6 @@ terms.
 - First sentence filters the audience: if you've never paid placement fees, this isn't for you. Qualifies prospects instantly.
 - "Do the math" framing gives the reader agency. They feel like they reached the conclusion themselves.
 - Checklist of features mapped to dream outcomes, not vanity features.
-- Ends with explicit "or don't" — relieves pressure.
 
 ---
 
@@ -165,21 +156,20 @@ Short version: {facility.name} is listed on ComfySeniors.com (a senior
 care directory). Families are using it to compare facilities in your
 area.
 
-Three options:
+Two options, both take under 2 minutes:
 
-  1) Claim your listing (free, 2 min): control your description, photos,
-     and get inquiries sent to your inbox.
+  1) Claim your listing (free): control your description, photos, and
+     get every inquiry sent straight to your inbox.
 
-  2) Upgrade to Verified ($297/mo, no placement fees ever): enhanced
+  2) Upgrade to Verified ($297/mo, zero placement fees, ever): enhanced
      profile, badge, priority placement. Pays for itself after one move-in.
 
-  3) Opt out completely: reply "remove" and you're off the directory
-     within 24 hours.
+Either way, you're already on the directory — the only question is
+whether you run the listing or let us run it for you.
 
-What would you like to do?
+Start here: https://comfyseniors.com/for-facilities
 
 — ComfySeniors
-https://comfyseniors.com/for-facilities
 ```
 
 **Why this works:**
