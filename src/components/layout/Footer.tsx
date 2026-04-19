@@ -121,6 +121,14 @@ export default function Footer() {
             <Link href="/legal" className="transition-colors hover:text-white">
               Legal
             </Link>
+            <span aria-hidden="true" className="text-[#2D3E6A]">&middot;</span>
+            <Link
+              href="/admin/login"
+              className="text-[10px] uppercase tracking-wide text-[#5B6E94] transition-colors hover:text-cs-lavender"
+              title="Internal admin only"
+            >
+              Admin
+            </Link>
           </div>
           <span>Made for American families.</span>
         </div>
