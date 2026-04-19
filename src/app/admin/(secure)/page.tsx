@@ -61,6 +61,36 @@ export default async function AdminOverviewPage() {
     .from("facilities")
     .select("*", { count: "exact", head: true });
 
+  // Email engagement — sent / opened / clicked / bounced
+  const [
+    { count: sentCount },
+    { count: openedCount },
+    { count: clickedCount },
+    { count: bouncedCount },
+  ] = await Promise.all([
+    supabase.from("email_sends").select("*", { count: "exact", head: true }),
+    supabase
+      .from("email_sends")
+      .select("*", { count: "exact", head: true })
+      .not("opened_at", "is", null),
+    supabase
+      .from("email_sends")
+      .select("*", { count: "exact", head: true })
+      .not("clicked_at", "is", null),
+    supabase
+      .from("email_sends")
+      .select("*", { count: "exact", head: true })
+      .not("bounced_at", "is", null),
+  ]);
+
+  const sent = sentCount || 0;
+  const opened = openedCount || 0;
+  const clicked = clickedCount || 0;
+  const bounced = bouncedCount || 0;
+  const openRate = sent > 0 ? (opened / sent) * 100 : 0;
+  const clickRate = sent > 0 ? (clicked / sent) * 100 : 0;
+  const bounceRate = sent > 0 ? (bounced / sent) * 100 : 0;
+
   return (
     <div className="space-y-8">
       <div>
@@ -99,6 +129,54 @@ export default async function AdminOverviewPage() {
           value={`${(reachableCount || 0).toLocaleString()} / ${(totalFacilityCount || 0).toLocaleString()}`}
           accent="muted"
         />
+      </div>
+
+      {/* Email engagement */}
+      <div>
+        <h2 className="mb-3 font-sans text-base font-semibold text-cs-blue-dark">
+          Email campaign engagement
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <BigStat
+            label="Sent"
+            value={sent.toLocaleString()}
+            accent="blue"
+          />
+          <BigStat
+            label={`Open rate ${sent > 0 ? `(${opened.toLocaleString()})` : ""}`}
+            value={`${openRate.toFixed(1)}%`}
+            accent={openRate >= 30 ? "green" : openRate >= 15 ? "blue" : "muted"}
+          />
+          <BigStat
+            label={`Click rate ${sent > 0 ? `(${clicked.toLocaleString()})` : ""}`}
+            value={`${clickRate.toFixed(1)}%`}
+            accent={clickRate >= 5 ? "green" : clickRate >= 2 ? "blue" : "muted"}
+          />
+          <BigStat
+            label={`Bounce rate ${sent > 0 ? `(${bounced.toLocaleString()})` : ""}`}
+            value={`${bounceRate.toFixed(1)}%`}
+            accent={bounceRate >= 3 ? "red" : bounceRate >= 1 ? "blue" : "muted"}
+          />
+        </div>
+        {sent === 0 && (
+          <p className="mt-2 text-xs text-cs-muted">
+            No campaign emails sent yet. Run{" "}
+            <code className="rounded bg-cs-blue-light px-1 py-0.5">
+              python email_campaign.py --batch 50
+            </code>{" "}
+            to start. Open and click rates appear once Resend webhooks fire.
+          </p>
+        )}
+        {sent > 0 && opened === 0 && clicked === 0 && (
+          <p className="mt-2 text-xs text-cs-muted">
+            Engagement showing 0 — confirm the Resend webhook is configured at
+            Resend Dashboard → Webhooks pointing to{" "}
+            <code className="rounded bg-cs-blue-light px-1 py-0.5">
+              /api/webhooks/resend
+            </code>
+            .
+          </p>
+        )}
       </div>
 
       {/* Status pipeline */}

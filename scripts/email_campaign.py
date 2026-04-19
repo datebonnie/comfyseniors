@@ -28,7 +28,7 @@ import hashlib
 import base64
 import requests
 from datetime import datetime
-from supabase_client import select
+from supabase_client import select, insert
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY") or ""
 UNSUBSCRIBE_SECRET = os.getenv("UNSUBSCRIBE_SECRET") or ""
@@ -236,8 +236,8 @@ To update your listing information, reply to this email or log in at
     }
 
 
-def send_email(email_data: dict) -> bool:
-    """Send an email via Resend API."""
+def send_email(email_data: dict) -> tuple[bool, str | None]:
+    """Send an email via Resend API. Returns (ok, resend_id)."""
     r = requests.post(
         "https://api.resend.com/emails",
         headers={
@@ -247,7 +247,29 @@ def send_email(email_data: dict) -> bool:
         json=email_data,
         timeout=15,
     )
-    return r.status_code == 200
+    if r.status_code != 200:
+        return (False, None)
+    try:
+        return (True, r.json().get("id"))
+    except Exception:
+        return (True, None)
+
+
+def log_send_to_db(facility: dict, email_data: dict, resend_id: str | None,
+                   variant: str | None = None) -> None:
+    """Insert an email_sends row in Supabase. Best-effort — never block
+    the campaign loop on logging failures."""
+    try:
+        insert("email_sends", [{
+            "facility_id": facility.get("id") if facility.get("id") != "test" else None,
+            "recipient_email": email_data["to"],
+            "subject": email_data.get("subject"),
+            "variant": variant,
+            "resend_id": resend_id,
+        }])
+    except Exception as e:
+        # Don't crash the campaign on a log failure — just print.
+        print(f"  [log] failed to log send for {email_data.get('to')}: {e}")
 
 
 def load_facilities(state: str = None, limit: int = None,
@@ -334,8 +356,11 @@ def main():
         }
         email_data = build_email(test_facility)
         email_data["to"] = test_email
-        if send_email(email_data):
-            print(f"Test email sent to {test_email}")
+        ok, resend_id = send_email(email_data)
+        if ok:
+            print(f"Test email sent to {test_email} (resend_id={resend_id})")
+            # Log test sends too — useful to verify webhook plumbing
+            log_send_to_db(test_facility, email_data, resend_id, variant="test")
         else:
             print("Failed to send test email")
         return
@@ -413,10 +438,15 @@ def main():
 
     for i, facility in enumerate(to_send):
         email_data = build_email(facility)
+        variant = "medicaid" if is_medicaid_facility(facility) else "verified"
 
-        if send_email(email_data):
+        ok, resend_id = send_email(email_data)
+        if ok:
             sent += 1
             sent_log.add(facility["id"])
+
+            # Log to DB so the admin CRM can show sent/open/click stats
+            log_send_to_db(facility, email_data, resend_id, variant=variant)
 
             # Save log every 10 emails
             if sent % 10 == 0:

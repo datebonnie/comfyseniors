@@ -112,6 +112,26 @@ export default async function LeadDetailPage({
     notes = (notesRaw as NoteRow[] | null) ?? [];
   }
 
+  // Email send history for this facility
+  type SendRow = {
+    id: string;
+    subject: string | null;
+    variant: string | null;
+    sent_at: string | null;
+    delivered_at: string | null;
+    opened_at: string | null;
+    clicked_at: string | null;
+    bounced_at: string | null;
+    bounce_reason: string | null;
+  };
+
+  const { data: sendsRaw } = await supabase
+    .from("email_sends")
+    .select("id,subject,variant,sent_at,delivered_at,opened_at,clicked_at,bounced_at,bounce_reason")
+    .eq("facility_id", facility.id)
+    .order("sent_at", { ascending: false });
+  const sends = (sendsRaw as SendRow[] | null) ?? [];
+
   const isMM = Boolean(facility.accepts_medicaid || facility.accepts_medicare);
 
   return (
@@ -275,6 +295,62 @@ export default async function LeadDetailPage({
                 ))
               )}
             </ul>
+          </div>
+
+          {/* Email send history */}
+          <div className="rounded-card border border-cs-border bg-white p-5">
+            <h2 className="mb-3 font-sans text-base font-semibold text-cs-blue-dark">
+              Email history ({sends.length})
+            </h2>
+            {sends.length === 0 ? (
+              <p className="text-sm text-cs-muted">
+                No emails sent to this facility yet.
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {sends.map((s) => {
+                  const events: { label: string; ts: string | null; cls: string }[] = [
+                    { label: "Sent", ts: s.sent_at, cls: "text-cs-muted" },
+                    { label: "Delivered", ts: s.delivered_at, cls: "text-cs-blue-dark" },
+                    { label: "Opened", ts: s.opened_at, cls: "text-green-700" },
+                    { label: "Clicked", ts: s.clicked_at, cls: "text-cs-lavender" },
+                    { label: "Bounced", ts: s.bounced_at, cls: "text-red-700" },
+                  ].filter((e) => e.ts);
+                  return (
+                    <li
+                      key={s.id}
+                      className="rounded-btn border border-cs-border bg-cs-blue-light/30 p-3 text-sm"
+                    >
+                      <div className="flex flex-wrap items-baseline justify-between gap-2">
+                        <p className="font-medium text-cs-blue-dark">
+                          {s.subject || "(no subject)"}
+                        </p>
+                        {s.variant && (
+                          <span className="rounded-full bg-white px-2 py-0.5 text-[10px] uppercase tracking-wide text-cs-muted">
+                            {s.variant}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px]">
+                        {events.map((e) => (
+                          <span key={e.label} className={e.cls}>
+                            {e.label}{" "}
+                            <span className="opacity-70">
+                              {new Date(e.ts!).toLocaleDateString()}
+                            </span>
+                          </span>
+                        ))}
+                      </div>
+                      {s.bounce_reason && (
+                        <p className="mt-1 text-[11px] text-red-700">
+                          Bounce: {s.bounce_reason}
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
         </div>
 
