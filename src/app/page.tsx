@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import PageWrapper from "@/components/layout/PageWrapper";
 import SearchBar from "@/components/ui/SearchBar";
 import FacilityCard from "@/components/ui/FacilityCard";
@@ -71,7 +72,24 @@ const differentiators = [
   },
 ];
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: { code?: string; redirect?: string };
+}) {
+  // Safety net: if Supabase magic-link redirected here with a stray
+  // ?code= parameter (e.g. due to a Supabase URL Configuration mismatch),
+  // forward it to the proper /auth/callback handler so the session can
+  // be exchanged. Prevents the user from getting stuck on the homepage.
+  if (searchParams?.code) {
+    const params = new URLSearchParams();
+    params.set("code", searchParams.code);
+    if (searchParams.redirect) {
+      params.set("redirect", searchParams.redirect);
+    }
+    redirect(`/auth/callback?${params.toString()}`);
+  }
+
   let featuredFacilities: Awaited<ReturnType<typeof getFeaturedFacilities>> = [];
   let faqItems: Awaited<ReturnType<typeof getTopFAQs>> = [];
   let facilityCount = 0;

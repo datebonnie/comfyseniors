@@ -2,10 +2,16 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
+const ADMIN_EMAIL = (
+  process.env.ADMIN_EMAIL || "hello@comfyseniors.com"
+).toLowerCase();
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const redirect = searchParams.get("redirect") || "/for-facilities/dashboard";
+  const explicitRedirect = searchParams.get("redirect");
+
+  let redirectPath = explicitRedirect || "/for-facilities/dashboard";
 
   if (code) {
     const cookieStore = cookies();
@@ -26,8 +32,17 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data } = await supabase.auth.exchangeCodeForSession(code);
+
+    // If no explicit redirect was requested, route by user role:
+    // - Admin email → /admin
+    // - Anyone else → /for-facilities/dashboard
+    if (!explicitRedirect && data?.user?.email) {
+      if (data.user.email.toLowerCase() === ADMIN_EMAIL) {
+        redirectPath = "/admin";
+      }
+    }
   }
 
-  return NextResponse.redirect(`${origin}${redirect}`);
+  return NextResponse.redirect(`${origin}${redirectPath}`);
 }
