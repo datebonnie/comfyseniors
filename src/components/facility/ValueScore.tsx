@@ -1,19 +1,9 @@
 interface ValueScoreProps {
   score: number | null;
   size?: "sm" | "md" | "lg";
-  /**
-   * If true, renders a small explainer underneath telling families what
-   * the score actually measures. Use on facility profile pages, omit on
-   * search-result cards (keeps cards compact).
-   */
-  withExplainer?: boolean;
 }
 
-export default function ValueScore({
-  score,
-  size = "md",
-  withExplainer = false,
-}: ValueScoreProps) {
+export default function ValueScore({ score, size = "md" }: ValueScoreProps) {
   if (score === null || score === undefined) return null;
 
   const label =
@@ -52,22 +42,13 @@ export default function ValueScore({
     "Higher scores mean better quality for the price.";
 
   return (
-    <div className="inline-block">
-      <div
-        className={`inline-flex items-center gap-2 rounded-btn border ${color} ${sizeClasses}`}
-        title={tooltipText}
-      >
-        <span className="font-bold">{score}</span>
-        <span className="text-xs opacity-75">/ 100</span>
-        {size !== "sm" && <span className="ml-1 text-xs font-medium">{label}</span>}
-      </div>
-      {withExplainer && (
-        <p className="mt-1.5 max-w-md text-xs leading-relaxed text-cs-muted">
-          Quality (60%) + price vs. county median (40%). A higher score
-          means better care for the dollar — not just a lower price, and
-          not just a better facility. Both, together.
-        </p>
-      )}
+    <div
+      className={`inline-flex items-center gap-2 rounded-btn border ${color} ${sizeClasses}`}
+      title={tooltipText}
+    >
+      <span className="font-bold">{score}</span>
+      <span className="text-xs opacity-75">/ 100</span>
+      {size !== "sm" && <span className="ml-1 text-xs font-medium">{label}</span>}
     </div>
   );
 }
