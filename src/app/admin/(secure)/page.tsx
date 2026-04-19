@@ -49,11 +49,17 @@ export default async function AdminOverviewPage() {
     }
   }
 
-  // Total facilities with email = potential lead universe
-  const { count: emailedFacilityCount } = await supabase
+  // Total facilities for which we have an email — i.e. the universe of
+  // facilities we COULD email (not the count of facilities already emailed).
+  const { count: reachableCount } = await supabase
     .from("facilities")
     .select("*", { count: "exact", head: true })
     .not("email", "is", null);
+
+  // Total facilities in the directory regardless of email coverage
+  const { count: totalFacilityCount } = await supabase
+    .from("facilities")
+    .select("*", { count: "exact", head: true });
 
   return (
     <div className="space-y-8">
@@ -89,8 +95,8 @@ export default async function AdminOverviewPage() {
           href="/admin/leads?followup=overdue"
         />
         <BigStat
-          label="Universe (emailed facilities)"
-          value={(emailedFacilityCount || 0).toLocaleString()}
+          label="Reachable (have email on file)"
+          value={`${(reachableCount || 0).toLocaleString()} / ${(totalFacilityCount || 0).toLocaleString()}`}
           accent="muted"
         />
       </div>
