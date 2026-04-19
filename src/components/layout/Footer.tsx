@@ -16,11 +16,14 @@ const footerLinks = {
     { href: "/care-types/home-care", label: "Home Care" },
     { href: "/care-types/hospice", label: "Hospice" },
   ],
-  "For Facilities": [
-    { href: "/for-facilities", label: "Get Listed" },
-    { href: "/for-facilities/dashboard", label: "Facility Dashboard" },
-  ],
 };
+
+const facilityLinks = [
+  { href: "/for-facilities", label: "Get Listed" },
+  { href: "/for-facilities/dashboard", label: "Facility Dashboard" },
+];
+
+const adminLinks = [{ href: "/admin/login", label: "Admin Login" }];
 
 const socialLinks = [
   {
@@ -104,6 +107,37 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Facilities + Admins column */}
+          <div>
+            <h4 className="label mb-3 text-white">For Facilities</h4>
+            <ul className="flex flex-col gap-2">
+              {facilityLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-[#8B9EC7] transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <h4 className="label mb-3 mt-6 text-white">For Admins</h4>
+            <ul className="flex flex-col gap-2">
+              {adminLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-[#8B9EC7] transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Bottom bar */}
@@ -120,14 +154,6 @@ export default function Footer() {
             <span aria-hidden="true" className="text-[#2D3E6A]">&middot;</span>
             <Link href="/legal" className="transition-colors hover:text-white">
               Legal
-            </Link>
-            <span aria-hidden="true" className="text-[#2D3E6A]">&middot;</span>
-            <Link
-              href="/admin/login"
-              className="text-[10px] uppercase tracking-wide text-[#5B6E94] transition-colors hover:text-cs-lavender"
-              title="Internal admin only"
-            >
-              Admin
             </Link>
           </div>
           <span>Made for American families.</span>
