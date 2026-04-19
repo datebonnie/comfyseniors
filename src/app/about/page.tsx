@@ -148,13 +148,50 @@ export default function AboutPage() {
 
                 <div className="border-t border-cs-blue/20 pt-4">
                   <p className="font-semibold text-cs-blue-dark">
+                    Verified subscription: $297/month flat
+                  </p>
+                  <p className="mt-1 text-sm">
+                    Some facilities prefer to eliminate placement fees
+                    altogether and pay us a flat{" "}
+                    <strong>$297 per month</strong>. Verified subscribers
+                    pay this rate regardless of how many residents move in —
+                    no per-family fee, ever. With a single move-in per year,
+                    Verified pays for itself in about five weeks; after that,
+                    every family we send them is free.
+                  </p>
+                  <p className="mt-1 text-sm">
+                    For you, Verified changes nothing about what you see —
+                    same listings, same prices, same inspection records. The
+                    only visible difference is a small{" "}
+                    <strong>&ldquo;Verified&rdquo; badge</strong> next to
+                    a facility&apos;s name, indicating they&apos;ve claimed
+                    their listing and pay us directly rather than
+                    per-move-in. It&apos;s an information signal, not a
+                    quality endorsement.
+                  </p>
+                </div>
+
+                <div className="border-t border-cs-blue/20 pt-4">
+                  <p className="font-semibold text-cs-blue-dark">
                     Medicare/Medicaid facilities: flat listing fee
                   </p>
                   <p className="mt-1 text-sm">
-                    Facilities that primarily serve Medicare or Medicaid
-                    residents pay a flat monthly listing fee of{" "}
-                    <strong>$300&ndash;$500/month</strong> for featured
-                    placement. No placement fees, no per-admission charges.
+                    Facilities that primarily serve residents on{" "}
+                    <strong>Medicare or Medicaid</strong> operate under strict
+                    government reimbursement caps, which means they can&apos;t
+                    absorb a $5,000&ndash;$8,000 placement fee the way
+                    private-pay facilities can — if they tried, they&apos;d
+                    either go out of business or stop accepting new Medicare
+                    residents. Neither outcome helps families.
+                  </p>
+                  <p className="mt-1 text-sm">
+                    So for these facilities, we charge a flat monthly listing
+                    fee of <strong>$300&ndash;$500</strong> that covers
+                    directory placement with <strong>zero</strong> per-resident
+                    charges. This keeps Medicare- and Medicaid-accepting
+                    facilities affordable for families who depend on
+                    government coverage, while still letting us sustain the
+                    directory.
                   </p>
                 </div>
               </div>
