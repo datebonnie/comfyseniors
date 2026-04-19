@@ -19,6 +19,7 @@ import requests
 from collections import defaultdict, Counter
 from statistics import median
 from supabase_client import select, update, insert
+from value_score import calculate_value_score
 
 API_KEY = "AIzaSyAQcWNjqV6fyjcr8dQn9pcQ2Q8U_ELfMzI"
 CMS_PROVIDER_URL = "https://data.cms.gov/provider-data/api/1/datastore/query/4pq5-n9py/0"
@@ -163,15 +164,12 @@ def step1_cms_enrichment():
         overall = safe_int(provider.get('overall_rating'))
         citation_count = safe_int(provider.get('rating_cycle_1_total_number_of_health_deficiencies')) or 0
 
-        # Value score
-        score = 50
-        if overall: score += (overall - 3) * 10
-        if citation_count == 0: score += 15
-        elif citation_count <= 3: score += 5
-        elif citation_count <= 10: score -= 5
-        elif citation_count <= 20: score -= 15
-        else: score -= 25
-        score = max(0, min(100, score))
+        # Value score — quality + price-vs-county-median (see value_score.py).
+        # County benchmark lookup happens in step4_value_scores; for the CMS
+        # enrichment pass we use neutral price assumption (None, None) so the
+        # score gets the quality-only baseline. The recompute step refines
+        # it once benchmarks are known.
+        score = calculate_value_score(overall, citation_count, None, None)
 
         # Inspection summary
         if citation_count == 0:
@@ -308,36 +306,71 @@ def step3_descriptions():
 # ─── Step 4: Value scores ───
 
 def step4_value_scores():
+    """
+    Recompute value scores for ALL facilities using the blended
+    quality + price formula (see value_score.py).
+
+    This pass requires county_benchmarks to be populated first, so the
+    price component can be calculated. Step 5 (benchmarks) recalculates
+    that table — if you're running the full pipeline, this step happens
+    on the next run with fresh benchmarks loaded.
+    """
     print(f"\n{'='*60}")
-    print("STEP 4: Value Scores")
+    print("STEP 4: Value Scores (quality + price)")
     print(f"{'='*60}")
 
-    all_f = load_all_facilities()
-    no_score = [f for f in all_f if f.get('value_score') is None]
-    print(f"  Missing value score: {len(no_score)}")
+    all_f = []
+    for offset in range(0, 200000, 1000):
+        batch = select('facilities', {
+            'select': 'id,county,care_types,price_min,overall_rating,citation_count,value_score',
+            'limit': '1000',
+            'offset': str(offset),
+        })
+        all_f.extend(batch)
+        if len(batch) < 1000:
+            break
 
-    if not no_score:
-        print("  All have value scores. Skipping.")
-        return
+    # Load benchmarks into memory: {(county, care_type): median_price}
+    benchmarks = {}
+    bm_rows = select('county_benchmarks', {'select': 'county,care_type,median_price', 'limit': '100000'})
+    for b in bm_rows:
+        if b.get('county') and b.get('care_type'):
+            benchmarks[(b['county'], b['care_type'])] = b.get('median_price')
+
+    print(f"  Facilities to score: {len(all_f)}")
+    print(f"  County benchmarks loaded: {len(benchmarks)}")
 
     updated = 0
-    for f in no_score:
-        score = 50
-        citation = f.get('citation_count') or 0
-        if citation == 0: score += 15
-        elif citation <= 3: score += 5
-        elif citation <= 10: score -= 5
-        elif citation <= 20: score -= 15
-        else: score -= 25
-        score = max(0, min(100, score))
+    skipped_unchanged = 0
+
+    for f in all_f:
+        # Look up county median for this facility's primary care type
+        county_median = None
+        county = f.get('county')
+        care_types = f.get('care_types') or []
+        if county and care_types:
+            county_median = benchmarks.get((county, care_types[0]))
+
+        new_score = calculate_value_score(
+            f.get('overall_rating'),
+            f.get('citation_count'),
+            f.get('price_min'),
+            county_median,
+        )
+
+        # Skip the write if the score hasn't changed (cuts ~50% of writes)
+        if f.get('value_score') == new_score:
+            skipped_unchanged += 1
+            continue
 
         try:
-            update('facilities', {'id': f['id']}, {'value_score': score})
+            update('facilities', {'id': f['id']}, {'value_score': new_score})
             updated += 1
         except:
             pass
 
-    print(f"  Updated {updated} facilities with value scores")
+    print(f"  Updated:           {updated}")
+    print(f"  Skipped (no change): {skipped_unchanged}")
 
 
 # ─── Step 5: County benchmarks ───

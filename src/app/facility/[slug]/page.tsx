@@ -163,7 +163,11 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
             {facility.value_score !== null &&
               facility.value_score !== undefined && (
                 <div className="mt-4">
-                  <ValueScore score={facility.value_score} size="lg" />
+                  <ValueScore
+                    score={facility.value_score}
+                    size="lg"
+                    withExplainer
+                  />
                 </div>
               )}
 
