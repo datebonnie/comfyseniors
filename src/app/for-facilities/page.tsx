@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageWrapper from "@/components/layout/PageWrapper";
 import StripeButton from "@/components/ui/StripeButton";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
@@ -71,6 +72,15 @@ export default function ForFacilitiesPage() {
             </StripeButton>
             <p className="mt-3 text-sm text-cs-muted">
               Cancel anytime. No contracts. No setup fees.
+            </p>
+            <p className="mt-5 text-sm text-cs-muted">
+              Primarily Medicare or Medicaid?{" "}
+              <Link
+                href="/for-facilities/medicaid"
+                className="font-semibold text-cs-lavender hover:underline"
+              >
+                See the Medicare/Medicaid tier &rarr;
+              </Link>
             </p>
           </div>
         </div>

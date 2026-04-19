@@ -173,7 +173,7 @@ export default function AboutPage() {
 
                 <div className="border-t border-cs-blue/20 pt-4">
                   <p className="font-semibold text-cs-blue-dark">
-                    Medicare/Medicaid facilities: flat listing fee
+                    Medicare/Medicaid facilities: $397/month flat
                   </p>
                   <p className="mt-1 text-sm">
                     Facilities that primarily serve residents on{" "}
@@ -185,13 +185,12 @@ export default function AboutPage() {
                     residents. Neither outcome helps families.
                   </p>
                   <p className="mt-1 text-sm">
-                    So for these facilities, we charge a flat monthly listing
-                    fee of <strong>$300&ndash;$500</strong> that covers
-                    directory placement with <strong>zero</strong> per-resident
-                    charges. This keeps Medicare- and Medicaid-accepting
-                    facilities affordable for families who depend on
-                    government coverage, while still letting us sustain the
-                    directory.
+                    So for these facilities, we charge a flat{" "}
+                    <strong>$397 per month</strong> with <strong>zero</strong>{" "}
+                    per-resident charges. This keeps Medicare- and
+                    Medicaid-accepting facilities affordable for families who
+                    depend on government coverage, while still letting us
+                    sustain the directory.
                   </p>
                 </div>
               </div>

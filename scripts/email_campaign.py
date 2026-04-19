@@ -8,6 +8,10 @@ Usage:
   python email_campaign.py --batch 100      # Send to first 100 facilities
   python email_campaign.py --all            # Send to all facilities with emails
   python email_campaign.py --state NJ       # Send to all NJ facilities with emails
+  python email_campaign.py --medicaid       # Only Medicare/Medicaid-accepting facilities
+                                            # (pitches /for-facilities/medicaid tier)
+  python email_campaign.py --private-pay    # Only private-pay facilities
+                                            # (excludes Medicare/Medicaid)
 
 Rate limited to 50 emails/hour to warm up the domain.
 Tracks sent emails to avoid duplicates on re-run.
@@ -78,8 +82,18 @@ def save_sent_log(sent: set):
         json.dump(list(sent), f)
 
 
+def is_medicaid_facility(facility: dict) -> bool:
+    """True if this facility primarily serves Medicare/Medicaid residents."""
+    return bool(facility.get("accepts_medicaid") or facility.get("accepts_medicare"))
+
+
 def build_email(facility: dict) -> dict:
-    """Build a personalized email for a facility."""
+    """Build a personalized email for a facility.
+
+    Automatically routes Medicare/Medicaid facilities to the $397/mo
+    Medicare/Medicaid Listing tier, and private-pay facilities to the
+    $297/mo Verified tier.
+    """
     name = facility.get("name", "Your Facility")
     city = facility.get("city", "")
     state = facility.get("state", "")
@@ -89,7 +103,6 @@ def build_email(facility: dict) -> dict:
     price_max = facility.get("price_max")
 
     listing_url = f"{SITE_URL}/facility/{slug}"
-    verified_url = f"{SITE_URL}/for-facilities"
 
     price_text = ""
     if price_min and price_max:
@@ -97,9 +110,67 @@ def build_email(facility: dict) -> dict:
     elif price_min:
         price_text = f"From ${price_min:,}/month"
 
-    subject = f"Your facility page on ComfySeniors — and a $5,000 question"
+    # ── Branch: Medicare/Medicaid vs. private-pay ──────────────────
+    if is_medicaid_facility(facility):
+        signup_url = f"{SITE_URL}/for-facilities/medicaid"
+        price_line = "ComfySeniors Medicare/Medicaid Listing: $397/month. Zero placement fees. Ever."
+        cta_label = "Get Listed"
+        subject = f"A flat-fee listing for {name} — built for reimbursement caps"
+        body = f"""Hi,
 
-    body = f"""Hi,
+{name} is already listed on ComfySeniors.com — America's most honest senior care directory.
+
+Your listing is live here:
+{listing_url}
+
+Right now, your page shows a "Not Verified" warning. This is what families see when they search for senior care in {city}, {state}.
+
+{f"Your listed price range: {price_text}" if price_text else ""}
+{f"Inspection citations: {citation_count}" if citation_count > 0 else "Inspection record: Clean"}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BUILT FOR FACILITIES LIKE YOURS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Most placement services charge $5,000–$8,000 per move-in. That math doesn't work under Medicare or Medicaid reimbursement caps — if it did, you'd have to refuse new Medicaid admissions to stay in business.
+
+So we built a different tier for facilities that accept government payers:
+
+{price_line}
+
+What you get for $397/month:
+✓ "Verified" badge replaces the "Not Verified" warning
+✓ Your photos, description, and care philosophy — not our auto-generated copy
+✓ Priority placement when families filter for "Accepts Medicare" or "Accepts Medicaid"
+✓ Every family inquiry sent directly to your inbox with a tracking code
+✓ Inspection response — add your context next to any CMS citation
+✓ Real-time analytics dashboard
+✓ ZERO placement fees when a family moves in — ever
+
+No contracts. Cancel anytime. No per-resident charges regardless of census.
+
+{cta_label}: {signup_url}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+One bed at your facility generates $5,000–$10,000/month in billed revenue.
+ComfySeniors Medicare/Medicaid Listing costs less than $14/day.
+
+See your listing: {listing_url}
+{cta_label}: {signup_url}
+
+— The ComfySeniors Team
+hello@comfyseniors.com
+
+P.S. You're receiving this because {name} is listed on ComfySeniors.com.
+To update your listing information, reply to this email or log in at
+{SITE_URL}/for-facilities/login
+"""
+    else:
+        # Private-pay: route to /for-facilities ($297/mo Verified tier)
+        signup_url = f"{SITE_URL}/for-facilities"
+        subject = f"Your facility page on ComfySeniors — and a $5,000 question"
+        body = f"""Hi,
 
 {name} is now listed on ComfySeniors.com — America's most honest senior care directory.
 
@@ -130,7 +201,7 @@ What you get as a Verified member:
 ✓ Analytics dashboard
 ✓ Competitive pricing intelligence
 
-Get Verified: {verified_url}
+Get Verified: {signup_url}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -138,7 +209,7 @@ One empty bed costs you $5,000–$15,000 per month in lost revenue.
 ComfySeniors Verified costs less than $10/day.
 
 See your listing: {listing_url}
-Get Verified: {verified_url}
+Get Verified: {signup_url}
 
 — The ComfySeniors Team
 hello@comfyseniors.com
@@ -179,12 +250,21 @@ def send_email(email_data: dict) -> bool:
     return r.status_code == 200
 
 
-def load_facilities(state: str = None, limit: int = None) -> list:
-    """Load facilities with emails."""
+def load_facilities(state: str = None, limit: int = None,
+                    segment: str = None) -> list:
+    """Load facilities with emails.
+
+    segment:
+      None          → all facilities with emails
+      'medicaid'    → only facilities accepting Medicare OR Medicaid
+      'private-pay' → only facilities NOT accepting Medicare/Medicaid
+                      (private-pay assisted living, memory care, etc.)
+    """
     all_f = []
     for offset in range(0, 200000, 1000):
         params = {
-            "select": "id,name,slug,city,state,email,citation_count,price_min,price_max",
+            "select": "id,name,slug,city,state,email,citation_count,price_min,price_max,"
+                      "accepts_medicaid,accepts_medicare,care_types",
             "limit": "1000",
             "offset": str(offset),
             "email": "not.is.null",
@@ -196,6 +276,18 @@ def load_facilities(state: str = None, limit: int = None) -> list:
         all_f.extend(batch)
         if len(batch) < 1000:
             break
+
+    # Apply segment filter in Python (PostgREST OR filtering is finicky)
+    if segment == "medicaid":
+        all_f = [
+            f for f in all_f
+            if f.get("accepts_medicaid") or f.get("accepts_medicare")
+        ]
+    elif segment == "private-pay":
+        all_f = [
+            f for f in all_f
+            if not f.get("accepts_medicaid") and not f.get("accepts_medicare")
+        ]
 
     if limit:
         all_f = all_f[:limit]
@@ -250,6 +342,7 @@ def main():
 
     state = None
     limit = None
+    segment = None
 
     if "--state" in args:
         idx = args.index("--state")
@@ -262,16 +355,28 @@ def main():
     if "--all" in args:
         limit = None
 
-    if not any(x in args for x in ["--all", "--batch", "--state"]):
+    if "--medicaid" in args:
+        segment = "medicaid"
+
+    if "--private-pay" in args:
+        segment = "private-pay"
+
+    if not any(x in args for x in ["--all", "--batch", "--state", "--medicaid", "--private-pay"]):
         print("Usage:")
         print("  python email_campaign.py --test")
         print("  python email_campaign.py --batch 100")
         print("  python email_campaign.py --state NJ")
+        print("  python email_campaign.py --medicaid           # M/M facilities only")
+        print("  python email_campaign.py --private-pay        # private-pay only")
         print("  python email_campaign.py --all")
         sys.exit(0)
 
     # Load facilities + unsubscribe list
-    facilities = load_facilities(state=state, limit=limit)
+    facilities = load_facilities(state=state, limit=limit, segment=segment)
+    if segment:
+        print(f"Segment filter: {segment}")
+        medicaid_count = sum(1 for f in facilities if is_medicaid_facility(f))
+        print(f"  Medicare/Medicaid facilities in batch: {medicaid_count:,}")
     sent_log = load_sent_log()
     unsubscribed = load_unsubscribes()
 

@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+/**
+ * Plan → Stripe price-ID + plan-tag mapping.
+ * Add a new row here to introduce a new subscription product.
+ */
+const PLANS = {
+  verified_monthly: {
+    envVar: "STRIPE_VERIFIED_MONTHLY_PRICE_ID",
+    planTag: "verified",
+  },
+  verified_annual: {
+    envVar: "STRIPE_VERIFIED_ANNUAL_PRICE_ID",
+    planTag: "verified",
+  },
+  medicaid_monthly: {
+    envVar: "STRIPE_MEDICAID_MONTHLY_PRICE_ID",
+    planTag: "medicaid",
+  },
+} as const;
+
+type PlanKey = keyof typeof PLANS;
+
 export async function POST(req: NextRequest) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) {
@@ -13,42 +34,38 @@ export async function POST(req: NextRequest) {
   const stripe = new Stripe(secretKey);
   const { plan, facilityId } = await req.json();
 
-  const validPlans = ["verified_monthly", "verified_annual"];
-  if (!plan || !validPlans.includes(plan)) {
-    return NextResponse.json(
-      { error: "Invalid plan." },
-      { status: 400 }
-    );
+  if (!plan || !(plan in PLANS)) {
+    return NextResponse.json({ error: "Invalid plan." }, { status: 400 });
   }
 
-  const priceId =
-    plan === "verified_monthly"
-      ? process.env.STRIPE_VERIFIED_MONTHLY_PRICE_ID
-      : process.env.STRIPE_VERIFIED_ANNUAL_PRICE_ID;
+  const { envVar, planTag } = PLANS[plan as PlanKey];
+  const priceId = process.env[envVar];
 
   if (!priceId) {
     return NextResponse.json(
-      { error: "Stripe price not configured." },
+      { error: `Stripe price not configured (${envVar}).` },
       { status: 503 }
     );
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://comfyseniors.com";
+  const successRedirectBase =
+    planTag === "medicaid" ? "/for-facilities/medicaid" : "/for-facilities";
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${appUrl}/for-facilities?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/for-facilities?canceled=true`,
+      success_url: `${appUrl}${successRedirectBase}?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}${successRedirectBase}?canceled=true`,
       metadata: {
         facility_id: facilityId || "",
-        plan: "verified",
+        plan: planTag,
       },
       subscription_data: {
         metadata: {
           facility_id: facilityId || "",
-          plan: "verified",
+          plan: planTag,
         },
       },
     });
