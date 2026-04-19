@@ -14,11 +14,20 @@ const STATUSES = [
 export default async function AdminOverviewPage() {
   const supabase = createAdminSupabaseClient();
 
+  type LeadRow = {
+    status: string;
+    value_estimate: number | null;
+    last_contacted_at: string | null;
+    next_followup_at: string | null;
+  };
+
   // Pull every CRM row in one shot — even at 50K facilities,
   // the table itself stays small (lazy creation per facility).
-  const { data: leads, error } = await supabase
+  const { data: leadsRaw, error } = await supabase
     .from("crm_facility_leads")
-    .select("status, value_estimate, last_contacted_at, next_followup_at");
+    .select("status,value_estimate,last_contacted_at,next_followup_at");
+
+  const leads = (leadsRaw as LeadRow[] | null) ?? [];
 
   const byStatus = new Map<string, number>();
   let totalMrrPipeline = 0;
@@ -26,7 +35,7 @@ export default async function AdminOverviewPage() {
   let overdueFollowups = 0;
   const now = new Date();
 
-  for (const row of leads || []) {
+  for (const row of leads) {
     byStatus.set(row.status, (byStatus.get(row.status) || 0) + 1);
 
     if (row.status === "paying" && row.value_estimate) {

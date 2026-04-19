@@ -21,25 +21,70 @@ export default async function LeadDetailPage({
 }) {
   const supabase = createAdminSupabaseClient();
 
-  const { data: facility } = await supabase
+  // Strongly-typed shape for facility — Supabase's auto-typing falls back
+  // to GenericStringError when select strings are split across lines, so
+  // we cast the response explicitly here.
+  type FacilityRow = {
+    id: string;
+    name: string;
+    slug: string;
+    city: string | null;
+    state: string | null;
+    county: string | null;
+    email: string | null;
+    phone: string | null;
+    website: string | null;
+    care_types: string[] | null;
+    accepts_medicaid: boolean | null;
+    accepts_medicare: boolean | null;
+    price_min: number | null;
+    price_max: number | null;
+    beds: number | null;
+    value_score: number | null;
+    overall_rating: number | null;
+    citation_count: number | null;
+    last_inspection: string | null;
+    is_verified: boolean | null;
+  };
+
+  const { data: facilityRaw } = await supabase
     .from("facilities")
-    .select(
-      "id,name,slug,city,state,county,email,phone,website,care_types," +
-        "accepts_medicaid,accepts_medicare,price_min,price_max,beds," +
-        "value_score,overall_rating,citation_count,last_inspection,is_verified"
-    )
+    .select("id,name,slug,city,state,county,email,phone,website,care_types,accepts_medicaid,accepts_medicare,price_min,price_max,beds,value_score,overall_rating,citation_count,last_inspection,is_verified")
     .eq("id", params.id)
     .single();
 
+  const facility = facilityRaw as FacilityRow | null;
   if (!facility) notFound();
 
-  const { data: existingLead } = await supabase
+  type LeadRow = {
+    id: string;
+    facility_id: string;
+    status: string;
+    source: string | null;
+    priority: number | null;
+    last_contacted_at: string | null;
+    next_followup_at: string | null;
+    value_estimate: number | null;
+  };
+
+  const { data: existingLeadRaw } = await supabase
     .from("crm_facility_leads")
     .select("*")
     .eq("facility_id", facility.id)
     .maybeSingle();
 
-  const lead = existingLead || {
+  const existingLead = existingLeadRaw as LeadRow | null;
+
+  const lead: {
+    id: string | null;
+    facility_id: string;
+    status: string;
+    source: string | null;
+    priority: number | null;
+    last_contacted_at: string | null;
+    next_followup_at: string | null;
+    value_estimate: number | null;
+  } = existingLead ?? {
     id: null,
     facility_id: facility.id,
     status: "new",
@@ -50,15 +95,24 @@ export default async function LeadDetailPage({
     value_estimate: facility.accepts_medicaid || facility.accepts_medicare ? 397 : 297,
   };
 
-  const { data: notes } = lead.id
-    ? await supabase
-        .from("crm_lead_notes")
-        .select("id,body,author,created_at")
-        .eq("lead_id", lead.id)
-        .order("created_at", { ascending: false })
-    : { data: [] as Array<{ id: string; body: string; author: string | null; created_at: string }> };
+  type NoteRow = {
+    id: string;
+    body: string;
+    author: string | null;
+    created_at: string;
+  };
 
-  const isMM = facility.accepts_medicaid || facility.accepts_medicare;
+  let notes: NoteRow[] = [];
+  if (lead.id) {
+    const { data: notesRaw } = await supabase
+      .from("crm_lead_notes")
+      .select("id,body,author,created_at")
+      .eq("lead_id", lead.id)
+      .order("created_at", { ascending: false });
+    notes = (notesRaw as NoteRow[] | null) ?? [];
+  }
+
+  const isMM = Boolean(facility.accepts_medicaid || facility.accepts_medicare);
 
   return (
     <div className="space-y-6">
@@ -195,19 +249,19 @@ export default async function LeadDetailPage({
           {/* Notes */}
           <div className="rounded-card border border-cs-border bg-white p-5">
             <h2 className="mb-3 font-sans text-base font-semibold text-cs-blue-dark">
-              Notes ({(notes || []).length})
+              Notes ({notes.length})
             </h2>
 
             {/* Add-note form */}
             <NoteFormClient leadId={lead.id} facilityId={facility.id} />
 
             <ul className="mt-4 space-y-3">
-              {(notes || []).length === 0 ? (
+              {notes.length === 0 ? (
                 <li className="text-sm text-cs-muted">
                   No notes yet. Add the first one above.
                 </li>
               ) : (
-                notes!.map((n) => (
+                notes.map((n) => (
                   <li
                     key={n.id}
                     className="rounded-btn border border-cs-border bg-cs-blue-light/40 p-3 text-sm"

@@ -58,36 +58,63 @@ export default async function LeadsListPage({
     .order("name", { ascending: true })
     .range(offset, offset + PAGE_SIZE - 1);
 
-  const { data: facilities, count, error: facError } = await q;
+  const { data: facilitiesRaw, count, error: facError } = await q;
+
+  type FacilityRow = {
+    id: string;
+    name: string;
+    slug: string;
+    city: string | null;
+    state: string | null;
+    email: string | null;
+    phone: string | null;
+    care_types: string[] | null;
+    accepts_medicaid: boolean | null;
+    accepts_medicare: boolean | null;
+    price_min: number | null;
+    value_score: number | null;
+  };
+
+  type CrmRow = {
+    facility_id: string;
+    status: string;
+    priority: number | null;
+    last_contacted_at: string | null;
+    next_followup_at: string | null;
+    value_estimate: number | null;
+  };
+
+  const facilities = (facilitiesRaw as FacilityRow[] | null) ?? [];
 
   // Fetch CRM rows for the facilities on this page in one shot
-  const ids = (facilities || []).map((f) => f.id);
-  const { data: crmRows } = ids.length
-    ? await supabase
-        .from("crm_facility_leads")
-        .select("facility_id,status,priority,last_contacted_at,next_followup_at,value_estimate")
-        .in("facility_id", ids)
-    : { data: [] as Array<{
-        facility_id: string;
-        status: string;
-        priority: number;
-        last_contacted_at: string | null;
-        next_followup_at: string | null;
-        value_estimate: number | null;
-      }> };
+  const ids = facilities.map((f) => f.id);
 
-  const crmByFacility = new Map((crmRows || []).map((r) => [r.facility_id, r]));
+  let crmRows: CrmRow[] = [];
+  if (ids.length > 0) {
+    const { data: crmRaw } = await supabase
+      .from("crm_facility_leads")
+      .select("facility_id,status,priority,last_contacted_at,next_followup_at,value_estimate")
+      .in("facility_id", ids);
+    crmRows = (crmRaw as CrmRow[] | null) ?? [];
+  }
+
+  const crmByFacility = new Map<string, CrmRow>(
+    crmRows.map((r) => [r.facility_id, r])
+  );
 
   // Apply status filter (post-fetch since lazy CRM rows may not exist)
-  let rows = (facilities || []).map((f) => ({
+  const defaultCrm: CrmRow = {
+    facility_id: "",
+    status: "new",
+    priority: 0,
+    last_contacted_at: null,
+    next_followup_at: null,
+    value_estimate: null,
+  };
+
+  let rows = facilities.map((f) => ({
     ...f,
-    crm: crmByFacility.get(f.id) || {
-      status: "new" as const,
-      priority: 0,
-      last_contacted_at: null,
-      next_followup_at: null,
-      value_estimate: null,
-    },
+    crm: crmByFacility.get(f.id) ?? defaultCrm,
   }));
 
   if (searchParams.status) {
@@ -227,7 +254,7 @@ export default async function LeadsListPage({
               </tr>
             ) : (
               rows.map((r) => {
-                const isMM = r.accepts_medicaid || r.accepts_medicare;
+                const isMM = Boolean(r.accepts_medicaid || r.accepts_medicare);
                 return (
                   <tr key={r.id} className="border-b border-cs-border hover:bg-cs-blue-light/30">
                     <td className="px-4 py-3">
