@@ -82,7 +82,14 @@ export default async function HomePage({
       </section>
 
       {/* ─── DECISION ENGINE (replaces FAQ section) ─── */}
-      <section className="bg-cs-lavender-mist py-16 sm:py-20">
+      {/* id="engine" is the scroll target the engine's links point at via
+          `#engine` — preserves scroll position across step transitions
+          even when JavaScript is disabled. The `scroll-mt-4` keeps the
+          section header visible above the sticky nav after the jump. */}
+      <section
+        id="engine"
+        className="scroll-mt-4 bg-cs-lavender-mist py-16 sm:py-20"
+      >
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="mb-6 text-center">
             <span className="label text-cs-lavender">3-step engine</span>

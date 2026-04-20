@@ -123,12 +123,21 @@ async function searchFacilitiesInternal(
     query = query.ilike("city", `%${filters.city}%`);
   }
 
+  // Budget filter — both bounds compared against facility.price_min
+  // (the entry/starting price). Reasons:
+  //   1. price_min is populated for ~all facilities; price_max often null.
+  //      A `lte("price_max", X)` against a NULL is false, which would
+  //      silently drop any facility without a max.
+  //   2. "Budget $5K-$7K" intuitively means "show me facilities whose
+  //      starting price is in this range" — not "facilities whose entire
+  //      pricing tier is sandwiched inside the bracket". A $5,500-$8,000
+  //      facility belongs in the $5K-$7K results.
   if (filters.priceMin !== undefined) {
     query = query.gte("price_min", filters.priceMin);
   }
 
   if (filters.priceMax !== undefined) {
-    query = query.lte("price_max", filters.priceMax);
+    query = query.lte("price_min", filters.priceMax);
   }
 
   if (filters.acceptsMedicaid) {

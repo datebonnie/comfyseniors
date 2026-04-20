@@ -131,6 +131,15 @@ export default function DecisionEngine({ ds, forWho, care }: Props) {
 
 /* ─── Steps ────────────────────────────────────────────────── */
 
+// Scroll preservation across step transitions:
+//   - `scroll={false}` on <Link> tells Next.js to NOT scroll to top
+//     after a client-side navigation (handles the JS-on case).
+//   - The `#engine` fragment in every href tells the browser to scroll
+//     to the section anchor on full page navigation, which is right at
+//     the section header — covers the JS-off case (where Next.js's
+//     scroll prop is irrelevant because the browser does the navigation).
+const FRAG = "#engine";
+
 function Step1() {
   return (
     <>
@@ -145,7 +154,8 @@ function Step1() {
         {RELATIONSHIP_OPTIONS.map((opt) => (
           <Link
             key={opt.value}
-            href={`/?ds=2&for=${opt.value}`}
+            href={`/?ds=2&for=${opt.value}${FRAG}`}
+            scroll={false}
             className="rounded-btn border border-cs-border bg-white px-4 py-3 text-left text-sm font-medium text-cs-body transition-colors hover:border-cs-blue hover:bg-cs-blue-light hover:text-cs-blue-dark"
           >
             {opt.label}
@@ -176,7 +186,8 @@ function Step2({ forWho }: { forWho: string }) {
         {CARE_OPTIONS.map((opt) => (
           <Link
             key={opt.value}
-            href={`/?ds=3&for=${forWho}&care=${opt.value}`}
+            href={`/?ds=3&for=${forWho}&care=${opt.value}${FRAG}`}
+            scroll={false}
             className="block rounded-btn border border-cs-border bg-white px-4 py-3 text-left transition-colors hover:border-cs-blue hover:bg-cs-blue-light"
           >
             <div className="text-sm font-medium text-cs-body">{opt.label}</div>
@@ -185,7 +196,7 @@ function Step2({ forWho }: { forWho: string }) {
         ))}
       </div>
 
-      <BackLink href={`/?ds=1`} />
+      <BackLink href={`/?ds=1${FRAG}`} />
     </>
   );
 }
@@ -221,7 +232,7 @@ function Step3({ forWho, care }: { forWho: string; care: string }) {
         </Link>
       </div>
 
-      <BackLink href={`/?ds=2&for=${forWho}`} />
+      <BackLink href={`/?ds=2&for=${forWho}${FRAG}`} />
     </>
   );
 }
