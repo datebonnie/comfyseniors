@@ -49,15 +49,14 @@ export default async function HomePage({
       <section className="bg-cs-blue-light py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <p className="label mb-3 text-cs-lavender">
-            Bergen County, NJ
+            New Jersey&apos;s Answer to Assisted Living
           </p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            Find assisted living in Bergen County. Real prices. Real
-            inspection records.
+            Find Care. Feel Comfortable.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-[1.65] text-cs-body">
-            Every licensed facility. Verified or not, we tell you which.
-            We never sell your number.
+            Every licensed facility in Bergen County, with all the data
+            you need to feel comfortable.
           </p>
 
           <div className="mx-auto mt-8 max-w-xl">
