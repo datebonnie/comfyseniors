@@ -27,19 +27,20 @@ export default function TermsPage() {
       <section className="py-12 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="prose-cs space-y-8 text-cs-body">
-            {/* TODO (post-LLC filing): replace "a New Jersey business"
-                with "operated by ComfySeniors, LLC, a New Jersey limited
-                liability company formed [DATE], NJ Business Registration
-                [BRC]." Pending certificate of formation. */}
+            {/* TODO (full LLC metadata): formation date + NJ BRC number
+                still pending. Once received, append "Filed [DATE]. NJ
+                Business Registration [BRC]." to the sentence below. */}
             <div>
               <p className="text-sm leading-relaxed">
                 Welcome to ComfySeniors.com (&ldquo;<strong>ComfySeniors</strong>,&rdquo;
                 &ldquo;<strong>we</strong>,&rdquo; &ldquo;<strong>us</strong>,&rdquo;
-                or &ldquo;<strong>our</strong>&rdquo;), a New Jersey business.
-                These Terms of Service (&ldquo;<strong>Terms</strong>&rdquo;)
-                govern your access to and use of our website, services, and
-                content. By using ComfySeniors.com, you agree to be bound by
-                these Terms. If you do not agree, please do not use the site.
+                or &ldquo;<strong>our</strong>&rdquo;), operated by{" "}
+                <strong>ComfySeniors LLC</strong>, a New Jersey limited
+                liability company. These Terms of Service
+                (&ldquo;<strong>Terms</strong>&rdquo;) govern your access
+                to and use of our website, services, and content. By using
+                ComfySeniors.com, you agree to be bound by these Terms. If
+                you do not agree, please do not use the site.
               </p>
             </div>
 

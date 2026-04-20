@@ -122,13 +122,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        {/* TODO: Once NJ LLC is filed, replace the copyright line with
-            "© YEAR ComfySeniors, LLC — a New Jersey limited liability company."
-            and add formation date + registered agent to /legal. Do not
-            put placeholder legal text live until the certificate of
-            formation is issued. */}
+        {/* TODO (full LLC metadata): formation date, registered agent,
+            and NJ BRC number still pending — add them to /legal and
+            /privacy once received. The name is live below. */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
-          <span>&copy; {new Date().getFullYear()} ComfySeniors.com. All rights reserved.</span>
+          <span>
+            &copy; {new Date().getFullYear()} ComfySeniors LLC, a New
+            Jersey limited liability company. All rights reserved.
+          </span>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             <Link href="/terms" className="transition-colors hover:text-white">
               Terms of Service
