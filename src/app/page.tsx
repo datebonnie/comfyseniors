@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PageWrapper from "@/components/layout/PageWrapper";
-import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
 import DecisionEngine from "@/components/home/DecisionEngine";
 
@@ -43,8 +42,15 @@ export default async function HomePage({
 
   return (
     <PageWrapper>
-      {/* ─── HERO ─── */}
-      <section className="bg-cs-blue-light py-16 sm:py-24">
+      {/* ─── HERO (with Decision Engine in place of the search bar) ─── */}
+      {/* id="engine" is the scroll target the engine's links point at
+          via `#engine` — preserves scroll position across step
+          transitions even when JavaScript is disabled. `scroll-mt-4`
+          keeps the top of the hero visible below the sticky nav. */}
+      <section
+        id="engine"
+        className="scroll-mt-4 bg-cs-blue-light py-16 sm:py-20"
+      >
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <p className="label mb-3 text-cs-lavender">
             New Jersey&apos;s Answer to Assisted Living
@@ -57,12 +63,19 @@ export default async function HomePage({
             you need to feel comfortable.
           </p>
 
-          <div className="mx-auto mt-8 max-w-xl">
-            <SearchBar size="lg" placeholder="Search Bergen County" />
+          {/* Decision Engine — replaces the old search bar. Users
+              answer 3 quick questions and land directly on filtered
+              /search results. */}
+          <div className="mt-10 text-left">
+            <DecisionEngine
+              ds={searchParams?.ds}
+              forWho={searchParams?.for}
+              care={searchParams?.care}
+            />
           </div>
 
           {/* Trust chips */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             {trustChips.map((text) => (
               <span
                 key={text}
@@ -78,34 +91,6 @@ export default async function HomePage({
             Every licensed assisted living and memory care facility in
             Bergen County — we tell you which ones are verified.
           </p>
-        </div>
-      </section>
-
-      {/* ─── DECISION ENGINE (replaces FAQ section) ─── */}
-      {/* id="engine" is the scroll target the engine's links point at via
-          `#engine` — preserves scroll position across step transitions
-          even when JavaScript is disabled. The `scroll-mt-4` keeps the
-          section header visible above the sticky nav after the jump. */}
-      <section
-        id="engine"
-        className="scroll-mt-4 bg-cs-lavender-mist py-16 sm:py-20"
-      >
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 text-center">
-            <span className="label text-cs-lavender">3-step engine</span>
-            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              Find care in 3 clicks
-            </h2>
-            <p className="mt-2 text-sm text-cs-muted">
-              No signup. No phone number. No hassle.
-            </p>
-          </div>
-
-          <DecisionEngine
-            ds={searchParams?.ds}
-            forWho={searchParams?.for}
-            care={searchParams?.care}
-          />
         </div>
       </section>
 
