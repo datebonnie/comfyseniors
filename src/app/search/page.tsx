@@ -113,7 +113,65 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     // Defaults already set above
   }
 
+  // Progressive relaxation: if the user's exact filters match nothing,
+  // retry without the "optional" filters (budget, payer toggles, clean
+  // record). Never show an empty page when something broader would
+  // match — the 3-step engine's last step can produce combinations
+  // (e.g. "Memory Care + under $5K in Bergen") that no facility
+  // actually satisfies, and silence is worse than a clear "we
+  // loosened your filters" message.
+  //
+  // Care type and county are NOT relaxed — they're core intent
+  // signals. If Bergen has zero Memory Care facilities at any price,
+  // we still show zero (that's honest). In practice Bergen has 16
+  // Memory Care facilities, so type-only retries always have hits.
+  const hadOptionalFilters =
+    filters.priceMin !== undefined ||
+    filters.priceMax !== undefined ||
+    filters.cleanRecordOnly ||
+    filters.acceptsMedicaid ||
+    filters.acceptsMedicare;
+
+  let relaxed = false;
+  if (results.count === 0 && hadOptionalFilters) {
+    const relaxedFilters = {
+      ...filters,
+      priceMin: undefined,
+      priceMax: undefined,
+      cleanRecordOnly: false,
+      acceptsMedicaid: false,
+      acceptsMedicare: false,
+    };
+    try {
+      const retry = await searchFacilities(relaxedFilters, 1, PER_PAGE);
+      if (retry.count > 0) {
+        results = retry;
+        relaxed = true;
+      }
+    } catch {
+      // leave results empty
+    }
+  }
+
   const totalPages = Math.ceil(results.count / PER_PAGE);
+
+  // Build a human-readable description of which filters got relaxed,
+  // used in the notice banner below. Only populated when relaxed=true.
+  const relaxedParts: string[] = [];
+  if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
+    if (filters.priceMin !== undefined && filters.priceMax !== undefined) {
+      relaxedParts.push(
+        `$${filters.priceMin.toLocaleString()}–$${filters.priceMax.toLocaleString()} budget`
+      );
+    } else if (filters.priceMax !== undefined) {
+      relaxedParts.push(`under $${filters.priceMax.toLocaleString()}`);
+    } else if (filters.priceMin !== undefined) {
+      relaxedParts.push(`$${filters.priceMin.toLocaleString()}+`);
+    }
+  }
+  if (filters.cleanRecordOnly) relaxedParts.push("clean-record-only");
+  if (filters.acceptsMedicaid) relaxedParts.push("accepts Medicaid");
+  if (filters.acceptsMedicare) relaxedParts.push("accepts Medicare");
 
   return (
     <PageWrapper>
@@ -132,9 +190,29 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <FilterSidebar counties={counties} languages={languages} />
 
             <div>
+              {/* Relaxation notice — shown when the exact filters matched
+                  nothing and we broadened the search to avoid a blank
+                  page. Amber-toned so it stands out from the lavender
+                  trust line; explicit about what got dropped so the user
+                  knows we didn't silently ignore their preferences. */}
+              {relaxed && (
+                <div className="mb-4 rounded-card border-l-[3px] border-cs-amber-warn bg-[#FEF3C7] px-4 py-3 text-sm text-[#92400E]">
+                  <strong>
+                    No Bergen County facilities matched your filters
+                    {relaxedParts.length > 0 && (
+                      <> ({relaxedParts.join(", ")})</>
+                    )}
+                    .
+                  </strong>{" "}
+                  Showing all {results.count.toLocaleString()} facilities
+                  matching the rest of your search instead. Adjust filters
+                  in the sidebar to narrow again.
+                </div>
+              )}
+
               {/* Trust line — appears above results to set expectations
                   about what we do and don't do with the visitor's data. */}
-              {results.count > 0 && (
+              {results.count > 0 && !relaxed && (
                 <div className="mb-4 rounded-card border-l-[3px] border-cs-lavender bg-cs-lavender-mist px-4 py-3 text-sm text-cs-blue-dark">
                   Showing{" "}
                   <strong>{results.count.toLocaleString()}</strong> Bergen
