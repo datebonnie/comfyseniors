@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 const navLinks = [
   { href: "/staff", label: "Overview" },
   { href: "/staff/leads", label: "Leads" },
+  { href: "/staff/engagement", label: "Engagement" },
 ];
 
 export default async function AdminLayout({

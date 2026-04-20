@@ -5,6 +5,7 @@ const footerLinks = {
     { href: "/search", label: "Find Care" },
     { href: "/faq", label: "FAQ" },
     { href: "/about", label: "About Us" },
+    { href: "/trust", label: "Trust & Security" },
     { href: "/contact", label: "Contact" },
   ],
   "Care Types": [
@@ -16,6 +17,7 @@ const footerLinks = {
 const facilityLinks = [
   { href: "/for-facilities", label: "Get Listed" },
   { href: "/for-facilities/dashboard", label: "Facility Dashboard" },
+  { href: "/for-chains", label: "For Chains (25+)" },
 ];
 
 const socialLinks = [
@@ -120,6 +122,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
+        {/* TODO: Once NJ LLC is filed, replace the copyright line with
+            "© YEAR ComfySeniors, LLC — a New Jersey limited liability company."
+            and add formation date + registered agent to /legal. Do not
+            put placeholder legal text live until the certificate of
+            formation is issued. */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[#2D3E6A] pt-6 text-xs text-cs-muted sm:flex-row">
           <span>&copy; {new Date().getFullYear()} ComfySeniors.com. All rights reserved.</span>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
@@ -134,9 +141,24 @@ export default function Footer() {
             <Link href="/legal" className="transition-colors hover:text-white">
               Legal
             </Link>
+            <span aria-hidden="true" className="text-[#2D3E6A]">&middot;</span>
+            <a
+              href="https://status.comfyseniors.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-white"
+            >
+              System status ↗
+            </a>
           </div>
           <span>Made for Bergen County families.</span>
         </div>
+
+        {/* Tech stack trust line — facility admins scanning the footer
+            see the stack that powers their listing. */}
+        <p className="mt-3 text-center text-[10px] uppercase tracking-wide text-[#5B6E94]">
+          Powered by Next.js, Supabase, and Stripe.
+        </p>
       </div>
     </footer>
   );

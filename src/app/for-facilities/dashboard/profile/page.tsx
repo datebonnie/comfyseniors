@@ -57,9 +57,28 @@ export default function ProfilePage() {
     setSaving(true);
     setSaved(false);
 
+    // Pull the currently logged-in admin so we can stamp the profile
+    // with who saved it. Display name falls back to email before
+    // literal "facility admin" — never left empty.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const adminName =
+      (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+      (user?.user_metadata?.name as string | undefined)?.trim() ||
+      user?.email ||
+      "facility admin";
+
     await supabase
       .from("facilities")
-      .update({ description, phone, website, email })
+      .update({
+        description,
+        phone,
+        website,
+        email,
+        profile_last_updated_by_admin_at: new Date().toISOString(),
+        profile_last_updated_by_admin_name: adminName,
+      })
       .eq("id", facility.id as string);
 
     setSaving(false);

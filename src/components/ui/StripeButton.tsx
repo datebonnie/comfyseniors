@@ -7,7 +7,8 @@ interface StripeButtonProps {
     | "verified_monthly"
     | "verified_annual"
     | "medicaid_monthly"
-    | "claim_monthly";
+    | "claim_monthly"
+    | "founding_monthly";
   className?: string;
   children: React.ReactNode;
 }

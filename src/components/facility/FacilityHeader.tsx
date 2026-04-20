@@ -27,6 +27,15 @@ export default function FacilityHeader({
             Featured
           </span>
         )}
+        {/* Founding Partner — lavender, shown alongside Verified badge
+            for facilities on the Founding Member tier. Requires
+            verification as well (enforced by Stripe webhook flipping
+            both tier and is_verified atomically). */}
+        {facility.subscription_tier === "founding" && facility.is_verified && (
+          <span className="label inline-block rounded-full bg-cs-lavender px-2.5 py-1 text-[11px] text-white">
+            Founding Partner
+          </span>
+        )}
         {facility.is_verified ? <VerifiedBadge size="md" /> : <NotVerifiedLabel size="md" />}
         {facility.care_types?.map((type) => (
           <CareTypeBadge key={type} type={type} />

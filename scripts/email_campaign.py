@@ -32,7 +32,10 @@ from supabase_client import select, insert
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY") or ""
 UNSUBSCRIBE_SECRET = os.getenv("UNSUBSCRIBE_SECRET") or ""
-FROM_EMAIL = "hello@comfyseniors.com"
+# Cold outreach FROM address — intentionally distinct from the
+# transactional RESEND_FROM_EMAIL so one sender's reputation can't
+# drag down the other.
+FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL_OUTREACH", "hello@comfyseniors.com")
 SITE_URL = "https://comfyseniors.com"
 
 # Track sent emails to avoid duplicates

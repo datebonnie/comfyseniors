@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
+import { createServiceClient } from "@/lib/supabase";
 
 interface ContactResult {
   success: boolean;
@@ -46,7 +46,10 @@ export async function sendFacilityInquiry(
   let code = generateCode();
 
   try {
-    const supabase = createClient();
+    // Service role: writes to leads (insert + RETURNING) require
+    // privileged access under our RLS policy set, and this path is
+    // a server action so the key stays on the server.
+    const supabase = createServiceClient();
 
     // Look up facility for Resend relay
     const { data: facility } = await supabase
@@ -89,7 +92,10 @@ export async function sendFacilityInquiry(
 
     // Send Resend email if configured
     const resendKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "hello@comfyseniors.com";
+    // Inquiry forwarding is transactional — use the transactional
+    // FROM (partners@), not the outreach FROM (hello@).
+    const fromEmail =
+      process.env.RESEND_FROM_EMAIL || "partners@comfyseniors.com";
 
     if (resendKey && facility?.email) {
       const { Resend } = await import("resend");
@@ -156,7 +162,9 @@ export async function markInquiryConverted(
   }
 
   try {
-    const supabase = createClient();
+    // Service role: UPDATE with RETURNING on the leads table needs
+    // to bypass RLS; facility admins don't control this path, we do.
+    const supabase = createServiceClient();
 
     const { data, error } = await supabase
       .from("leads")

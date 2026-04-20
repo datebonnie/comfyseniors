@@ -18,13 +18,17 @@ const PLANS = {
     envVar: "STRIPE_MEDICAID_MONTHLY_PRICE_ID",
     planTag: "medicaid",
   },
-  // TODO: Manually create $97/mo recurring price in Stripe Dashboard
-  // (Products → ComfySeniors Claim → $97 USD monthly), then set
-  // STRIPE_CLAIM_MONTHLY_PRICE_ID in Vercel + .env.local. Until set,
-  // this endpoint returns 503 for plan=claim_monthly.
   claim_monthly: {
     envVar: "STRIPE_CLAIM_MONTHLY_PRICE_ID",
     planTag: "claim",
+  },
+  // Founding Member tier — capped at first 20 Bergen County facilities.
+  // Hidden on /for-facilities once count >= 20. Webhook sets
+  // subscription_tier='founding' on checkout completion, which the
+  // facility page uses to show the "Founding Partner" badge.
+  founding_monthly: {
+    envVar: "STRIPE_FOUNDING_MONTHLY_PRICE_ID",
+    planTag: "founding",
   },
 } as const;
 

@@ -4,6 +4,11 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import StripeButton from "@/components/ui/StripeButton";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
 import NotVerifiedLabel from "@/components/ui/NotVerifiedLabel";
+import SelfLookupWidget from "@/components/for-facilities/SelfLookupWidget";
+import VerificationCounter from "@/components/for-facilities/VerificationCounter";
+import DashboardPreview from "@/components/for-facilities/DashboardPreview";
+import LoggedCTA from "@/components/for-facilities/LoggedCTA";
+import { createClient } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   title:
@@ -21,7 +26,41 @@ const whatYouGet = [
   "Analytics dashboard — page views, inquiries, conversions",
 ];
 
-export default function ForFacilitiesPage() {
+// Scaffolded by spec item #8. Final copy TODO: user to provide.
+const whatWeveSolved = [
+  {
+    title: "Your facility data is already in our directory",
+    body: "Imported from NJ DOH and CMS public records. You don't enter anything twice. Claim takes 2 minutes because the hard work is already done.",
+  },
+  {
+    title: "Inquiry tracking works out of the box",
+    body: "Every family who contacts you gets a unique reference code. You see which inquiries came from us and which converted — no integration required.",
+  },
+  {
+    title: "Billing runs through Stripe",
+    body: "Same checkout you use on any SaaS. Cancel in one click from your dashboard. No annual contracts, no setup fees, no cancellation penalties.",
+  },
+  {
+    title: "Inspection records are already formatted",
+    body: "CMS citation severity codes (B / D / G / L) translated to plain English, alongside your response field. Transparency with context — not a gotcha.",
+  },
+];
+
+const FOUNDING_CAP = 20;
+
+export default async function ForFacilitiesPage() {
+  // Server-side count to decide whether to render the Founding tier.
+  // Hidden once 20 founding facilities have been claimed — honoring
+  // the "first 20 only" promise literally.
+  const supabase = createClient();
+  const { count: foundingCount } = await supabase
+    .from("facilities")
+    .select("*", { count: "exact", head: true })
+    .eq("subscription_tier", "founding");
+
+  const foundingClaimed = foundingCount || 0;
+  const foundingAvailable = foundingClaimed < FOUNDING_CAP;
+
   return (
     <PageWrapper>
       {/* ─── HERO ─── */}
@@ -39,12 +78,14 @@ export default function ForFacilitiesPage() {
             $297/month, cancel anytime.
           </p>
           <div className="mt-8">
-            <StripeButton
-              plan="verified_monthly"
-              className="rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
-            >
-              Remove my warning — $297/month
-            </StripeButton>
+            <LoggedCTA eventType="cta_click_verified" metadata={{ placement: "hero" }}>
+              <StripeButton
+                plan="verified_monthly"
+                className="rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
+              >
+                Remove my warning — $297/month
+              </StripeButton>
+            </LoggedCTA>
             <p className="mt-3 text-sm text-cs-muted">
               Cancel anytime. No contracts. No setup fees.
             </p>
@@ -58,6 +99,30 @@ export default function ForFacilitiesPage() {
               </Link>
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* ─── VERIFICATION COUNTER ─── */}
+      <section className="bg-white py-10 sm:py-12">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <VerificationCounter />
+        </div>
+      </section>
+
+      {/* ─── SELF-LOOKUP WIDGET ─── */}
+      <section className="bg-white py-10 sm:py-14">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-4 text-center">
+            <span className="label text-cs-lavender">Check your listing</span>
+            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark">
+              Already listed? See what families see.
+            </h2>
+            <p className="mt-2 text-sm text-cs-muted">
+              Search your facility name to open your current ComfySeniors
+              listing in a new tab.
+            </p>
+          </div>
+          <SelfLookupWidget />
         </div>
       </section>
 
@@ -247,18 +312,103 @@ export default function ForFacilitiesPage() {
         </div>
       </section>
 
-      {/* ─── TWO PRICING TIERS (Claim vs Grow) ─── */}
+      {/* ─── WHAT WE'VE ALREADY SOLVED ─── */}
       <section className="bg-white py-14 sm:py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <span className="label text-cs-lavender">
+              What we&apos;ve already solved
+            </span>
+            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
+              Most of the work is already done.
+            </h2>
+            <p className="mt-2 text-sm text-cs-muted">
+              Flag-plant copy scaffolded below — replacing with final
+              founder copy before full launch.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {whatWeveSolved.map((s) => (
+              <div
+                key={s.title}
+                className="rounded-card border border-cs-border bg-white p-5"
+              >
+                <h3 className="font-sans text-base font-semibold text-cs-blue-dark">
+                  {s.title}
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-cs-body">
+                  {s.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── PRICING TIERS (Founding + Claim + Grow) ─── */}
+      <section className="bg-white py-14 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-2 text-center font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
             Pick your tier.
           </h2>
           <p className="mb-10 text-center text-sm text-cs-muted">
-            Both tiers remove the &ldquo;Not Verified&rdquo; warning. Grow
-            adds direct inquiries, enhanced profile, and analytics.
+            {foundingAvailable
+              ? `Founding Member pricing is open for the first ${FOUNDING_CAP} Bergen County facilities — ${foundingClaimed}/${FOUNDING_CAP} claimed so far.`
+              : "Founding Member spots are full. Claim or Grow tier below."}
           </p>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div
+            className={`grid gap-6 ${
+              foundingAvailable ? "lg:grid-cols-3" : "sm:grid-cols-2"
+            }`}
+          >
+            {/* Founding — $197 (conditional) */}
+            {foundingAvailable && (
+              <div className="relative rounded-card border-2 border-cs-blue bg-cs-blue-light p-6">
+                <span className="absolute -top-3 left-6 rounded-full bg-cs-blue px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                  Founding Member · {foundingClaimed}/{FOUNDING_CAP}
+                </span>
+                <div className="mb-1 flex items-baseline justify-between">
+                  <h3 className="font-display text-xl text-cs-blue-dark">
+                    Founding
+                  </h3>
+                  <p className="text-2xl font-semibold text-cs-blue-dark">
+                    $197
+                    <span className="text-sm font-normal text-cs-muted">/mo</span>
+                  </p>
+                </div>
+                <p className="mb-4 text-xs uppercase tracking-wide text-cs-blue">
+                  For life. First 20 only.
+                </p>
+
+                <ul className="mb-6 space-y-2">
+                  {[
+                    "Everything in Grow",
+                    "$197/mo locked in for the life of the subscription",
+                    "\"Founding Partner\" badge on your public profile",
+                    "Direct line to the founder for feedback + roadmap input",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-2 text-sm text-cs-body"
+                    >
+                      <span className="mt-1.5 inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-blue" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <LoggedCTA eventType="cta_click_founding" metadata={{ placement: "pricing_grid" }}>
+                  <StripeButton
+                    plan="founding_monthly"
+                    className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
+                  >
+                    Claim Founding spot — $197/month
+                  </StripeButton>
+                </LoggedCTA>
+              </div>
+            )}
+
             {/* Claim — $97 */}
             <div className="rounded-card border border-cs-border bg-white p-6">
               <div className="mb-1 flex items-baseline justify-between">
@@ -290,12 +440,14 @@ export default function ForFacilitiesPage() {
                 ))}
               </ul>
 
-              <StripeButton
-                plan="claim_monthly"
-                className="block w-full rounded-btn border border-cs-blue bg-white px-6 py-3 text-center text-sm font-medium text-cs-blue transition-colors hover:bg-cs-blue hover:text-white"
-              >
-                Claim my listing — $97/month
-              </StripeButton>
+              <LoggedCTA eventType="cta_click_claim" metadata={{ placement: "pricing_grid" }}>
+                <StripeButton
+                  plan="claim_monthly"
+                  className="block w-full rounded-btn border border-cs-blue bg-white px-6 py-3 text-center text-sm font-medium text-cs-blue transition-colors hover:bg-cs-blue hover:text-white"
+                >
+                  Claim my listing — $97/month
+                </StripeButton>
+              </LoggedCTA>
             </div>
 
             {/* Grow — $297 (recommended, highlighted) */}
@@ -336,14 +488,23 @@ export default function ForFacilitiesPage() {
                 ))}
               </ul>
 
-              <StripeButton
-                plan="verified_monthly"
-                className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
-              >
-                Remove my warning — $297/month
-              </StripeButton>
+              <LoggedCTA eventType="cta_click_grow" metadata={{ placement: "pricing_grid" }}>
+                <StripeButton
+                  plan="verified_monthly"
+                  className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
+                >
+                  Remove my warning — $297/month
+                </StripeButton>
+              </LoggedCTA>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── DASHBOARD PREVIEW ─── */}
+      <section className="bg-cs-lavender-mist py-14 sm:py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <DashboardPreview />
         </div>
       </section>
 
@@ -359,12 +520,14 @@ export default function ForFacilitiesPage() {
             placement fee.
           </p>
           <div className="mt-8">
-            <StripeButton
-              plan="verified_monthly"
-              className="rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
-            >
-              Remove my warning — $297/month
-            </StripeButton>
+            <LoggedCTA eventType="cta_click_verified" metadata={{ placement: "bottom_cta" }}>
+              <StripeButton
+                plan="verified_monthly"
+                className="rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
+              >
+                Remove my warning — $297/month
+              </StripeButton>
+            </LoggedCTA>
             <p className="mt-3 text-sm text-[#8B9EC7]">
               Cancel anytime. No contracts. No setup fees.
             </p>

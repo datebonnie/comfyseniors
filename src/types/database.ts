@@ -43,6 +43,13 @@ export interface Facility {
   description: string | null;
   amenities: string[] | null;
   photos: string[] | null;
+  subscription_tier: string | null;
+  verified_at: string | null;
+  verified_at_is_estimated: boolean | null;
+  data_last_verified_at: string | null;
+  data_last_verified_at_is_estimated: boolean | null;
+  profile_last_updated_by_admin_at: string | null;
+  profile_last_updated_by_admin_name: string | null;
   is_featured: boolean;
   featured_since: string | null;
   featured_expires: string | null;

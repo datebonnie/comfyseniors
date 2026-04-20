@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
+import { createServiceClient } from "@/lib/supabase";
 
 interface ReferralResult {
   success: boolean;
@@ -34,7 +34,7 @@ export async function createFacilityReferral(
     return { success: false, error: "Facility ID required." };
   }
 
-  const supabase = createClient();
+  const supabase = createServiceClient();
 
   // Verify the facility exists and is verified
   const { data: facility } = await supabase
@@ -80,7 +80,7 @@ export async function createFacilityReferral(
  * Get all referrals for a facility.
  */
 export async function getFacilityReferrals(facilityId: string) {
-  const supabase = createClient();
+  const supabase = createServiceClient();
 
   const { data } = await supabase
     .from("facility_referrals")

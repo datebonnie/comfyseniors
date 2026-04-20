@@ -133,6 +133,20 @@ const PLANS = [
       },
     ],
   },
+  {
+    productName: "ComfySeniors Founding Member",
+    productDescription:
+      "Founding Member pricing — first 20 Bergen County facilities. Locks in $197/month for the life of the subscription, includes everything in Grow, plus the Founding Partner badge and direct-to-founder feedback line.",
+    prices: [
+      {
+        envVar: "STRIPE_FOUNDING_MONTHLY_PRICE_ID",
+        lookupKey: "comfyseniors_founding_monthly",
+        amountCents: 19700,
+        interval: "month",
+        nickname: "Founding Monthly ($197/mo)",
+      },
+    ],
+  },
 ];
 
 // ─── Helpers ───────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { createClient } from "@/lib/supabase";
+import { createServiceClient } from "@/lib/supabase";
 import { verifyUnsubscribeToken } from "@/lib/unsubscribe-token";
 
 /**
@@ -33,7 +33,9 @@ async function recordUnsubscribe(
   userAgent: string,
   ip: string
 ): Promise<{ ok: boolean; error?: string }> {
-  const supabase = createClient();
+  // Service role: insert + subsequent row reads for idempotency.
+  // The route already verifies an HMAC token before touching the DB.
+  const supabase = createServiceClient();
 
   // Upsert on unique email — if already unsubscribed, silent success
   const { error } = await supabase

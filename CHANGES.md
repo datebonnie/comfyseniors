@@ -1,219 +1,347 @@
-# Bergen County Pivot — Execution Summary
+# Trust & Credibility Sprint — Execution Plan
 
-**Status: SHIPPED.** All 8 changes from the original sprint spec are implemented and the production build passes locally.
+**Status: AWAITING APPROVAL. NO CODE WRITTEN YET.**
 
----
-
-## Addendum: Decision Engine + Search Trust Line + Direct-Contact Buttons
-
-A second sprint replaced the homepage FAQ section with a 3-step
-decision engine and made every facility card directly contactable.
-
-### Created
-| File | Purpose |
-|---|---|
-| `src/components/home/DecisionEngine.tsx` | 3-step flow on the homepage. Server component. URL-state design (`?ds=N&for=X&care=Y`) — works with JavaScript disabled because every option is a real anchor link and every progression is a real navigation. |
-
-### Modified
-| File | Change |
-|---|---|
-| `src/app/page.tsx` | **Removed** the entire "Frequently asked questions" section (and the `getTopFAQs` import). **Added** the new "Find care in 3 clicks" section wrapping `<DecisionEngine />`. searchParams type widened to include `ds`, `for`, `care`. The `/faq` route remains alive (still in footer). |
-| `src/app/search/page.tsx` | Added a lavender trust line above results: *"Showing N Bergen County facilities matching your criteria. We don't sell your info. Call any facility directly — we never see it."* `parseFilters` now accepts `budget_min` / `budget_max` as aliases for `priceMin` / `priceMax` (the DecisionEngine emits the budget_* names). |
-| `src/components/ui/FacilityCard.tsx` | New primary CTA: `<a href="tel:...">Call {facility.name}</a>` if phone exists, otherwise `Visit website` (links to `facility.website` with `target="_blank"`). The "View facility" button stays as a secondary action. **No** modal, **no** form, **no** lead gate. Phone digit-stripping for valid `tel:` href; rejects too-short numbers gracefully. |
-| `src/app/globals.css` | Added `@keyframes ds-step-in` + `.ds-step-in` utility for the per-step fade/rise animation. Honors `prefers-reduced-motion: reduce`. |
-
-### Routes affected
-- `/` — FAQ section gone; DecisionEngine in its place. Reads `?ds=`, `?for=`, `?care=`.
-- `/search` — accepts `?budget_min=` / `?budget_max=` (aliases for `priceMin/Max`); shows new trust line above results.
-- `/facility/:slug` — unchanged (FacilityCard isn't used there).
-- `/faq` — unchanged. Still linked from footer; just removed from homepage.
-
-### Constraints honored
-- ✅ No email capture introduced anywhere
-- ✅ No "Get Pricing" form gates
-- ✅ Budget filter is optional ("Not sure yet" emits no params → no filter)
-- ✅ Works without JavaScript: every step is an anchor link, every URL is a full Next.js navigation; `tel:` and `https://` links work natively in HTML.
-- ✅ Animation gracefully degrades via `prefers-reduced-motion: reduce`
-
-### Decision Engine URL spec
-| Step | URL | What's stored |
-|---|---|---|
-| 1 | `/` (or `/?ds=1`) | nothing yet |
-| 2 | `/?ds=2&for=parent` | relationship picked |
-| 3 | `/?ds=3&for=parent&care=al` | relationship + care type picked |
-| Done | `/search?type=Assisted%20Living&budget_min=5000&budget_max=7000` | final navigation to results |
-
-`care` values map to `?type=` filters:
-- `al` → `Assisted Living`
-- `mc` → `Memory Care`
-- `both` → `?type=Assisted%20Living&type=Memory%20Care` (two duplicate params)
-
-`budget` values map to `budget_min` / `budget_max`:
-- `under5` → `budget_max=5000`
-- `5-7` → `budget_min=5000&budget_max=7000`
-- `7-10` → `budget_min=7000&budget_max=10000`
-- `10plus` → `budget_min=10000`
-- `unsure` → no budget params
-
-The `relationship` value is collected for personalization (Step 2's heading uses it: *"What kind of help does your parent need?"*) but is **not** passed to `/search` — it's not a filter. Future iterations could add `?for=parent` to /search for further copy personalization.
-
-### Task 1 deployment confirmed
-Verified live via `curl https://www.comfyseniors.com/`:
-- ✅ H1: `Find Care. Feel Comfortable.`
-- ✅ Eyebrow: `New Jersey's Answer to Assisted Living`
-- ✅ Subhead: `Every licensed facility in Bergen County, with all the data you need to feel comfortable.`
-- ✅ Footer brand tagline: `Bergen County's most honest senior care directory.`
-- ✅ Footer bottom bar: `Made for Bergen County families.`
-- ✅ Nav: only `Find Care`, `About`, `For Facilities` (CTA). No Care Match Quiz. No FAQ link in nav.
-- ✅ Footer Care Types: only Assisted Living and Memory Care.
-
-### New manual follow-ups
-None. The decision engine works out of the box on deploy. No new env vars, no Stripe products, no Supabase migrations required.
+Reply **"approved"** (or with edits / answers to the open questions) and I will execute in the stated order. Until then, this file is the only thing that changes.
 
 ---
 
-## Files modified (29) and created (4)
+## TL;DR
 
-### Created
-| File | Purpose |
-|---|---|
-| `supabase/migrations/012_featured_implies_verified.sql` | Cleans existing rows + adds CHECK constraint forbidding `is_featured && !is_verified` |
-| `src/app/match/MatchClient.tsx` | The original quiz client logic (extracted from `page.tsx` so the page can become a server-side flag check) |
-| `next.config.mjs` (rewritten from empty) | 4 permanent redirects for removed care-type routes |
-| `CHANGES.md` (this file) | This summary |
+| # | Item | Files | Risk |
+|---|---|---|---|
+| A | Engagement tracking table + helper | 2 new | Low |
+| B | `/trust` page | 1 new | Low |
+| C | `/for-chains` page + lead capture | 3 new, 1 schema | Low |
+| D | `/for-facilities` widget additions (self-lookup, counter, "what we solved", dashboard preview) | 1 modified, 2-3 new components | Medium |
+| E | Founding Member tier + Stripe plan | 2 modified, 1 schema | Medium |
+| F | "Last verified" timestamps on facility pages | 2 modified, 1 schema, 1 script | Low |
+| G | Technical trust signals (footer, legal, status link) | 3 modified | Low |
+| H | `/staff/engagement` admin view | 1 new | Low |
 
-### Modified
-| File | Change |
-|---|---|
-| `src/types/database.ts` | `CareType` union narrowed to `"Assisted Living" \| "Memory Care"` |
-| `src/components/search/FilterSidebar.tsx` | `CARE_TYPES` array trimmed to active two |
-| `src/components/ui/CareTypeBadge.tsx` | Accepts `string` (legacy DB values still render with their original badge styling); falls back to default style for unknown values |
-| `src/app/care-types/[type-slug]/page.tsx` | `CARE_TYPE_MAP` trimmed; "Nationwide" → "Bergen County, NJ"; metadata Bergen-focused; bottom CTA now links to `/search?type=…` instead of `/match` |
-| `src/app/sitemap.ts` | Dropped `/match` + 4 dropped care-type slugs from output |
-| `src/components/layout/Footer.tsx` | Care Types section trimmed to 2; "Care Match Quiz" link removed; "For Admins" section removed |
-| `src/components/layout/Nav.tsx` | Trimmed to: logo + 2 plain links (Find Care, About) + 1 emphasized CTA (For Facilities). Care Match Quiz + FAQ removed |
-| `src/app/layout.tsx` | Root `metadata` (title, description, og, twitter) rewritten to Bergen County focus |
-| `src/app/page.tsx` | Full rewrite: new H1, 2 trust chips, longer trust line, 3-FAQ section, bottom facility CTA. **Deleted:** care-type pills strip, How-It-Works, Featured Facilities carousel, Why-ComfySeniors 4-card section |
-| `src/app/search/page.tsx` | Default `county = "Bergen"` when no `?county=` param; metadata updated; explicit empty `?county=` allowed as escape hatch |
-| `src/lib/queries.ts` | `getFeaturedFacilities` now filters `county = "Bergen"` AND `is_verified = true` (mirrors migration 012 invariant) |
-| `src/components/ui/SearchBar.tsx` | Default placeholder = "Search Bergen County" |
-| `src/app/match/page.tsx` | NEW server-component shell: redirects to `/search` when `NEXT_PUBLIC_ENABLE_QUIZ !== "true"`; renders `<MatchClient />` otherwise. Quiz code preserved verbatim in MatchClient.tsx |
-| `src/app/cities/[city-slug]/page.tsx` | "Take the Care Match Quiz" CTA replaced with city-specific search CTA |
-| `src/app/partners/page.tsx` | Removed "Care Match Quiz" tile (only the FAQ + Search tiles remain) |
-| `src/app/for-facilities/page.tsx` | New H1 + subhead. CTA copy → "Remove my warning". 4 pillar sections → 1 "What you get" section (6 bullets). New 2-tier pricing block (Claim $97 / Grow $297) added above the bottom CTA. Comparison table + math section unchanged. Bergen-aware copy throughout. |
-| `src/app/api/stripe/checkout/route.ts` | Added `claim_monthly` plan mapping → `STRIPE_CLAIM_MONTHLY_PRICE_ID` env var → `planTag = "claim"`. TODO comment included for the manual Stripe-Dashboard step. |
-| `src/components/ui/StripeButton.tsx` | Plan union extended to include `"claim_monthly"` |
-| `src/middleware.ts` | Extended to add HTTP Basic Auth gate on `/staff/*` and `/api/staff/*` (using `ADMIN_BASIC_AUTH_USER` + `ADMIN_BASIC_AUTH_PASS` env vars). Bypasses if vars unset to prevent first-deploy lockout. Existing `/for-facilities/dashboard` Supabase guard preserved. |
-| `src/app/auth/callback/route.ts` | Admin redirect path `/admin` → `/staff` |
-| `src/lib/admin-auth.ts` | `requireAdmin()` redirects to `/staff/login` instead of `/admin/login` |
-| `src/app/robots.ts` | Disallow list expanded: `/staff`, `/match`, `/unsubscribe`, `/auth/` (in addition to existing `/for-facilities/dashboard` + `/api/`) |
-| `src/components/ui/FacilityCard.tsx` | Defensive guard: never renders the "Featured" badge unless `is_verified` is also true. Border-color logic also follows the guard. |
-| `src/components/facility/FacilityHeader.tsx` | Same defensive guard on the facility detail page |
-| `src/app/about/page.tsx` | Metadata + hero + bottom-CTA copy → Bergen County (was "America's"). |
-| `src/app/terms/page.tsx` | Section "Who We Are" rewritten to Bergen County focus + drops enumeration of removed care types |
-| `src/app/faq/page.tsx` | Hero subtitle → Bergen County focus |
-
-### Renamed (entire directories)
-| Old path | New path |
-|---|---|
-| `src/app/admin/` | `src/app/staff/` |
-| `src/app/api/admin/` | `src/app/api/staff/` |
-
-All internal hrefs and `fetch()` URLs inside these directories were updated from `/admin*` → `/staff*` and `/api/admin/*` → `/api/staff/*`.
+**Total new files: ~11. Modified: ~12. Schema migrations: 3 (013, 014, 015).**
 
 ---
 
-## Routes affected
+## Open questions (BLOCK execution until you answer)
 
-### Permanently redirected (301)
-| Old route | New route |
-|---|---|
-| `/care-types/independent-living` | `/search?type=Assisted%20Living` |
-| `/care-types/nursing-home` | `/search?type=Assisted%20Living` |
-| `/care-types/home-care` | `/search` |
-| `/care-types/hospice` | `/search` |
+1. **Dashboard preview on `/for-facilities` (Item #4).** I confirmed the dashboard is real and functional. It shows: facility header, 3 stat cards (total inquiries / pending conversions / confirmed move-ins), and 4 quick-action tiles (View inquiries, Edit profile, View public listing, Manage subscription). **Three options:**
+   - **(a) Sanitized real screenshot:** I log in locally with a seeded test facility, take a screenshot, crop PII, check it into `public/dashboard-preview.png`. Most honest.
+   - **(b) Hand-coded static preview HTML:** A fake dashboard matching the real one's layout, rendered inline. No external image. Renders faster, reads as a "preview" rather than a screenshot.
+   - **(c) Live iframe:** Authenticity-max, but complex (auth, responsive) and you said no fabricated data, so if there's no live data yet, this is a mostly-empty dashboard. Probably not it.
+   - **My pick: (b).** Safer than a screenshot (nothing to re-capture when the dashboard changes), honest in framing ("Here's what you'll see..."), no image asset to manage. Confirm.
 
-### Renamed (no auto-redirect — `/admin/*` is now 404)
-| Old route | New route |
-|---|---|
-| `/admin` | `/staff` |
-| `/admin/login` | `/staff/login` |
-| `/admin/leads` | `/staff/leads` |
-| `/admin/leads/[id]` | `/staff/leads/[id]` |
-| `/api/admin/lead` | `/api/staff/lead` |
-| `/api/admin/lead-note` | `/api/staff/lead-note` |
+2. **Founding Member price ID** (Item #3). Should I create the $197/mo Stripe product myself via the existing `scripts/setup_stripe_products.mjs` (just add a new plan entry), OR do you want to create it manually and paste the ID? Creating via the script is idempotent and keeps the Stripe catalog in one source of truth. **My pick: let me add it to the script.** Confirm.
 
-### Newly gated
-| Route | Gate |
-|---|---|
-| `/staff/*` | HTTP Basic Auth (middleware) → magic-link auth (page-level) |
-| `/api/staff/*` | HTTP Basic Auth (middleware) → admin-email check (route handler) |
+3. **`/staff-login/engagement` URL typo.** Your spec says `/staff-login/engagement`, but the existing admin CRM lives at `/staff/*` (not `/staff-login/*` — `/staff/login` is just the login page). I'll put the new engagement view at `/staff/engagement` to match the existing routing pattern. Confirm or correct.
 
-### Soft-disabled (feature-flagged off)
-| Route | Behavior |
-|---|---|
-| `/match` | Redirects to `/search` when `NEXT_PUBLIC_ENABLE_QUIZ !== "true"`. Code preserved at `MatchClient.tsx`. |
+4. **LLC legal name footer text.** Spec says "ComfySeniors, LLC — a New Jersey limited liability company." Is the LLC actually filed yet? Last I heard you were still waiting on it. If not filed, I'll put a TODO comment in Privacy/Terms and flag it as a manual follow-up rather than putting incorrect legal text live.
 
-### Bergen-defaulted
-| Route | Default behavior |
-|---|---|
-| `/search` (no `?county=` param) | Filters to Bergen. Set `?county=` (empty) to override. |
-| `/` homepage featured query | Now Bergen-only AND requires `is_verified=true` |
+5. **Verified-at vs. verification-counter "this month" semantics.** Item #2 says "verified this month." For the Supabase query I need a `facilities.verified_at` timestamp (doesn't exist yet — currently `is_verified` is a boolean with no associated date). I'll add that column and backfill existing `is_verified=true` rows with `updated_at` as a best-effort approximation. Any new verification going forward uses `now()`. Confirm this approach, or tell me how to handle the backfill if you disagree.
+
+6. **Scope check: "Last verified" on facility pages (Item #7).** The `data_last_verified_at` column would need a script that sets it every time we run the CMS / DOH scraper. Current scrapers don't set this. I'll add the column + update the scrape scripts (`scripts/full_enrichment.py` + `scripts/import_cms_facilities.py`) to stamp it on every row touched. For the initial backfill, I'll use each facility's `updated_at`. Confirm.
 
 ---
 
-## Manual follow-ups for you
+## Execution order (after approval)
 
-### REQUIRED before next deploy is fully functional
+I'll execute in this order per your spec:
 
-| # | Action | Notes |
-|---|---|---|
-| 1 | **Run migration 012** in Supabase SQL Editor | Cleans existing `is_featured=true && is_verified=false` rows + adds CHECK constraint |
-| 2 | **Set Vercel env `NEXT_PUBLIC_ENABLE_QUIZ`** | Set to `false` (or just leave unset; default behavior is OFF). Value-of-true would re-enable `/match`. |
-| 3 | **Set Vercel env `ADMIN_BASIC_AUTH_USER` + `ADMIN_BASIC_AUTH_PASS`** | Required to lock down `/staff/*`. Without them, the basic-auth gate is bypassed (so the deploy doesn't hard-lock you out, but the staff CRM is then only protected by magic-link auth). Pick a strong unique password. |
-| 4 | **Update Supabase Auth Redirect URLs** | Add `https://www.comfyseniors.com/auth/callback?redirect=/staff` to the allow list. Old `/admin` redirect URL can be removed. |
+1. **Migration 013** — `engagement_events` table
+2. **`/trust` page**
+3. **`/for-chains` page** + migration 014 (`portfolio_leads`) + Resend email on submit
+4. **`/for-facilities` additions** — self-lookup widget + verification counter + "what we solved" section + dashboard preview
+5. **Founding Member tier** — migration 015 + Stripe script update + CTA logic + badge
+6. **Timestamps on facility pages** — columns + scrape hooks + UI
+7. **Technical signals** — footer, legal text, status page link
+8. **`/staff/engagement` admin view** — final step since it reads everything from #1
 
-### REQUIRED before $97 Claim tier works
-
-| # | Action | Notes |
-|---|---|---|
-| 5 | **Create $97/mo Stripe price** | Stripe Dashboard → Products → ComfySeniors Claim → recurring monthly $97 USD. Copy the `price_xxxxx` ID. |
-| 6 | **Set Vercel env `STRIPE_CLAIM_MONTHLY_PRICE_ID`** | Paste the price ID from step 5. Mirror to `.env.local`. Until set, clicking the "Claim my listing" button returns a 503. |
-
-### OPTIONAL but recommended
-
-| # | Action | Notes |
-|---|---|---|
-| 7 | **Review FAQ rows in `faq_questions` table** | The static page header was updated, but FAQ content is database-driven. Edit any rows that mention nursing homes / hospice / home care / independent living to be neutral or removed. |
-| 8 | **Update Plausible / Google Search Console** | Submit the new sitemap (`/sitemap.xml`) so deprecated care-type routes get re-crawled and the 301s register. |
-| 9 | **Refresh county_benchmarks table** | If county benchmarks were pre-computed nationally, the Bergen-only featured query may produce stale comparisons until you re-run `python scripts/full_enrichment.py` step5. Low priority. |
-
-### Decisions deferred (not in this sprint)
-
-- **Subdomain admin** — left as `/staff` per the "at minimum" path. If you later want `staff.comfyseniors.com` or similar: add the subdomain in Vercel + DNS, and the basic-auth middleware will continue to gate it.
-- **Admin URL slug obscurity** — went with the readable `/staff` rather than a random suffix. Combined with basic auth + magic-link + robots disallow + middleware lockout, this is sufficient defense in depth.
-- **Existing /admin/* bookmarks** — return 404. If you want to soft-redirect them to `/staff/*` for the people who already had the URL, add a one-liner redirect in `next.config.mjs`. I haven't added this because exposing `/admin → /staff` defeats the obscurity purpose.
+Each step builds on the previous; running out of order risks compile errors.
 
 ---
 
-## Build verification
+## Detailed plan per item
 
-`npm run build` passes locally. All TypeScript types resolve. All routes register. The narrowed `CareType` union flagged the legacy `CareTypeBadge` styles as a type error; resolved by widening that one component's prop to `string` while preserving the legacy style mappings (so existing facilities with old `care_types` arrays still render with the right colors).
+### A — Engagement events table (prerequisite for 1, 10)
 
-Production routes summary from the build output:
-- 4 dropped care-type slugs no longer in the route table (handled by the `next.config.mjs` redirects)
-- `/staff/*` routes present (renamed from `/admin/*`)
-- `/api/staff/*` routes present (renamed from `/api/admin/*`)
-- `/match` still in the route table — but the page server-side-redirects to `/search` unless the flag is enabled
+**New file:** `supabase/migrations/013_engagement_events.sql`
+```sql
+create table engagement_events (
+  id          uuid primary key default gen_random_uuid(),
+  event_type  text not null,           -- 'facility_self_lookup', 'cta_click_verified', 'chain_form_submit'
+  facility_id uuid references facilities(id) on delete set null,
+  metadata    jsonb default '{}'::jsonb,
+  user_agent  text,
+  ip_hash     text,                    -- sha256 truncated, not PII
+  created_at  timestamptz default now()
+);
+create index idx_engagement_events_type_created on engagement_events (event_type, created_at desc);
+create index idx_engagement_events_facility on engagement_events (facility_id)
+  where facility_id is not null;
+alter table engagement_events enable row level security;
+-- Admin reads only, anon can insert (site-originated events)
+create policy "admin reads engagement" on engagement_events for select to authenticated
+  using ((auth.jwt() ->> 'email') = 'hello@comfyseniors.com');
+create policy "anon inserts engagement" on engagement_events for insert to anon
+  with check (true);
+```
+
+**New file:** `src/lib/engagement.ts`
+- Single function `logEngagement(event_type, facilityId?, metadata?)` that wraps a Supabase insert with proper ip_hash + user_agent capture.
+- Called from the widget, CTA buttons, and the chain form.
+
+### B — `/trust` page
+
+**New file:** `src/app/trust/page.tsx`
+- Sections scaffolded per your spec:
+  1. "Who runs ComfySeniors" — `<TODO: bio placeholder — user will fill>` with prop-style comment block
+  2. "Where your data lives" — Next.js on Vercel, Supabase for DB, Stripe for billing, Resend for email, Plausible for analytics, UptimeRobot (or Better Stack) for status. Explained in plain language.
+  3. "Our commitment" — 5 slots, scaffolded with TODO markers for your final copy
+  4. "Security FAQ" — 5 questions per your suggestions (HIPAA + data sales + dashboard privacy + cancellation + hosting location)
+  5. Simple footer cross-link back to `/for-facilities` + `/contact`
+- `metadata` exports proper SEO tags; no `noindex`.
+- Reading time: ~3 minutes.
+
+**Modified:** `src/components/layout/Footer.tsx` — add "Trust" link to the Directory column.
+
+### C — `/for-chains` page
+
+**New file:** `src/app/for-chains/page.tsx` — server component with the form child.
+
+**New file:** `src/app/for-chains/PortfolioLeadForm.tsx` — client component with the 6-field form:
+- `chain_name` (text, required)
+- `total_facilities_count` (number, required, min 25)
+- `primary_state` (select: state 2-letter codes, required)
+- `contact_name` (text, required)
+- `contact_email` (email, required)
+- `contact_phone` (tel, required)
+
+**New file:** `src/app/actions/portfolio-lead.ts` — server action:
+- Validate input (min 25 facilities enforced server-side too)
+- Insert into `portfolio_leads` table
+- Call Resend: to `hello@comfyseniors.com`, subject `[Portfolio Lead] <chain_name> — <facility_count> facilities`, body includes every field
+- Log engagement event (`event_type = 'chain_form_submit'`)
+- Return `{ ok: true }` / error
+- No PII stored beyond what they explicitly volunteered. No phone of unsolicited family.
+
+**New file:** `supabase/migrations/014_portfolio_leads.sql`
+```sql
+create table portfolio_leads (
+  id                     uuid primary key default gen_random_uuid(),
+  chain_name             text not null,
+  total_facilities_count integer not null check (total_facilities_count >= 25),
+  primary_state          text not null,
+  contact_name           text not null,
+  contact_email          text not null,
+  contact_phone          text not null,
+  status                 text default 'new',  -- new | contacted | qualified | signed | dead
+  created_at             timestamptz default now()
+);
+create index idx_portfolio_leads_created on portfolio_leads (created_at desc);
+alter table portfolio_leads enable row level security;
+create policy "admin reads portfolio" on portfolio_leads for all to authenticated
+  using ((auth.jwt() ->> 'email') = 'hello@comfyseniors.com');
+create policy "anon submits portfolio" on portfolio_leads for insert to anon
+  with check (true);
+```
+
+**Modified:** `src/components/layout/Footer.tsx` — add "For Chains" link under the "For Facilities" footer column.
+
+**Page structure:**
+- Hero: "25+ facilities? We build portfolio deals."
+- Subhead: "One contract. One invoice. All your facilities, verified and saving you money."
+- 3-bullet value prop (will use placeholder copy in the same voice as `/for-facilities`: bulk pricing / dedicated rep / unified dashboard — happy to swap for copy you provide)
+- Form card
+- Thank-you state after submit — "We'll reach out within 1 business day. Meanwhile, review our [trust page]."
+
+**No pricing shown.** Explicit line: "Portfolio deals are custom-negotiated."
+
+### D — `/for-facilities` widget additions
+
+**Modified:** `src/app/for-facilities/page.tsx`
+
+Insert 4 new blocks above and below the existing pitch:
+
+1. **Self-lookup widget** (above "Right now, this is what families see when they find you" section):
+   - Heading: "Already listed? See what families see."
+   - Client-side autocomplete input that queries `/api/facilities/autocomplete?q=...` (new API route — see below)
+   - On selection, opens `/facility/:slug` in new tab + fires engagement event
+   - Shows "Can't find your facility? We might be missing it. [Email us]."
+
+2. **Live verification counter** (above the main pitch, below the hero):
+   - Server-rendered — runs the count query on every request
+   - Two display modes:
+     - If `count > 0`: "**[count] Bergen County facilities verified this month.** Most recent: [name, date], [name, date], [name, date]."
+     - If `count == 0`: "**Founding Member program: first 20 Bergen County facilities get $197/month for life.** 0/20 claimed so far." (The count that powers this is `facilities` WHERE `subscription_tier='founding'`.)
+
+3. **"What we've already solved"** (mid-page, between the comparison table and the pricing block):
+   - 4-bullet scaffold with TODO markers for your final copy
+   - Starter placeholder bullets (all TODO-marked for your replacement):
+     - "Your facility data is already imported from the NJ DOH — no manual entry"
+     - "Inquiry tracking works out of the box via unique reference codes"
+     - "We track every lead so you can see which ones convert"
+     - "Every payment runs through Stripe with zero setup on your end"
+
+4. **Dashboard preview** (between pricing and bottom CTA):
+   - Static HTML rendering that matches the real dashboard (option B from question #1)
+   - Header line: "What you'll see after claiming:"
+   - Sub-line: "Every Verified facility gets this dashboard. Sample data below."
+   - Renders a realistic facility name + plausible numbers (e.g. "Harmony House Assisted Living" — clearly fake), the 3 stat cards, the 4 quick-action tiles.
+
+**New file:** `src/app/api/facilities/autocomplete/route.ts`
+- GET handler, takes `?q=...` (min 2 chars)
+- Returns top 8 matches where `name ILIKE '%q%' AND county = 'Bergen'` (Bergen-scoped per the pivot)
+- Only returns `id`, `name`, `city`, `slug`, `is_verified` — no PII
+
+**New file:** `src/components/facility-lookup/SelfLookupWidget.tsx` — the client component (input + autocomplete dropdown + keyboard nav).
+
+**New file:** `src/components/for-facilities/VerificationCounter.tsx` — server component with the two display modes.
+
+**New file:** `src/components/for-facilities/DashboardPreview.tsx` — static preview (option B).
+
+Every CTA button on `/for-facilities` (the three "Remove my warning" / "Claim my listing" buttons) gets wrapped with the engagement logger via a new lightweight `LoggedCTA.tsx` client component that calls `/api/engagement/log` before redirecting.
+
+### E — Founding Member tier + Stripe plan
+
+**New file:** `supabase/migrations/015_subscription_tier.sql`
+```sql
+alter table facilities
+  add column if not exists subscription_tier text;  -- 'founding' | 'verified' | 'claim' | 'medicaid' | null
+alter table facilities
+  add column if not exists verified_at timestamptz;
+-- Backfill: facilities already is_verified get their updated_at as verified_at (best-effort)
+update facilities set verified_at = updated_at where is_verified = true and verified_at is null;
+create index if not exists idx_facilities_tier on facilities (subscription_tier);
+create index if not exists idx_facilities_verified_at on facilities (verified_at desc)
+  where is_verified = true;
+```
+
+**Modified:** `scripts/setup_stripe_products.mjs` — add a 4th plan entry:
+```js
+{
+  productName: "ComfySeniors Founding Member",
+  productDescription: "Founding Member pricing — first 20 Bergen County facilities. Locks in $197/month for life of subscription.",
+  prices: [{
+    envVar: "STRIPE_FOUNDING_MONTHLY_PRICE_ID",
+    lookupKey: "comfyseniors_founding_monthly",
+    amountCents: 19700,
+    interval: "month",
+    nickname: "Founding Monthly ($197/mo)",
+  }],
+}
+```
+
+**Modified:** `src/app/api/stripe/checkout/route.ts` — add `founding_monthly` to the PLANS map, mapped to `STRIPE_FOUNDING_MONTHLY_PRICE_ID`.
+
+**Modified:** `src/components/ui/StripeButton.tsx` — widen the plan union to include `"founding_monthly"`.
+
+**Modified:** `src/app/for-facilities/page.tsx` — dynamically show/hide the Founding tier:
+- Server-rendered count of `facilities` WHERE `subscription_tier = 'founding'`
+- If count < 20: render the Founding tier card with `{count}/20 claimed` counter, priced at $197/mo, button = "Claim Founding spot — $197/mo"
+- If count >= 20: hide entirely (existing Claim / Grow tiers remain)
+- **Never fabricate:** if count is 0, we show "0/20 claimed" — honest.
+
+**Modified:** `src/app/api/stripe/webhook/route.ts` — on `checkout.session.completed` where `metadata.plan === 'founding'`, set `facilities.subscription_tier = 'founding'` and `verified_at = now()`.
+
+**Modified:** `src/components/facility/FacilityHeader.tsx` — if `subscription_tier === 'founding' && is_verified`, show a small lavender "Founding Partner" badge next to the existing Verified badge.
+
+### F — Facility page timestamps (Item #7)
+
+**New file:** `supabase/migrations/016_facility_timestamps.sql`
+```sql
+alter table facilities
+  add column if not exists data_last_verified_at timestamptz,
+  add column if not exists profile_last_updated_by_admin_at timestamptz,
+  add column if not exists profile_last_updated_by_admin_name text;
+-- Backfill data_last_verified_at from updated_at for existing rows
+update facilities
+  set data_last_verified_at = updated_at
+  where data_last_verified_at is null;
+```
+
+**Modified:** `scripts/full_enrichment.py` — set `data_last_verified_at = now()` on every row touched during a scrape cycle.
+
+**Modified:** `scripts/import_cms_facilities.py` — same.
+
+**Modified:** `src/app/facility/[slug]/page.tsx` — new footer block above the similar-facilities section:
+- If `is_verified` AND `profile_last_updated_by_admin_at` is not null:
+  > "Facility-verified profile. Last updated by [profile_last_updated_by_admin_name or 'facility admin'] on [profile_last_updated_by_admin_at → MMMM d, yyyy]."
+- Else:
+  > "Facility data last verified [data_last_verified_at → MMMM d, yyyy] from the NJ Department of Health."
+
+**Modified:** `src/app/for-facilities/dashboard/profile/page.tsx` — on profile save, write `now()` to `profile_last_updated_by_admin_at` and use the logged-in email (or display name) for `profile_last_updated_by_admin_name`. This closes the loop so verified facilities actually get the live "Last updated" stamp.
+
+### G — Technical trust signals
+
+**Modified:** `src/components/layout/Footer.tsx`
+- New line in the bottom bar (below the legal links, above "Made for Bergen County families"):
+  > "Powered by Next.js, Supabase, and Stripe."
+- Added: status page link — `<a href="https://status.comfyseniors.com" target="_blank">System status</a>` — small, in the bottom row
+- If LLC is filed (Q4 above): append "— ComfySeniors, LLC, a New Jersey limited liability company." to the copyright line. If not, leave a `// TODO: LLC legal name` comment and keep the current copyright as-is.
+
+**Modified:** `src/app/privacy/page.tsx` — insert "ComfySeniors, LLC — a New Jersey limited liability company" in the opening paragraph (OR leave a TODO per Q4).
+
+**Modified:** `src/app/terms/page.tsx` — same.
+
+### H — `/staff/engagement` admin view
+
+**New file:** `src/app/staff/(secure)/engagement/page.tsx`
+- Reads from `engagement_events` table
+- Top: 4 tiles — total events in last 24h / 7d / 30d / all time
+- Table: paginated list (50/page) with columns: timestamp, event_type, facility_id (linked to `/staff/leads/{id}` if set), metadata preview (first 80 chars), user_agent truncated
+- Filter by event_type (dropdown)
+- Sort by date (default desc)
+
+**Modified:** `src/app/staff/(secure)/layout.tsx` — add "Engagement" link to the admin nav.
 
 ---
 
-## Quick sanity-check after deploy
+## Hard constraints you specified, reconfirmed
 
-1. `https://www.comfyseniors.com/` — new H1 about Bergen County; no care-type pills; no featured carousel; no How-It-Works; FAQ block + facility CTA at bottom.
-2. `https://www.comfyseniors.com/care-types/nursing-home` → 301 to `/search?type=Assisted%20Living`.
-3. `https://www.comfyseniors.com/match` → 307 to `/search` (assuming `NEXT_PUBLIC_ENABLE_QUIZ` is unset/false).
-4. `https://www.comfyseniors.com/search` — county filter pre-set to Bergen; only 2 care-type checkboxes visible.
-5. `https://www.comfyseniors.com/for-facilities` — new "Every month you're not verified..." H1; 2-tier pricing block visible; Comparison table + math section preserved; CTA button reads "Remove my warning — $297/month".
-6. `https://www.comfyseniors.com/admin` → 404. `https://www.comfyseniors.com/staff` → basic-auth prompt → magic-link login → CRM.
-7. Footer: Care Types section shows only Assisted Living + Memory Care; no "For Admins" section; no "Care Match Quiz" link.
+- ✅ No fabricated data. Verification counter has honest fallback. Founding Member counter shows real "0/20 claimed" until facilities actually pay.
+- ✅ No testimonials added.
+- ✅ Homepage untouched.
+- ✅ `/match` route untouched (still feature-flagged off).
+- ✅ Every new component renders on mobile (tested via the `sm:` / `md:` breakpoints; I verify in Chrome after deploy).
+
+## What I'm NOT doing (out of scope)
+
+- Not building the external status page itself — you configure Better Stack / UptimeRobot, I just wire the subdomain link
+- Not writing your final copy for the 5 "Our commitment" promises or the 4 "What we've already solved" bullets — scaffolded with TODOs for you
+- Not changing the existing Verified / Medicaid / Claim Stripe tiers
+- Not touching `/for-facilities/medicaid` (dedicated page, separate funnel)
+- Not touching the 3-step decision engine on the homepage
+
+---
+
+## Manual follow-ups for you (post-deploy)
+
+1. **Supabase SQL Editor:** Run migrations 013, 014, 015, 016 (I'll provide the exact copy-paste SQL after execution).
+2. **Stripe price:** After I update `setup_stripe_products.mjs`, re-run it once to create the $197/mo Founding product, then add `STRIPE_FOUNDING_MONTHLY_PRICE_ID` to `.env.local` and Vercel.
+3. **Status page external service:** Sign up for [Better Stack](https://betterstack.com/uptime) (free tier) or [UptimeRobot](https://uptimerobot.com) (free tier). Add the comfyseniors.com + /api/stripe/checkout + /api/webhooks/resend endpoints as monitors. Create a public status page at the provider's generated URL.
+4. **Subdomain `status.comfyseniors.com`:** In whoever hosts your DNS, add a CNAME from `status.comfyseniors.com` to the URL the status page provider gives you. Wait for DNS propagation (~15 min).
+5. **LLC legal name:** Once your New Jersey LLC is filed, tell me the exact registered name so I can swap the TODO placeholders in Privacy, Terms, and Footer.
+6. **"Our commitment" copy + "What we've already solved" copy:** Provide your 5 promises + 4 bullet items; I swap them in.
+7. **Bio + headshot for `/trust`:** Drop a bio paragraph + headshot URL (or a file path) and I'll wire them in.
+8. **First real testimonials:** Once you have 1-3 quotes from real early-signed facilities, send them and I'll add a testimonial block on `/for-facilities`. (Not part of this sprint.)
+
+---
+
+## Smoke test checklist (post-deploy, I'll run via curl + browser)
+
+1. `/for-facilities` renders; self-lookup widget accepts input and shows matches; clicking a match opens facility page in new tab
+2. `/for-facilities` verification counter shows either "N verified this month" OR "0/20 claimed" (whichever is accurate)
+3. `/for-facilities` Founding tier card renders if count < 20, hidden when ≥ 20
+4. `/for-chains` renders; form validates; submit writes to `portfolio_leads`; email arrives at hello@comfyseniors.com
+5. `/trust` renders and is linked from footer
+6. Facility page shows a "Last verified" line at the bottom in the correct mode (DOH vs. admin)
+7. Footer shows "Powered by Next.js, Supabase, and Stripe" and "System status" link
+8. `/staff/engagement` requires basic-auth + magic-link; shows the table once events exist
+9. Logging in to `/for-facilities/dashboard/profile` and saving updates `profile_last_updated_by_admin_at` — I can verify this via the live facility page showing the new date
+10. `/admin` returns 404 (safety check — no regression from earlier Bergen pivot)
+
+Failures I find, I fix before handoff.
+
+---
+
+**Reply "approved" and I'll execute in the stated order.** If you're answering the 6 open questions above, best format is `Q1: b, Q2: yes, Q3: /staff/engagement, Q4: not filed yet, Q5: approach OK, Q6: OK` — or prose is fine.

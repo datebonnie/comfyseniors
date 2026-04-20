@@ -232,7 +232,10 @@ export async function GET(req: NextRequest) {
   }
 
   const resendKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "hello@comfyseniors.com";
+  // Warmup is part of the cold-outreach reputation pipeline — always
+  // send from the outreach FROM, never the transactional one.
+  const fromEmail =
+    process.env.RESEND_FROM_EMAIL_OUTREACH || "hello@comfyseniors.com";
 
   if (!resendKey) {
     return NextResponse.json(

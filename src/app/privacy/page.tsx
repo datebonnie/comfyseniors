@@ -36,13 +36,20 @@ export default function PrivacyPage() {
           </div>
 
           <div className="mt-10 space-y-8 text-cs-body">
+            {/* TODO (post-LLC filing): replace the sentence below with
+                "ComfySeniors is operated by ComfySeniors, LLC, a New
+                Jersey limited liability company formed [DATE], registered
+                agent [AGENT], NJ Business Registration [BRC]." Pending
+                certificate of formation — interim language below
+                intentionally avoids incorrect legal claims. */}
             <Section title="1. Who We Are">
               <p>
                 ComfySeniors.com (&ldquo;<strong>ComfySeniors</strong>,&rdquo;
                 &ldquo;<strong>we</strong>,&rdquo; &ldquo;<strong>us</strong>&rdquo;)
-                is an independent senior care directory. This Privacy Policy
-                explains what information we collect, how we use it, and
-                your rights. By using our site, you agree to this policy.
+                is an independent senior care directory, currently operated
+                as a New Jersey business. This Privacy Policy explains what
+                information we collect, how we use it, and your rights. By
+                using our site, you agree to this policy.
               </p>
             </Section>
 

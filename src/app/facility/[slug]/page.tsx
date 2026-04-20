@@ -264,6 +264,45 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
           </div>
         </div>
 
+        {/* ─── Last verified timestamps ───
+            Display logic honors the is_estimated flags: backfilled rows
+            show the source without a date (since the date is a proxy,
+            not a real event). Rows with real timestamps show the date. */}
+        <div className="mt-8 border-t border-cs-border pt-6 text-center">
+          {facility.is_verified &&
+          facility.profile_last_updated_by_admin_at ? (
+            <p className="text-xs text-cs-muted">
+              Facility-verified profile. Last updated by{" "}
+              <span className="text-cs-blue-dark">
+                {facility.profile_last_updated_by_admin_name || "facility admin"}
+              </span>{" "}
+              on{" "}
+              {new Date(
+                facility.profile_last_updated_by_admin_at
+              ).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+              .
+            </p>
+          ) : facility.data_last_verified_at &&
+            facility.data_last_verified_at_is_estimated === false ? (
+            <p className="text-xs text-cs-muted">
+              Facility data last verified{" "}
+              {new Date(facility.data_last_verified_at).toLocaleDateString(
+                "en-US",
+                { year: "numeric", month: "long", day: "numeric" }
+              )}{" "}
+              from the NJ Department of Health.
+            </p>
+          ) : (
+            <p className="text-xs text-cs-muted">
+              Facility data from the NJ Department of Health.
+            </p>
+          )}
+        </div>
+
         {/* Similar facilities */}
         <SimilarFacilities facilities={similar} />
       </div>

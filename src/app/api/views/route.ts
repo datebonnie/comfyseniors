@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase";
+import { createServiceClient } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   const { facilityId } = await req.json();
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing facilityId" }, { status: 400 });
   }
 
-  const supabase = createClient();
+  const supabase = createServiceClient();
   const now = new Date();
   const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ count: 0 });
   }
 
-  const supabase = createClient();
+  const supabase = createServiceClient();
 
   const { data } = await supabase
     .from("facility_views")

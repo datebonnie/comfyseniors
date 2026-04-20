@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { createClient } from "@/lib/supabase";
+import { createServiceClient } from "@/lib/supabase";
 
 /**
  * Resend webhook receiver.
@@ -116,7 +116,9 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Invalid JSON", { status: 400 });
   }
 
-  const supabase = createClient();
+  // Service role: webhook handler runs server-side with a verified
+  // Svix signature above. Updates email_sends under privileged access.
+  const supabase = createServiceClient();
   const emailId = event.data.email_id;
 
   if (!emailId) {
