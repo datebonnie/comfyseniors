@@ -34,3 +34,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python (scripts/)
+__pycache__/
+*.pyc
+
+# data exports — large CSVs from scripts/, never commit
+*.csv
+!supabase/seed/**/*.csv
+
+# campaign send log — local state, never commit
+scripts/email_sent_log.json
