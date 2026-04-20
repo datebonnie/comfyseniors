@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 };
 
 const navLinks = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/leads", label: "Leads" },
+  { href: "/staff", label: "Overview" },
+  { href: "/staff/leads", label: "Leads" },
 ];
 
 export default async function AdminLayout({
@@ -27,7 +27,7 @@ export default async function AdminLayout({
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
             <Link
-              href="/admin"
+              href="/staff"
               className="font-display text-lg font-semibold text-cs-blue-dark"
             >
               CS Admin

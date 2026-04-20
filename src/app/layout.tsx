@@ -19,13 +19,15 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://comfyseniors.com"),
-  title: "ComfySeniors — America's Most Honest Senior Care Directory",
+  title:
+    "Bergen County, NJ Assisted Living and Memory Care — ComfySeniors",
   description:
-    "Find every licensed senior care facility in the US with real prices, state inspection records, and unfiltered reviews. No pressure. No lead selling.",
+    "Bergen County, NJ assisted living and memory care — verified listings, real prices, no phone harvesting.",
   openGraph: {
-    title: "ComfySeniors — America's Most Honest Senior Care Directory",
+    title:
+      "Bergen County, NJ Assisted Living and Memory Care — ComfySeniors",
     description:
-      "Every licensed senior care facility with real prices, state inspection records, and unfiltered reviews. We never sell your number.",
+      "Bergen County, NJ assisted living and memory care — verified listings, real prices, no phone harvesting.",
     url: "https://comfyseniors.com",
     siteName: "ComfySeniors",
     type: "website",
@@ -33,9 +35,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ComfySeniors — America's Most Honest Senior Care Directory",
+    title:
+      "Bergen County, NJ Assisted Living and Memory Care — ComfySeniors",
     description:
-      "Real prices. Real records. No pressure. Every licensed senior care facility.",
+      "Bergen County, NJ assisted living and memory care — verified listings, real prices, no phone harvesting.",
     site: "@comfyseniors",
     creator: "@comfyseniors",
   },

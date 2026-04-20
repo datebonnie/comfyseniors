@@ -42,12 +42,11 @@ export default function TermsPage() {
             <Section title="1. Who We Are">
               <p>
                 ComfySeniors is an independent, privately-owned directory of
-                senior care facilities in the United States. We help families
-                research assisted living, memory care, nursing homes,
-                independent living, home care, and hospice care providers. We
-                are <strong>not</strong> a healthcare provider, a licensed
-                placement agency, a medical professional, or a government
-                agency.
+                assisted living and memory care facilities in Bergen County,
+                New Jersey. We help families research, compare, and contact
+                senior care facilities. We are <strong>not</strong> a
+                healthcare provider, a licensed placement agency, a medical
+                professional, or a government agency.
               </p>
             </Section>
 

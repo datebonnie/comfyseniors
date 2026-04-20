@@ -3,7 +3,11 @@
 import { useState } from "react";
 
 interface StripeButtonProps {
-  plan: "verified_monthly" | "verified_annual" | "medicaid_monthly";
+  plan:
+    | "verified_monthly"
+    | "verified_annual"
+    | "medicaid_monthly"
+    | "claim_monthly";
   className?: string;
   children: React.ReactNode;
 }

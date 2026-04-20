@@ -3,7 +3,6 @@ import Link from "next/link";
 const footerLinks = {
   Directory: [
     { href: "/search", label: "Find Care" },
-    { href: "/match", label: "Care Match Quiz" },
     { href: "/faq", label: "FAQ" },
     { href: "/about", label: "About Us" },
     { href: "/contact", label: "Contact" },
@@ -11,10 +10,6 @@ const footerLinks = {
   "Care Types": [
     { href: "/care-types/assisted-living", label: "Assisted Living" },
     { href: "/care-types/memory-care", label: "Memory Care" },
-    { href: "/care-types/independent-living", label: "Independent Living" },
-    { href: "/care-types/nursing-home", label: "Nursing Home" },
-    { href: "/care-types/home-care", label: "Home Care" },
-    { href: "/care-types/hospice", label: "Hospice" },
   ],
 };
 
@@ -22,8 +17,6 @@ const facilityLinks = [
   { href: "/for-facilities", label: "Get Listed" },
   { href: "/for-facilities/dashboard", label: "Facility Dashboard" },
 ];
-
-const adminLinks = [{ href: "/admin/login", label: "Admin Login" }];
 
 const socialLinks = [
   {
@@ -108,25 +101,11 @@ export default function Footer() {
             </div>
           ))}
 
-          {/* Facilities + Admins column */}
+          {/* For Facilities column */}
           <div>
             <h4 className="label mb-3 text-white">For Facilities</h4>
             <ul className="flex flex-col gap-2">
               {facilityLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[#8B9EC7] transition-colors hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <h4 className="label mb-3 mt-6 text-white">For Admins</h4>
-            <ul className="flex flex-col gap-2">
-              {adminLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

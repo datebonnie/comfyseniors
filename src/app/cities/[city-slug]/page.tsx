@@ -249,13 +249,14 @@ export default async function CityPage({ params }: CityPageProps) {
       <section className="bg-cs-lavender-mist py-10 sm:py-14">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-3 font-display text-xl font-normal text-cs-blue-dark">
-            Not sure which type of care you need?
+            Browse senior care in {cityName}
           </h2>
           <p className="mb-6 text-sm text-cs-muted">
-            Take our 60-second quiz to find your best match in {cityName}.
+            Compare every licensed facility with real prices, inspection
+            records, and unfiltered reviews.
           </p>
-          <Button href="/match" size="lg">
-            Take the Care Match Quiz
+          <Button href={`/search?city=${encodeURIComponent(cityName)}`} size="lg">
+            See all facilities in {cityName}
           </Button>
         </div>
       </section>

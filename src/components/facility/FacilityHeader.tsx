@@ -17,9 +17,12 @@ export default function FacilityHeader({
 }: FacilityHeaderProps) {
   return (
     <div>
-      {/* Badges row */}
+      {/* Badges row — guard against the (DB-impossible-but-defensive)
+          state of featured + not-verified by suppressing the Featured
+          badge unless verification is also in place. Mirrors the CHECK
+          constraint chk_featured_implies_verified from migration 012. */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        {facility.is_featured && (
+        {facility.is_featured && facility.is_verified && (
           <span className="label inline-block rounded-full bg-cs-blue px-2.5 py-1 text-[11px] text-white">
             Featured
           </span>

@@ -3,9 +3,10 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import Button from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-  title: "About Us — ComfySeniors | America's Most Honest Senior Care Directory",
+  title:
+    "About Us — ComfySeniors | Bergen County Assisted Living & Memory Care",
   description:
-    "Why we built ComfySeniors: real prices, real inspection records, and zero phone harvesting. The honest alternative to referral-based directories.",
+    "Why we built ComfySeniors: real prices, real inspection records, and zero phone harvesting for Bergen County, NJ assisted living and memory care.",
 };
 
 const promises = [
@@ -35,8 +36,8 @@ export default function AboutPage() {
             About ComfySeniors
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-cs-muted">
-            America&apos;s most honest senior care directory. Built for
-            families, not facilities.
+            The most honest senior care directory in Bergen County, NJ.
+            Built for families, not facilities.
           </p>
         </div>
       </section>
@@ -270,7 +271,8 @@ export default function AboutPage() {
             Ready to find the right care?
           </h2>
           <p className="mb-6 text-cs-muted">
-            Browse every licensed facility in the United States — no account needed.
+            Browse every licensed assisted living and memory care facility
+            in Bergen County — no account needed.
           </p>
           <Button href="/search" size="lg">
             Start searching

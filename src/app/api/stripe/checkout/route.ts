@@ -18,6 +18,14 @@ const PLANS = {
     envVar: "STRIPE_MEDICAID_MONTHLY_PRICE_ID",
     planTag: "medicaid",
   },
+  // TODO: Manually create $97/mo recurring price in Stripe Dashboard
+  // (Products → ComfySeniors Claim → $97 USD monthly), then set
+  // STRIPE_CLAIM_MONTHLY_PRICE_ID in Vercel + .env.local. Until set,
+  // this endpoint returns 503 for plan=claim_monthly.
+  claim_monthly: {
+    envVar: "STRIPE_CLAIM_MONTHLY_PRICE_ID",
+    planTag: "claim",
+  },
 } as const;
 
 type PlanKey = keyof typeof PLANS;

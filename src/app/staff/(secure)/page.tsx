@@ -122,7 +122,7 @@ export default async function AdminOverviewPage() {
           label="Overdue follow-ups"
           value={overdueFollowups.toLocaleString()}
           accent={overdueFollowups > 0 ? "red" : "muted"}
-          href="/admin/leads?followup=overdue"
+          href="/staff/leads?followup=overdue"
         />
         <BigStat
           label="Reachable (have email on file)"
@@ -188,7 +188,7 @@ export default async function AdminOverviewPage() {
           {STATUSES.map((s) => (
             <Link
               key={s.key}
-              href={`/admin/leads?status=${s.key}`}
+              href={`/staff/leads?status=${s.key}`}
               className="rounded-card border border-cs-border bg-white p-4 transition-colors hover:border-cs-blue"
             >
               <span
@@ -210,16 +210,16 @@ export default async function AdminOverviewPage() {
           Common views
         </h2>
         <div className="flex flex-wrap gap-2">
-          <QuickLink href="/admin/leads">All leads</QuickLink>
-          <QuickLink href="/admin/leads?status=new">New (uncontacted)</QuickLink>
-          <QuickLink href="/admin/leads?status=replied">Replied — chase!</QuickLink>
-          <QuickLink href="/admin/leads?followup=overdue">
+          <QuickLink href="/staff/leads">All leads</QuickLink>
+          <QuickLink href="/staff/leads?status=new">New (uncontacted)</QuickLink>
+          <QuickLink href="/staff/leads?status=replied">Replied — chase!</QuickLink>
+          <QuickLink href="/staff/leads?followup=overdue">
             Overdue follow-ups
           </QuickLink>
-          <QuickLink href="/admin/leads?segment=medicaid">
+          <QuickLink href="/staff/leads?segment=medicaid">
             Medicare/Medicaid only
           </QuickLink>
-          <QuickLink href="/admin/leads?status=paying">
+          <QuickLink href="/staff/leads?status=paying">
             Paying customers
           </QuickLink>
         </div>

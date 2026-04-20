@@ -47,7 +47,7 @@ export default function LeadActions(props: Props) {
     setError(null);
 
     try {
-      const res = await fetch("/api/admin/lead", {
+      const res = await fetch("/api/staff/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -18,10 +18,17 @@ export async function getFeaturedFacilities(
 ): Promise<FacilityWithStats[]> {
   const supabase = createClient();
 
+  // Bergen-only featured pool — even if the homepage carousel is gone,
+  // /search still uses this elsewhere and we want consistency.
+  // Also enforce the integrity invariant in code: featured implies
+  // verified. Belt-and-suspenders alongside the DB CHECK constraint
+  // from migration 012.
   const { data: facilities } = await supabase
     .from("facilities")
     .select("*")
     .eq("is_featured", true)
+    .eq("is_verified", true)
+    .eq("county", "Bergen")
     .order("featured_since", { ascending: false })
     .limit(limit);
 

@@ -35,11 +35,11 @@ export async function GET(request: NextRequest) {
     const { data } = await supabase.auth.exchangeCodeForSession(code);
 
     // If no explicit redirect was requested, route by user role:
-    // - Admin email → /admin
+    // - Admin email → /staff
     // - Anyone else → /for-facilities/dashboard
     if (!explicitRedirect && data?.user?.email) {
       if (data.user.email.toLowerCase() === ADMIN_EMAIL) {
-        redirectPath = "/admin";
+        redirectPath = "/staff";
       }
     }
   }

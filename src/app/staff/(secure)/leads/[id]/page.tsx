@@ -138,7 +138,7 @@ export default async function LeadDetailPage({
     <div className="space-y-6">
       <div>
         <Link
-          href="/admin/leads"
+          href="/staff/leads"
           className="text-xs text-cs-muted hover:text-cs-blue-dark"
         >
           ← Back to leads

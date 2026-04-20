@@ -143,7 +143,7 @@ export default async function LeadsListPage({
           </p>
         </div>
         <Link
-          href="/admin/leads"
+          href="/staff/leads"
           className="rounded-btn border border-cs-border bg-white px-3 py-1.5 text-xs font-medium text-cs-body transition-colors hover:border-cs-blue"
         >
           Clear filters
@@ -152,7 +152,7 @@ export default async function LeadsListPage({
 
       {/* Filter bar */}
       <form
-        action="/admin/leads"
+        action="/staff/leads"
         method="GET"
         className="flex flex-wrap items-end gap-3 rounded-card border border-cs-border bg-white p-4"
       >
@@ -259,7 +259,7 @@ export default async function LeadsListPage({
                   <tr key={r.id} className="border-b border-cs-border hover:bg-cs-blue-light/30">
                     <td className="px-4 py-3">
                       <Link
-                        href={`/admin/leads/${r.id}`}
+                        href={`/staff/leads/${r.id}`}
                         className="font-medium text-cs-blue-dark hover:underline"
                       >
                         {r.name}
@@ -299,7 +299,7 @@ export default async function LeadsListPage({
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link
-                        href={`/admin/leads/${r.id}`}
+                        href={`/staff/leads/${r.id}`}
                         className="text-xs font-medium text-cs-blue hover:underline"
                       >
                         Open →
@@ -353,7 +353,7 @@ function PaginationLink({
   params.set("page", String(page));
   return (
     <Link
-      href={`/admin/leads?${params.toString()}`}
+      href={`/staff/leads?${params.toString()}`}
       className="rounded-btn border border-cs-border bg-white px-3 py-1.5 font-medium text-cs-blue-dark hover:border-cs-blue"
     >
       {children}

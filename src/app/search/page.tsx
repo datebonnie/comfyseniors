@@ -13,9 +13,9 @@ import {
 } from "@/lib/queries";
 
 export const metadata: Metadata = {
-  title: "Find Senior Care — ComfySeniors",
+  title: "Bergen County Assisted Living & Memory Care — ComfySeniors",
   description:
-    "Search and compare every licensed senior care facility. Filter by care type, price, location, and inspection record.",
+    "Search every licensed assisted living and memory care facility in Bergen County, NJ. Real prices, state inspection records, unfiltered reviews.",
 };
 
 const PER_PAGE = 20;
@@ -23,6 +23,11 @@ const PER_PAGE = 20;
 interface SearchPageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
+
+// Default county for the Bergen-County-only pivot. Users can override
+// by explicitly setting ?county=Foo, but the bare /search lands in
+// Bergen.
+const DEFAULT_COUNTY = "Bergen";
 
 function parseFilters(searchParams: SearchPageProps["searchParams"]): SearchFilters {
   const getStr = (key: string): string | undefined => {
@@ -37,10 +42,20 @@ function parseFilters(searchParams: SearchPageProps["searchParams"]): SearchFilt
     return [];
   };
 
+  // Honor an explicit empty county (?county=) as "all counties" — that
+  // way users CAN escape the default if they actively want to.
+  const countyParam = searchParams["county"];
+  const county =
+    countyParam === undefined
+      ? DEFAULT_COUNTY
+      : typeof countyParam === "string"
+        ? countyParam
+        : undefined;
+
   return {
     q: getStr("q"),
     careTypes: getArr("type").filter(Boolean) as CareType[],
-    county: getStr("county"),
+    county,
     city: getStr("city"),
     priceMin: getStr("priceMin") ? Number(getStr("priceMin")) : undefined,
     priceMax: getStr("priceMax") ? Number(getStr("priceMax")) : undefined,

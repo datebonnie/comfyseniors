@@ -23,26 +23,6 @@ const CARE_TYPE_MAP: Record<string, { label: CareType; description: string }> = 
     description:
       "Memory care facilities specialize in caring for seniors with Alzheimer's disease, dementia, and other cognitive impairments. They offer secure environments, structured routines, and staff trained in dementia care techniques.",
   },
-  "independent-living": {
-    label: "Independent Living",
-    description:
-      "Independent living communities are for active seniors who want a maintenance-free lifestyle with social activities and amenities. Residents live in private apartments or cottages with optional dining, housekeeping, and transportation services.",
-  },
-  "nursing-home": {
-    label: "Nursing Home",
-    description:
-      "Nursing homes (skilled nursing facilities) provide 24/7 medical supervision by licensed nurses for seniors with serious health conditions, chronic illnesses, or those recovering from surgery or hospitalization.",
-  },
-  "home-care": {
-    label: "Home Care",
-    description:
-      "Home care agencies provide in-home assistance for seniors who want to age in place. Services include personal care, companionship, meal preparation, medication reminders, light housekeeping, and transportation.",
-  },
-  "hospice": {
-    label: "Hospice",
-    description:
-      "Hospice care provides comfort, dignity, and support for people with terminal illnesses and their families. Services include pain management, emotional counseling, spiritual care, and family support — delivered at home, in a hospice facility, or in a hospital.",
-  },
 };
 
 async function getCareTypeFacilities(careType: CareType) {
@@ -99,8 +79,8 @@ export async function generateMetadata({
   if (!config) return { title: "Care Type — ComfySeniors" };
 
   return {
-    title: `${config.label} — Facilities & Pricing | ComfySeniors`,
-    description: `Find licensed ${config.label.toLowerCase()} facilities nationwide. Compare prices, reviews, and state inspection records. ${config.description.slice(0, 100)}`,
+    title: `${config.label} in Bergen County, NJ — ComfySeniors`,
+    description: `Find licensed ${config.label.toLowerCase()} facilities in Bergen County, NJ. Real prices, state inspection records, unfiltered reviews. ${config.description.slice(0, 100)}`,
   };
 }
 
@@ -163,7 +143,7 @@ export default async function CareTypePage({ params }: CareTypePageProps) {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="label mb-2 text-cs-lavender">Care type guide</p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            {config.label} Nationwide
+            {config.label} in Bergen County, NJ
           </h1>
           <p className="mt-4 max-w-2xl text-cs-body leading-relaxed">
             {config.description}
@@ -287,14 +267,17 @@ export default async function CareTypePage({ params }: CareTypePageProps) {
       <section className="bg-cs-lavender-mist py-10 sm:py-14">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-3 font-display text-xl font-normal text-cs-blue-dark">
-            Not sure if {config.label.toLowerCase()} is right?
+            Browse {config.label.toLowerCase()} in Bergen County
           </h2>
           <p className="mb-6 text-sm text-cs-muted">
-            Take our 60-second quiz and we&apos;ll match you with the best care
-            type for your situation.
+            Compare every licensed facility with real prices, inspection
+            records, and unfiltered reviews.
           </p>
-          <Button href="/match" size="lg">
-            Take the Care Match Quiz
+          <Button
+            href={`/search?type=${encodeURIComponent(config.label)}`}
+            size="lg"
+          >
+            See all {config.label.toLowerCase()}
           </Button>
         </div>
       </section>

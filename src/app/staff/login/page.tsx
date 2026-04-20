@@ -1,5 +1,12 @@
 "use client";
 
+// NOTE: noindex meta is set via /staff/(secure)/layout.tsx which wraps
+// this route's siblings, but the login page sits OUTSIDE that group.
+// Belt-and-suspenders: middleware.ts rejects unauthenticated requests
+// to /staff/* via Basic Auth, AND /robots.ts disallows the path.
+// Bots that ignore robots.txt also can't reach this page without basic
+// auth credentials.
+
 import { useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import PageWrapper from "@/components/layout/PageWrapper";
@@ -26,7 +33,7 @@ export default function AdminLoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?redirect=/admin`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?redirect=/staff`,
       },
     });
 

@@ -38,17 +38,21 @@ export default function FacilityCard({
   // "Best for" label based on data
   const bestForLabel = getBestForLabel(facility);
 
+  // Integrity guard (matches DB CHECK constraint chk_featured_implies_verified
+  // from migration 012). If the DB invariant is ever violated, never render
+  // both "Featured" and "Not Verified" simultaneously — the Featured badge
+  // is suppressed because the Verified badge is its prerequisite.
+  const showFeatured = is_featured && is_verified;
+
   return (
     <div
       className={`rounded-card bg-white p-5 transition-shadow hover:shadow-md sm:p-6 ${
-        is_featured
-          ? "border-2 border-cs-blue"
-          : "border border-cs-border"
+        showFeatured ? "border-2 border-cs-blue" : "border border-cs-border"
       } ${className}`}
     >
       {/* Top row: badges */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        {is_featured && (
+        {showFeatured && (
           <span className="label inline-block rounded-full bg-cs-blue px-2.5 py-1 text-[11px] text-white">
             Featured
           </span>

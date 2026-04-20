@@ -179,15 +179,6 @@ export default function PartnersPage() {
               </Button>
             </div>
             <div className="rounded-card border border-cs-border bg-white p-5 text-center">
-              <p className="font-semibold text-cs-blue-dark">Care Match Quiz</p>
-              <p className="mt-1 text-xs text-cs-muted">
-                60-second matching tool
-              </p>
-              <Button href="/match" variant="ghost" size="sm" className="mt-3">
-                Open
-              </Button>
-            </div>
-            <div className="rounded-card border border-cs-border bg-white p-5 text-center">
               <p className="font-semibold text-cs-blue-dark">FAQ Hub</p>
               <p className="mt-1 text-xs text-cs-muted">
                 AI-powered answers

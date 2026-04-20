@@ -21,7 +21,7 @@ export default function NoteFormClient({ facilityId }: Props) {
     setError(null);
 
     try {
-      const res = await fetch("/api/admin/lead-note", {
+      const res = await fetch("/api/staff/lead-note", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

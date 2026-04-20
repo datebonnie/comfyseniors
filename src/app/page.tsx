@@ -1,75 +1,21 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import PageWrapper from "@/components/layout/PageWrapper";
 import SearchBar from "@/components/ui/SearchBar";
-import FacilityCard from "@/components/ui/FacilityCard";
 import FAQAccordion from "@/components/ui/FAQAccordion";
 import Button from "@/components/ui/Button";
-import type { CareType } from "@/types";
-import {
-  getFeaturedFacilities,
-  getTopFAQs,
-  getFacilityCount,
-} from "@/lib/queries";
+import { getTopFAQs } from "@/lib/queries";
 
 export const metadata: Metadata = {
-  title: "ComfySeniors — America's Most Honest Senior Care Directory",
+  title:
+    "Bergen County, NJ Assisted Living and Memory Care — ComfySeniors",
   description:
-    "Find every licensed senior care facility with real prices, state inspection records, and unfiltered reviews. No pressure. No lead selling.",
+    "Bergen County, NJ assisted living and memory care — verified listings, real prices, no phone harvesting.",
 };
 
-const careTypes: { type: CareType; slug: string }[] = [
-  { type: "Assisted Living", slug: "Assisted Living" },
-  { type: "Memory Care", slug: "Memory Care" },
-  { type: "Independent Living", slug: "Independent Living" },
-  { type: "Nursing Home", slug: "Nursing Home" },
-  { type: "Home Care", slug: "Home Care" },
-  { type: "Hospice", slug: "Hospice" },
-];
-
-const trustItems = [
-  "Thousands of facilities listed",
+const trustChips = [
   "Real prices shown",
-  "We never sell your number",
   "State inspection records included",
-];
-
-const steps = [
-  {
-    num: "01",
-    title: "Search or browse",
-    desc: "Find facilities by location, care type, or budget. No signup needed — ever.",
-  },
-  {
-    num: "02",
-    title: "Compare side by side",
-    desc: "See real prices, reviews, and state inspection records for every facility.",
-  },
-  {
-    num: "03",
-    title: "Contact on your terms",
-    desc: "Reach out directly to facilities when you're ready. We never share your info.",
-  },
-];
-
-const differentiators = [
-  {
-    title: "Real prices listed",
-    desc: "No hidden pricing. See actual monthly costs on every listing.",
-  },
-  {
-    title: "Zero phone harvesting",
-    desc: "We never collect, store, or sell your phone number or email.",
-  },
-  {
-    title: "Federal inspection records",
-    desc: "Every facility shows its citation history from federal and state health departments.",
-  },
-  {
-    title: "Unfiltered reviews",
-    desc: "All reviews are published — positive and negative. No suppression, ever.",
-  },
 ];
 
 export default async function HomePage({
@@ -90,25 +36,12 @@ export default async function HomePage({
     redirect(`/auth/callback?${params.toString()}`);
   }
 
-  let featuredFacilities: Awaited<ReturnType<typeof getFeaturedFacilities>> = [];
   let faqItems: Awaited<ReturnType<typeof getTopFAQs>> = [];
-  let facilityCount = 0;
-
   try {
-    [featuredFacilities, faqItems, facilityCount] = await Promise.all([
-      getFeaturedFacilities(3),
-      getTopFAQs(3),
-      getFacilityCount(),
-    ]);
+    faqItems = await getTopFAQs(3);
   } catch {
-    // If Supabase is not configured, render with empty data
+    // If Supabase is not configured, render with empty FAQ
   }
-
-  const trustDisplay = trustItems.map((text) =>
-    text.includes("700+") && facilityCount > 0
-      ? `${facilityCount.toLocaleString()}+ facilities listed`
-      : text
-  );
 
   return (
     <PageWrapper>
@@ -116,22 +49,24 @@ export default async function HomePage({
       <section className="bg-cs-blue-light py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <p className="label mb-3 text-cs-lavender">
-            America&apos;s senior care directory
+            Bergen County, NJ
           </p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            Find Care. Feel Comfortable.
+            Find assisted living in Bergen County. Real prices. Real
+            inspection records.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-[1.65] text-cs-body">
-            Every licensed senior care facility &mdash; real prices, inspection
-            records, and we never sell your number. Browse at your own pace.
+            Every licensed facility. Verified or not, we tell you which.
+            We never sell your number.
           </p>
+
           <div className="mx-auto mt-8 max-w-xl">
-            <SearchBar size="lg" />
+            <SearchBar size="lg" placeholder="Search Bergen County" />
           </div>
 
-          {/* Trust strip */}
+          {/* Trust chips */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {trustDisplay.map((text) => (
+            {trustChips.map((text) => (
               <span
                 key={text}
                 className="flex items-center gap-1.5 text-xs text-cs-muted"
@@ -141,110 +76,15 @@ export default async function HomePage({
               </span>
             ))}
           </div>
+
+          <p className="mx-auto mt-3 max-w-xl text-xs text-cs-muted">
+            Every licensed assisted living and memory care facility in
+            Bergen County — we tell you which ones are verified.
+          </p>
         </div>
       </section>
 
-      {/* ─── CARE TYPE STRIP ─── */}
-      <section className="border-b border-cs-border bg-white py-5">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-3 px-4">
-          {careTypes.map(({ type, slug }) => (
-            <Link
-              key={type}
-              href={`/search?type=${encodeURIComponent(slug)}`}
-              className="rounded-pill border-[1.5px] border-cs-border-blue bg-cs-blue-light px-4 py-2 text-sm font-medium text-cs-blue transition-colors hover:bg-cs-blue hover:text-white"
-            >
-              {type}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── HOW IT WORKS ─── */}
-      <section className="border-b border-cs-border bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <span className="label text-cs-lavender">How it works</span>
-            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              Three steps. No pressure.
-            </h2>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            {steps.map((step) => (
-              <div
-                key={step.num}
-                className="rounded-pill border border-cs-border bg-cs-lavender-mist p-6 sm:p-8"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-cs-blue text-xs font-semibold text-white">
-                  {step.num}
-                </span>
-                <h3 className="mt-4 font-sans text-lg font-semibold text-cs-blue-dark">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-cs-muted">
-                  {step.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── FEATURED FACILITIES ─── */}
-      {featuredFacilities.length > 0 && (
-        <section className="bg-cs-lavender-mist py-16 sm:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 text-center">
-              <span className="label text-cs-lavender">Featured facilities</span>
-              <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-                Trusted senior care facilities
-              </h2>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredFacilities.map((f) => (
-                <FacilityCard key={f.id} facility={f} />
-              ))}
-            </div>
-
-            <div className="mt-8 text-center">
-              <Button href="/search" variant="ghost">
-                Browse all facilities
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ─── WHY COMFYSENIORS ─── */}
-      <section className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 text-center">
-            <span className="label text-cs-lavender">Why ComfySeniors</span>
-            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              The honest alternative.
-            </h2>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {differentiators.map((d) => (
-              <div
-                key={d.title}
-                className="rounded-r-pill border-l-[3px] border-cs-lavender bg-cs-lavender-mist p-5"
-              >
-                <h3 className="text-[13px] font-semibold text-cs-blue-dark">
-                  {d.title}
-                </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-cs-muted">
-                  {d.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── FAQ PREVIEW ─── */}
+      {/* ─── FAQ PREVIEW (capped at 3) ─── */}
       {faqItems.length > 0 && (
         <section className="bg-cs-lavender-mist py-16 sm:py-20">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -278,11 +118,11 @@ export default async function HomePage({
             Are you a senior care facility?
           </h2>
           <p className="mb-6 text-cs-muted">
-            Get listed free on America&apos;s most honest senior care
-            directory.
+            Get your Bergen County listing verified. Direct family
+            inquiries. No placement fees.
           </p>
           <Button href="/for-facilities" size="lg">
-            Get listed free
+            Get listed
           </Button>
         </div>
       </section>

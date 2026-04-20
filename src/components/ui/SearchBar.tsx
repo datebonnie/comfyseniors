@@ -12,7 +12,7 @@ interface SearchBarProps {
 
 export default function SearchBar({
   defaultValue = "",
-  placeholder = "Search by facility name, city, or zip...",
+  placeholder = "Search Bergen County",
   size = "md",
   className = "",
 }: SearchBarProps) {

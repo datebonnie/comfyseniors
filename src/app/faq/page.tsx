@@ -47,8 +47,8 @@ export default async function FAQPage() {
             Senior Care FAQ
           </h1>
           <p className="mt-3 text-lg text-cs-muted">
-            Plain-English answers to the most common questions about senior care
-            in the United States.
+            Plain-English answers to the most common questions about
+            assisted living and memory care in Bergen County, NJ.
           </p>
         </div>
       </section>

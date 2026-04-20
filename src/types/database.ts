@@ -3,13 +3,16 @@
 // Mirrors the Supabase PostgreSQL schema exactly
 // ============================================================
 
-export type CareType =
-  | "Assisted Living"
-  | "Memory Care"
-  | "Independent Living"
-  | "Nursing Home"
-  | "Home Care"
-  | "Hospice";
+/**
+ * Active care types for the Bergen County pivot.
+ *
+ * The database column `facilities.care_types` may contain legacy values
+ * ("Independent Living" | "Nursing Home" | "Home Care" | "Hospice") for
+ * historical rows — those facilities still exist in the DB but are no
+ * longer surfaced through filters or care-type landing pages. The
+ * narrower union here is the source of truth for the UI.
+ */
+export type CareType = "Assisted Living" | "Memory Care";
 
 export interface Facility {
   id: string;

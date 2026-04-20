@@ -4,14 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 import type { CareType } from "@/types";
 
-const CARE_TYPES: CareType[] = [
-  "Assisted Living",
-  "Memory Care",
-  "Independent Living",
-  "Nursing Home",
-  "Home Care",
-  "Hospice",
-];
+const CARE_TYPES: CareType[] = ["Assisted Living", "Memory Care"];
 
 const SORT_OPTIONS = [
   { value: "relevance", label: "Relevance" },

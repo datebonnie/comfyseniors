@@ -56,13 +56,13 @@ export async function getAdminUser() {
 }
 
 /**
- * Server component / route handler guard. Redirects to /admin/login
+ * Server component / route handler guard. Redirects to /staff/login
  * if the user is not the admin.
  */
 export async function requireAdmin() {
   const user = await getAdminUser();
   if (!user) {
-    redirect("/admin/login");
+    redirect("/staff/login");
   }
   return user;
 }

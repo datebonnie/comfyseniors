@@ -6,46 +6,19 @@ import VerifiedBadge from "@/components/ui/VerifiedBadge";
 import NotVerifiedLabel from "@/components/ui/NotVerifiedLabel";
 
 export const metadata: Metadata = {
-  title: "For Facilities — ComfySeniors | Get Verified",
+  title:
+    "For Facilities — Bergen County, NJ Listings | ComfySeniors",
   description:
-    "Get verified on America's most honest senior care directory. Direct family leads, zero placement fees, and full reputation tools for $297/month.",
+    "Remove the 'Not Verified' warning Bergen County families see next to your facility. Direct inquiries. No placement fees. $297/month, cancel anytime.",
 };
 
-const pillars = [
-  {
-    title: "Your listing works FOR you",
-    items: [
-      "Verified badge — removes the \"Not Verified\" warning families see right now",
-      "Enhanced profile — photos, detailed description, amenities, custom content",
-      "Inspection response — add your context next to any citations",
-      "Priority placement in search results for your city and care type",
-    ],
-  },
-  {
-    title: "Direct family leads, zero referral fees",
-    items: [
-      "Direct inquiry button on your page — families contact you, not a call center",
-      "Every inquiry tracked with a referral code — you see every lead",
-      "Zero placement fees — no $5,000–$8,000 charge when someone moves in",
-      "One resident from ComfySeniors pays for 17+ months of membership",
-    ],
-  },
-  {
-    title: "Reputation management",
-    items: [
-      "Respond to reviews publicly — show families you listen",
-      "Tour question preview — see what families will ask before they visit",
-      "Analytics dashboard — page views, clicks, and inquiries over 30 days",
-    ],
-  },
-  {
-    title: "Competitive intelligence",
-    items: [
-      "See how your pricing compares to county averages",
-      "Value score vs. competitors in your area",
-      "See what families in your city are searching for",
-    ],
-  },
+const whatYouGet = [
+  "Verified badge — removes the \"Not Verified\" warning families see right now",
+  "Direct family inquiries — every lead routed straight to your inbox with a tracking code",
+  "Zero placement fees on every move-in",
+  "Enhanced profile — your photos, description, amenities",
+  "Inspection response — add your context next to any citation",
+  "Analytics dashboard — page views, inquiries, conversions",
 ];
 
 export default function ForFacilitiesPage() {
@@ -54,21 +27,23 @@ export default function ForFacilitiesPage() {
       {/* ─── HERO ─── */}
       <section className="bg-cs-blue-light py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="label mb-3 text-cs-lavender">For senior care facilities</p>
+          <p className="label mb-3 text-cs-lavender">
+            For Bergen County senior care facilities
+          </p>
           <h1 className="font-display text-hero-mobile font-normal text-cs-blue-dark md:text-hero">
-            One empty bed costs you $6,000 a month.
+            Every month you&apos;re not verified, Bergen County families see
+            a warning next to your facility.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-[1.65] text-cs-body">
-            ComfySeniors puts your facility in front of families actively
-            searching for care — for less than $10 a day. No placement fees.
-            No referral commissions. Just families finding you directly.
+            Remove the warning. Get direct inquiries. No placement fees.
+            $297/month, cancel anytime.
           </p>
           <div className="mt-8">
             <StripeButton
               plan="verified_monthly"
               className="rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
             >
-              Get Verified — $297/month
+              Remove my warning — $297/month
             </StripeButton>
             <p className="mt-3 text-sm text-cs-muted">
               Cancel anytime. No contracts. No setup fees.
@@ -90,7 +65,8 @@ export default function ForFacilitiesPage() {
       <section className="bg-white py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-            Right now, this is what families see when they find you.
+            Right now, this is what Bergen County families see when they
+            find you.
           </h2>
           <div className="mt-6 flex items-center gap-3">
             <NotVerifiedLabel size="md" />
@@ -100,49 +76,39 @@ export default function ForFacilitiesPage() {
             </span>
           </div>
           <p className="mt-6 text-cs-body leading-relaxed">
-            Your facility is already listed on ComfySeniors. Families in your
-            area are already seeing your page. The question is: are they seeing
-            a &ldquo;Not Verified&rdquo; warning — or a{" "}
+            Your facility is already listed on ComfySeniors. Families in
+            Bergen County are already seeing your page. The question is:
+            are they seeing a &ldquo;Not Verified&rdquo; warning — or a{" "}
             <span className="inline-flex translate-y-0.5"><VerifiedBadge size="sm" /></span>{" "}
             badge that tells them your information is accurate and up to date?
           </p>
         </div>
       </section>
 
-      {/* ─── THE OFFER ─── */}
+      {/* ─── WHAT YOU GET (single section) ─── */}
       <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center">
             <span className="label text-cs-lavender">
               Everything you get for $297/month
             </span>
             <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              The ComfySeniors Verified membership.
+              What you get.
             </h2>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
-            {pillars.map((pillar) => (
-              <div
-                key={pillar.title}
-                className="rounded-card border border-cs-border bg-white p-6"
-              >
-                <h3 className="mb-4 font-sans text-base font-semibold text-cs-blue-dark">
-                  {pillar.title}
-                </h3>
-                <ul className="space-y-2.5">
-                  {pillar.items.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-start gap-2 text-sm text-cs-body"
-                    >
-                      <span className="mt-1.5 inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="rounded-card border border-cs-border bg-white p-6 sm:p-8">
+            <ul className="space-y-3">
+              {whatYouGet.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-3 text-base text-cs-body"
+                >
+                  <span className="mt-2 inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -211,7 +177,7 @@ export default function ForFacilitiesPage() {
         </div>
       </section>
 
-      {/* ─── FREE vs VERIFIED ─── */}
+      {/* ─── FREE vs VERIFIED comparison table (unchanged — best converter) ─── */}
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-center font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
@@ -281,7 +247,107 @@ export default function ForFacilitiesPage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
+      {/* ─── TWO PRICING TIERS (Claim vs Grow) ─── */}
+      <section className="bg-white py-14 sm:py-16">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <h2 className="mb-2 text-center font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
+            Pick your tier.
+          </h2>
+          <p className="mb-10 text-center text-sm text-cs-muted">
+            Both tiers remove the &ldquo;Not Verified&rdquo; warning. Grow
+            adds direct inquiries, enhanced profile, and analytics.
+          </p>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            {/* Claim — $97 */}
+            <div className="rounded-card border border-cs-border bg-white p-6">
+              <div className="mb-1 flex items-baseline justify-between">
+                <h3 className="font-display text-xl text-cs-blue-dark">
+                  Claim
+                </h3>
+                <p className="text-2xl font-semibold text-cs-blue-dark">
+                  $97
+                  <span className="text-sm font-normal text-cs-muted">/mo</span>
+                </p>
+              </div>
+              <p className="mb-4 text-xs uppercase tracking-wide text-cs-muted">
+                The basics, fast
+              </p>
+
+              <ul className="mb-6 space-y-2">
+                {[
+                  "Verified badge — removes \"Not Verified\" warning",
+                  "Basic verified profile (your description + amenities)",
+                  "Respond to reviews publicly",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-2 text-sm text-cs-body"
+                  >
+                    <span className="mt-1.5 inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-green-ok" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <StripeButton
+                plan="claim_monthly"
+                className="block w-full rounded-btn border border-cs-blue bg-white px-6 py-3 text-center text-sm font-medium text-cs-blue transition-colors hover:bg-cs-blue hover:text-white"
+              >
+                Claim my listing — $97/month
+              </StripeButton>
+            </div>
+
+            {/* Grow — $297 (recommended, highlighted) */}
+            <div className="relative rounded-card border-2 border-cs-lavender bg-cs-lavender-mist p-6">
+              <span className="absolute -top-3 left-6 rounded-full bg-cs-lavender px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                Recommended
+              </span>
+
+              <div className="mb-1 flex items-baseline justify-between">
+                <h3 className="font-display text-xl text-cs-blue-dark">
+                  Grow
+                </h3>
+                <p className="text-2xl font-semibold text-cs-blue-dark">
+                  $297
+                  <span className="text-sm font-normal text-cs-muted">/mo</span>
+                </p>
+              </div>
+              <p className="mb-4 text-xs uppercase tracking-wide text-cs-lavender">
+                Everything in Claim, plus inquiries
+              </p>
+
+              <ul className="mb-6 space-y-2">
+                {[
+                  "Everything in Claim",
+                  "Direct inquiry button on your facility page",
+                  "Enhanced profile with photos",
+                  "Priority placement in search results",
+                  "Analytics dashboard (views, inquiries, conversions)",
+                  "Competitive intelligence (county pricing, value scores)",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-2 text-sm text-cs-body"
+                  >
+                    <span className="mt-1.5 inline-block h-[7px] w-[7px] shrink-0 rounded-full bg-cs-lavender" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <StripeButton
+                plan="verified_monthly"
+                className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
+              >
+                Remove my warning — $297/month
+              </StripeButton>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── BOTTOM CTA ─── */}
       <section className="bg-cs-blue-dark py-14 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-normal text-white sm:text-[32px]">
@@ -297,7 +363,7 @@ export default function ForFacilitiesPage() {
               plan="verified_monthly"
               className="rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
             >
-              Get Verified — $297/month
+              Remove my warning — $297/month
             </StripeButton>
             <p className="mt-3 text-sm text-[#8B9EC7]">
               Cancel anytime. No contracts. No setup fees.

@@ -9,7 +9,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
     { url: `${baseUrl}/search`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${baseUrl}/match`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${baseUrl}/faq`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
     { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/for-facilities`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
@@ -61,14 +60,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Skip
   }
 
-  // Care type pages
+  // Care type pages (only the two active care types)
   const careTypePages: MetadataRoute.Sitemap = [
     "assisted-living",
     "memory-care",
-    "independent-living",
-    "nursing-home",
-    "home-care",
-    "hospice",
   ].map((slug) => ({
     url: `${baseUrl}/care-types/${slug}`,
     lastModified: new Date(),

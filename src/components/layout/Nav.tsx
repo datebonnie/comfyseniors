@@ -4,10 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
+// Minimal nav: Find Care + About as plain links; For Facilities is the
+// emphasized CTA button rendered separately below.
 const navLinks = [
   { href: "/search", label: "Find Care" },
-  { href: "/match", label: "Care Match Quiz" },
-  { href: "/faq", label: "FAQ" },
   { href: "/about", label: "About" },
 ];
 
