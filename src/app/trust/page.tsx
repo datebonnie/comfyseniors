@@ -8,14 +8,83 @@ export const metadata: Metadata = {
     "Who runs ComfySeniors, where your data lives, our promises, and straight answers to security questions from Bergen County senior care facilities.",
 };
 
-const commitments = [
-  // TODO: user to provide final copy. Scaffolded with placeholder-style
-  // one-liners that match the site voice; replace wholesale when ready.
-  "We never sell facility contact information to third parties, ever.",
-  "We show every licensed facility — paying or not.",
-  "We publish every review, positive and negative, without filter.",
-  "We surface inspection records on every facility page, not behind a paywall.",
-  "We charge facilities one flat monthly fee — no placement kickbacks.",
+/**
+ * Final commitments copy approved by the founder. Do not edit without
+ * explicit approval — these are on-brand promises with specific
+ * numeric claims that need to stay accurate as the product evolves.
+ */
+const commitments: { title: string; body: React.ReactNode }[] = [
+  {
+    title: "We will never charge you a placement fee.",
+    body: (
+      <>
+        Not 30% of first month&apos;s rent. Not 60%. Nothing. Referral
+        services built a $3B industry by taxing your move-ins. We
+        don&apos;t. When a family finds you through ComfySeniors, you
+        pay us nothing beyond your flat monthly subscription.
+      </>
+    ),
+  },
+  {
+    title: "Families contact you directly. We never broker the inquiry.",
+    body: (
+      <>
+        Every inquiry button on your page is a <code>tel:</code> link or
+        a <code>mailto:</code> link to YOU. We don&apos;t sit in the
+        middle. We don&apos;t &ldquo;qualify&rdquo; leads. We don&apos;t
+        sell your warm lead to three of your competitors. The family
+        emails you, the family calls you, the relationship is yours from
+        the first word.
+      </>
+    ),
+  },
+  {
+    title: "You will never be outranked by whoever paid the most.",
+    body: (
+      <>
+        We don&apos;t sell placement. Search results are ranked by
+        relevance to the family&apos;s criteria — location, care type,
+        budget — and by verification status. A facility cannot buy its
+        way above yours inside the same tier. Verified facilities do
+        rank above unverified facilities for the same search — that&apos;s
+        the point of verification. What we don&apos;t do: let anyone pay
+        for a higher position among Verified facilities. Inside the
+        tier, everyone competes on accuracy, reviews, and family fit —
+        never on payment.
+      </>
+    ),
+  },
+  {
+    title:
+      "Your citations are your story to tell, not a weapon we use against you.",
+    body: (
+      <>
+        When state health departments publish inspection citations, we
+        publish them too — transparency is non-negotiable for families.
+        But Verified facilities can post a public response next to any
+        citation, in your own words. Families see what happened AND what
+        you did about it. No other directory does this. We can do this
+        together, to bring comfort to these families.
+      </>
+    ),
+  },
+  {
+    title:
+      "If you ever feel misrepresented on ComfySeniors, you email me personally.",
+    body: (
+      <>
+        No <code>support@</code>. Not a ticket system.{" "}
+        <a
+          href="mailto:bmontero@comfyseniors.com"
+          className="font-semibold text-cs-blue hover:underline"
+        >
+          bmontero@comfyseniors.com
+        </a>
+        . I respond within 24 hours, every time. When this business is
+        big enough that I can&apos;t, I&apos;ll rewrite this promise.
+      </>
+    ),
+  },
 ];
 
 const securityFaqs: { q: string; a: string }[] = [
@@ -60,40 +129,67 @@ export default function TrustPage() {
         </div>
       </section>
 
-      {/* Who runs this */}
+      {/* Who runs this — founder bio */}
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-4 font-display text-2xl font-normal text-cs-blue-dark">
-            Who runs ComfySeniors
+            Brandoll Montero, Founder
           </h2>
 
-          {/* TODO: user to provide final bio + photo. Structured so that
-              swapping content is one Edit call. */}
           <div className="rounded-card border border-cs-border bg-cs-blue-light/40 p-6">
-            <p className="text-sm text-cs-body">
-              <strong className="text-cs-blue-dark">
-                {/* TODO: Founder name */}
-                [Founder name placeholder]
-              </strong>{" "}
-              built ComfySeniors after watching a family member navigate
-              senior care options in Bergen County without straight answers
-              on price, inspection history, or verified status.
+            <p className="text-sm leading-relaxed text-cs-body">
+              I&apos;m a New York City native who built my career in sales at
+              Tesla, Zara, and Lacoste — brands obsessed with how customers
+              feel at the moment of choice. Senior care is the highest-stakes
+              purchase a family will ever make, and the industry&apos;s sales
+              process doesn&apos;t treat it that way. I started ComfySeniors
+              to change two things at once: how families find honest
+              information, and how facilities reach families without getting
+              gouged by referral services. We&apos;re New Jersey–built,
+              operator-first, and we will do everything we can to make sure
+              our people Find Care, and Feel Comfortable.
             </p>
-            <p className="mt-3 text-sm text-cs-body">
-              {/* TODO: Founder bio paragraph */}
-              [Founder bio placeholder — 2-3 sentences on background,
-              why Bergen County, why this problem.]
-            </p>
-            <p className="mt-4 text-xs text-cs-muted">
-              One person answers every email at{" "}
+
+            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-cs-border pt-4 text-sm">
               <a
-                href="mailto:hello@comfyseniors.com"
-                className="font-medium text-cs-blue hover:underline"
+                href="https://www.linkedin.com/in/brandoll-m-002574141/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 font-medium text-cs-blue hover:underline"
               >
-                hello@comfyseniors.com
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z" />
+                </svg>
+                LinkedIn
               </a>
-              . No outsourced support team, no chatbot gatekeeping.
-            </p>
+              <span aria-hidden="true" className="text-cs-muted">·</span>
+              <a
+                href="mailto:bmontero@comfyseniors.com"
+                className="inline-flex items-center gap-1.5 font-medium text-cs-blue hover:underline"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <path d="M22 6l-10 7L2 6" />
+                </svg>
+                bmontero@comfyseniors.com
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -150,29 +246,34 @@ export default function TrustPage() {
         </div>
       </section>
 
-      {/* Our commitment */}
+      {/* Our Promises to Every Verified Facility on ComfySeniors */}
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-6 font-display text-2xl font-normal text-cs-blue-dark">
-            Our commitment
+            Our Promises to Every Verified Facility on ComfySeniors
           </h2>
-          <ol className="space-y-3">
+          <ol className="space-y-4">
             {commitments.map((c, i) => (
               <li
                 key={i}
-                className="flex items-start gap-4 rounded-r-pill border-l-[3px] border-cs-lavender bg-cs-lavender-mist p-4"
+                className="rounded-r-pill border-l-[3px] border-cs-lavender bg-cs-lavender-mist p-5"
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cs-blue text-sm font-semibold text-white">
-                  {i + 1}
-                </span>
-                <span className="text-cs-body leading-relaxed">{c}</span>
+                <div className="flex items-start gap-4">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cs-blue text-sm font-semibold text-white">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <h3 className="font-sans text-base font-semibold text-cs-blue-dark">
+                      {c.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-cs-body">
+                      {c.body}
+                    </p>
+                  </div>
+                </div>
               </li>
             ))}
           </ol>
-          <p className="mt-4 text-xs text-cs-muted">
-            {/* TODO: Final "Our commitment" copy from founder */}
-            Copy above is scaffolded pending final founder sign-off.
-          </p>
         </div>
       </section>
 

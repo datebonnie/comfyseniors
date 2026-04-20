@@ -26,23 +26,27 @@ const whatYouGet = [
   "Analytics dashboard — page views, inquiries, conversions",
 ];
 
-// Scaffolded by spec item #8. Final copy TODO: user to provide.
+/**
+ * Final founder-approved copy. Do not edit without explicit approval.
+ * These bullets contain specific pricing claims ($5,000–$8,000, $297/mo,
+ * 60%+) that must stay accurate as the product evolves.
+ */
 const whatWeveSolved = [
   {
-    title: "Your facility data is already in our directory",
-    body: "Imported from NJ DOH and CMS public records. You don't enter anything twice. Claim takes 2 minutes because the hard work is already done.",
+    title: "Real prices, shown publicly.",
+    body: "Every other directory hides pricing behind a lead form that sells your inquiry to your competitors. Every ComfySeniors listing shows actual monthly cost ranges upfront. Families know what they can afford before they ever call you — meaning your inquiries are qualified before they hit your inbox.",
   },
   {
-    title: "Inquiry tracking works out of the box",
-    body: "Every family who contacts you gets a unique reference code. You see which inquiries came from us and which converted — no integration required.",
+    title: "Zero placement fees. Flat monthly pricing.",
+    body: "A Place for Mom charges your facility $5,000–$8,000 every time a resident they referred moves in. That's 60%+ of your first month's revenue. ComfySeniors charges $297/month flat. One resident per year covers your cost 20 times over.",
   },
   {
-    title: "Billing runs through Stripe",
-    body: "Same checkout you use on any SaaS. Cancel in one click from your dashboard. No annual contracts, no setup fees, no cancellation penalties.",
+    title: "Direct inquiry button. No middleman.",
+    body: "When a family clicks \u201cContact this facility\u201d on your page, they call or email you directly. We never see the conversation. We never sell the lead. We never charge a commission. The family is yours from hello.",
   },
   {
-    title: "Inspection records are already formatted",
-    body: "CMS citation severity codes (B / D / G / L) translated to plain English, alongside your response field. Transparency with context — not a gotcha.",
+    title: "Transparent inspection records with your response next to them.",
+    body: "Every citation from state health departments is published on your listing — because families deserve honesty. But Verified facilities get to respond publicly, in their own words, right alongside the citation. You control your narrative. Nobody else in the industry lets you do that.",
   },
 ];
 
@@ -315,33 +319,29 @@ export default async function ForFacilitiesPage() {
       {/* ─── WHAT WE'VE ALREADY SOLVED ─── */}
       <section className="bg-white py-14 sm:py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 text-center">
+          <div className="mb-10 text-center">
             <span className="label text-cs-lavender">
               What we&apos;ve already solved
             </span>
             <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-              Most of the work is already done.
+              What we&apos;ve already solved that other directories
+              haven&apos;t.
             </h2>
-            <p className="mt-2 text-sm text-cs-muted">
-              Flag-plant copy scaffolded below — replacing with final
-              founder copy before full launch.
-            </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <ul className="space-y-4">
             {whatWeveSolved.map((s) => (
-              <div
+              <li
                 key={s.title}
-                className="rounded-card border border-cs-border bg-white p-5"
+                className="flex items-start gap-4 rounded-card border border-cs-border bg-white p-5"
               >
-                <h3 className="font-sans text-base font-semibold text-cs-blue-dark">
-                  {s.title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-cs-body">
+                <span className="mt-1.5 inline-block h-[8px] w-[8px] shrink-0 rounded-full bg-cs-green-ok" />
+                <p className="text-sm leading-relaxed text-cs-body">
+                  <strong className="text-cs-blue-dark">{s.title}</strong>{" "}
                   {s.body}
                 </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
