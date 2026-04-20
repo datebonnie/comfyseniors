@@ -294,7 +294,7 @@ export default function MatchClient() {
               Finding your best matches...
             </p>
             <p className="mt-2 text-sm text-cs-muted">
-              Analyzing your answers against 20,000+ facilities nationwide.
+              Analyzing your answers against Bergen County facilities.
             </p>
           </div>
         )}

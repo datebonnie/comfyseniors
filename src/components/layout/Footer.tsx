@@ -55,7 +55,7 @@ export default function Footer() {
               ComfySeniors
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-[#8B9EC7]">
-              America&apos;s most honest senior care directory.
+              Bergen County&apos;s most honest senior care directory.
             </p>
             <p className="mt-4 text-sm font-medium text-cs-lavender">
               We never sell your number &mdash; ever.
@@ -135,7 +135,7 @@ export default function Footer() {
               Legal
             </Link>
           </div>
-          <span>Made for American families.</span>
+          <span>Made for Bergen County families.</span>
         </div>
       </div>
     </footer>
