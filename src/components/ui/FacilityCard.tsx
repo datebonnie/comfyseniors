@@ -33,7 +33,14 @@ export default function FacilityCard({
     avg_rating,
     review_count,
     value_score,
+    phone,
+    website,
   } = facility;
+
+  // Direct-contact action: tel: link if we have a phone number, else
+  // a website link. NEVER a lead form — we don't capture family info.
+  const telDigits = phone ? phone.replace(/\D/g, "") : "";
+  const hasPhone = telDigits.length >= 7;
 
   // "Best for" label based on data
   const bestForLabel = getBestForLabel(facility);
@@ -110,8 +117,52 @@ export default function FacilityCard({
         </p>
       )}
 
-      {/* CTAs */}
+      {/* CTAs — direct contact first (tel: or website), then View. */}
       <div className="mt-4 flex flex-wrap gap-2">
+        {hasPhone ? (
+          <a
+            href={`tel:${telDigits}`}
+            className="inline-flex items-center gap-1.5 rounded-btn bg-cs-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 5a2 2 0 0 1 2-2h2l2 4-2 1a10 10 0 0 0 5 5l1-2 4 2v2a2 2 0 0 1-2 2A14 14 0 0 1 3 5z" />
+            </svg>
+            Call {name}
+          </a>
+        ) : website ? (
+          <a
+            href={website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-btn bg-cs-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
+          >
+            Visit website
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M7 13L17 3M9 3h8v8" />
+            </svg>
+          </a>
+        ) : null}
+
         <Button href={`/facility/${slug}`} variant="ghost" size="sm">
           View facility
         </Button>

@@ -37,3 +37,31 @@
     @apply font-sans font-semibold text-[11px] uppercase tracking-label;
   }
 }
+
+/* ── Decision Engine step transition ─────────────────────
+   A small fade-and-rise applied to whichever step card is
+   currently rendered. Runs once on mount (or page re-render)
+   so each step feels deliberate. Pure CSS — no JS dependency,
+   so it still works when the engine falls back to plain
+   anchor navigation. */
+@keyframes ds-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ds-step-in {
+  animation: ds-step-in 280ms ease-out both;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ds-step-in {
+    animation: none;
+  }
+}

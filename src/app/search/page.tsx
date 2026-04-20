@@ -52,13 +52,21 @@ function parseFilters(searchParams: SearchPageProps["searchParams"]): SearchFilt
         ? countyParam
         : undefined;
 
+  // Accept both naming conventions for price filtering:
+  //   priceMin / priceMax  — used by FilterSidebar's number inputs
+  //   budget_min / budget_max — emitted by the homepage DecisionEngine
+  // The DecisionEngine's "Not sure yet" option emits no budget params,
+  // which correctly results in undefined here (no budget filter).
+  const priceMinRaw = getStr("priceMin") || getStr("budget_min");
+  const priceMaxRaw = getStr("priceMax") || getStr("budget_max");
+
   return {
     q: getStr("q"),
     careTypes: getArr("type").filter(Boolean) as CareType[],
     county,
     city: getStr("city"),
-    priceMin: getStr("priceMin") ? Number(getStr("priceMin")) : undefined,
-    priceMax: getStr("priceMax") ? Number(getStr("priceMax")) : undefined,
+    priceMin: priceMinRaw ? Number(priceMinRaw) : undefined,
+    priceMax: priceMaxRaw ? Number(priceMaxRaw) : undefined,
     acceptsMedicaid: getStr("medicaid") === "true",
     acceptsMedicare: getStr("medicare") === "true",
     languages: getArr("lang"),
@@ -124,6 +132,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <FilterSidebar counties={counties} languages={languages} />
 
             <div>
+              {/* Trust line — appears above results to set expectations
+                  about what we do and don't do with the visitor's data. */}
+              {results.count > 0 && (
+                <div className="mb-4 rounded-card border-l-[3px] border-cs-lavender bg-cs-lavender-mist px-4 py-3 text-sm text-cs-blue-dark">
+                  Showing{" "}
+                  <strong>{results.count.toLocaleString()}</strong> Bergen
+                  County {results.count === 1 ? "facility" : "facilities"}{" "}
+                  matching your criteria. We don&apos;t sell your info.
+                  Call any facility directly — we never see it.
+                </div>
+              )}
+
               <div className="mb-6 flex items-center justify-between">
                 <p className="text-sm text-cs-muted">
                   {results.count > 0 ? (

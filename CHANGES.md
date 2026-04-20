@@ -4,6 +4,74 @@
 
 ---
 
+## Addendum: Decision Engine + Search Trust Line + Direct-Contact Buttons
+
+A second sprint replaced the homepage FAQ section with a 3-step
+decision engine and made every facility card directly contactable.
+
+### Created
+| File | Purpose |
+|---|---|
+| `src/components/home/DecisionEngine.tsx` | 3-step flow on the homepage. Server component. URL-state design (`?ds=N&for=X&care=Y`) — works with JavaScript disabled because every option is a real anchor link and every progression is a real navigation. |
+
+### Modified
+| File | Change |
+|---|---|
+| `src/app/page.tsx` | **Removed** the entire "Frequently asked questions" section (and the `getTopFAQs` import). **Added** the new "Find care in 3 clicks" section wrapping `<DecisionEngine />`. searchParams type widened to include `ds`, `for`, `care`. The `/faq` route remains alive (still in footer). |
+| `src/app/search/page.tsx` | Added a lavender trust line above results: *"Showing N Bergen County facilities matching your criteria. We don't sell your info. Call any facility directly — we never see it."* `parseFilters` now accepts `budget_min` / `budget_max` as aliases for `priceMin` / `priceMax` (the DecisionEngine emits the budget_* names). |
+| `src/components/ui/FacilityCard.tsx` | New primary CTA: `<a href="tel:...">Call {facility.name}</a>` if phone exists, otherwise `Visit website` (links to `facility.website` with `target="_blank"`). The "View facility" button stays as a secondary action. **No** modal, **no** form, **no** lead gate. Phone digit-stripping for valid `tel:` href; rejects too-short numbers gracefully. |
+| `src/app/globals.css` | Added `@keyframes ds-step-in` + `.ds-step-in` utility for the per-step fade/rise animation. Honors `prefers-reduced-motion: reduce`. |
+
+### Routes affected
+- `/` — FAQ section gone; DecisionEngine in its place. Reads `?ds=`, `?for=`, `?care=`.
+- `/search` — accepts `?budget_min=` / `?budget_max=` (aliases for `priceMin/Max`); shows new trust line above results.
+- `/facility/:slug` — unchanged (FacilityCard isn't used there).
+- `/faq` — unchanged. Still linked from footer; just removed from homepage.
+
+### Constraints honored
+- ✅ No email capture introduced anywhere
+- ✅ No "Get Pricing" form gates
+- ✅ Budget filter is optional ("Not sure yet" emits no params → no filter)
+- ✅ Works without JavaScript: every step is an anchor link, every URL is a full Next.js navigation; `tel:` and `https://` links work natively in HTML.
+- ✅ Animation gracefully degrades via `prefers-reduced-motion: reduce`
+
+### Decision Engine URL spec
+| Step | URL | What's stored |
+|---|---|---|
+| 1 | `/` (or `/?ds=1`) | nothing yet |
+| 2 | `/?ds=2&for=parent` | relationship picked |
+| 3 | `/?ds=3&for=parent&care=al` | relationship + care type picked |
+| Done | `/search?type=Assisted%20Living&budget_min=5000&budget_max=7000` | final navigation to results |
+
+`care` values map to `?type=` filters:
+- `al` → `Assisted Living`
+- `mc` → `Memory Care`
+- `both` → `?type=Assisted%20Living&type=Memory%20Care` (two duplicate params)
+
+`budget` values map to `budget_min` / `budget_max`:
+- `under5` → `budget_max=5000`
+- `5-7` → `budget_min=5000&budget_max=7000`
+- `7-10` → `budget_min=7000&budget_max=10000`
+- `10plus` → `budget_min=10000`
+- `unsure` → no budget params
+
+The `relationship` value is collected for personalization (Step 2's heading uses it: *"What kind of help does your parent need?"*) but is **not** passed to `/search` — it's not a filter. Future iterations could add `?for=parent` to /search for further copy personalization.
+
+### Task 1 deployment confirmed
+Verified live via `curl https://www.comfyseniors.com/`:
+- ✅ H1: `Find Care. Feel Comfortable.`
+- ✅ Eyebrow: `New Jersey's Answer to Assisted Living`
+- ✅ Subhead: `Every licensed facility in Bergen County, with all the data you need to feel comfortable.`
+- ✅ Footer brand tagline: `Bergen County's most honest senior care directory.`
+- ✅ Footer bottom bar: `Made for Bergen County families.`
+- ✅ Nav: only `Find Care`, `About`, `For Facilities` (CTA). No Care Match Quiz. No FAQ link in nav.
+- ✅ Footer Care Types: only Assisted Living and Memory Care.
+
+### New manual follow-ups
+None. The decision engine works out of the box on deploy. No new env vars, no Stripe products, no Supabase migrations required.
+
+---
+
 ## Files modified (29) and created (4)
 
 ### Created

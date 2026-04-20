@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import PageWrapper from "@/components/layout/PageWrapper";
 import SearchBar from "@/components/ui/SearchBar";
-import FAQAccordion from "@/components/ui/FAQAccordion";
 import Button from "@/components/ui/Button";
-import { getTopFAQs } from "@/lib/queries";
+import DecisionEngine from "@/components/home/DecisionEngine";
 
 export const metadata: Metadata = {
   title:
@@ -21,7 +20,13 @@ const trustChips = [
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams?: { code?: string; redirect?: string };
+  searchParams?: {
+    code?: string;
+    redirect?: string;
+    ds?: string;
+    for?: string;
+    care?: string;
+  };
 }) {
   // Safety net: if Supabase magic-link redirected here with a stray
   // ?code= parameter (e.g. due to a Supabase URL Configuration mismatch),
@@ -34,13 +39,6 @@ export default async function HomePage({
       params.set("redirect", searchParams.redirect);
     }
     redirect(`/auth/callback?${params.toString()}`);
-  }
-
-  let faqItems: Awaited<ReturnType<typeof getTopFAQs>> = [];
-  try {
-    faqItems = await getTopFAQs(3);
-  } catch {
-    // If Supabase is not configured, render with empty FAQ
   }
 
   return (
@@ -83,32 +81,26 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* ─── FAQ PREVIEW (capped at 3) ─── */}
-      {faqItems.length > 0 && (
-        <section className="bg-cs-lavender-mist py-16 sm:py-20">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-6 text-center">
-              <span className="label text-cs-lavender">Common questions</span>
-              <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
-                Frequently asked questions
-              </h2>
-            </div>
-
-            <FAQAccordion
-              items={faqItems.map((faq) => ({
-                question: faq.question,
-                answer: faq.answer ?? "",
-              }))}
-            />
-
-            <div className="mt-8 text-center">
-              <Button href="/faq" variant="ghost">
-                See all FAQs
-              </Button>
-            </div>
+      {/* ─── DECISION ENGINE (replaces FAQ section) ─── */}
+      <section className="bg-cs-lavender-mist py-16 sm:py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 text-center">
+            <span className="label text-cs-lavender">3-step engine</span>
+            <h2 className="mt-2 font-display text-2xl font-normal text-cs-blue-dark sm:text-[32px]">
+              Find care in 3 clicks
+            </h2>
+            <p className="mt-2 text-sm text-cs-muted">
+              No signup. No phone number. No hassle.
+            </p>
           </div>
-        </section>
-      )}
+
+          <DecisionEngine
+            ds={searchParams?.ds}
+            forWho={searchParams?.for}
+            care={searchParams?.care}
+          />
+        </div>
+      </section>
 
       {/* ─── FACILITY CTA ─── */}
       <section className="bg-cs-blue-light py-14 sm:py-16">
