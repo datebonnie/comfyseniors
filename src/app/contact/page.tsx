@@ -86,10 +86,10 @@ export default function ContactPage() {
                 Media inquiries, partnership proposals, or speaking requests.
               </p>
               <a
-                href="mailto:hello@comfyseniors.com"
+                href="mailto:press@comfyseniors.com"
                 className="mt-3 block text-sm font-semibold text-cs-blue hover:underline"
               >
-                hello@comfyseniors.com
+                press@comfyseniors.com
               </a>
             </div>
 
