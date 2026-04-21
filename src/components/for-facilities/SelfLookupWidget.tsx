@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Match {
   id: string;
@@ -8,6 +9,16 @@ interface Match {
   slug: string;
   city: string | null;
   is_verified: boolean;
+}
+
+interface Props {
+  /**
+   * Destination on selection. Default: "preview" — opens the public
+   * facility page in a new tab (the original /for-facilities
+   * behavior). "claim" navigates the current tab to
+   * /for-facilities/claim/[id] and fires a different engagement event.
+   */
+  mode?: "preview" | "claim";
 }
 
 /**
@@ -23,13 +34,14 @@ interface Match {
  *   - aria-controls + aria-activedescendant for screen readers
  *   - aria-live announces result counts on change
  */
-export default function SelfLookupWidget() {
+export default function SelfLookupWidget({ mode = "preview" }: Props = {}) {
   const [q, setQ] = useState("");
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [focused, setFocused] = useState(false);
 
+  const router = useRouter();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -61,22 +73,33 @@ export default function SelfLookupWidget() {
     };
   }, [q]);
 
-  const selectMatch = useCallback(async (m: Match) => {
-    // Fire-and-forget engagement event; don't block navigation on it
-    fetch("/api/engagement/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        event_type: "facility_self_lookup",
-        facility_id: m.id,
-        metadata: { query: q, name: m.name },
-      }),
-      keepalive: true,
-    }).catch(() => {});
+  const selectMatch = useCallback(
+    async (m: Match) => {
+      // Fire-and-forget engagement event; don't block navigation on it
+      fetch("/api/engagement/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event_type: "facility_self_lookup",
+          facility_id: m.id,
+          metadata: { query: q, name: m.name, mode },
+        }),
+        keepalive: true,
+      }).catch(() => {});
 
-    // Open in new tab so the admin doesn't lose their place on the pitch page
-    window.open(`/facility/${m.slug}`, "_blank", "noopener,noreferrer");
-  }, [q]);
+      if (mode === "claim") {
+        // Claim flow: navigate in-place to the tier picker. Admin is
+        // buying, not browsing — don't fracture their attention with
+        // a new tab.
+        router.push(`/for-facilities/claim/${m.id}`);
+      } else {
+        // Preview flow: open the public listing in a new tab so the
+        // admin doesn't lose their place on /for-facilities.
+        window.open(`/facility/${m.slug}`, "_blank", "noopener,noreferrer");
+      }
+    },
+    [q, mode, router]
+  );
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!matches.length) return;

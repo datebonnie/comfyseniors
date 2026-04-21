@@ -15,6 +15,11 @@ export const ENGAGEMENT_EVENTS = [
   "cta_click_founding",
   "cta_click_medicaid",
   "chain_form_submit",
+  // System-originated (cron + webhook): written via service role, not
+  // via /api/engagement/log, but listed here so /staff/engagement and
+  // any future aggregations recognize them.
+  "onboarding_nag_sent",
+  "welcome_email_sent",
 ] as const;
 
 export type EngagementEventType = (typeof ENGAGEMENT_EVENTS)[number];

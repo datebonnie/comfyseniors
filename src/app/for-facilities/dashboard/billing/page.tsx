@@ -1,6 +1,6 @@
 import { getUserFacility } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import StripeButton from "@/components/ui/StripeButton";
+import Link from "next/link";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 export default async function BillingPage() {
@@ -103,12 +103,14 @@ export default async function BillingPage() {
           </ul>
 
           <div className="mt-6">
-            <StripeButton
-              plan="verified_monthly"
-              className="w-full rounded-btn bg-cs-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-cs-blue-dark"
+            {/* Route to the unified claim flow — pre-loads this admin's
+                facility so they can pick a tier without re-selecting. */}
+            <Link
+              href={`/for-facilities/claim/${facility.id}`}
+              className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-cs-blue-dark"
             >
               Get Verified — $297/month
-            </StripeButton>
+            </Link>
             <p className="mt-2 text-center text-xs text-cs-muted">
               Cancel anytime. No contracts.
             </p>

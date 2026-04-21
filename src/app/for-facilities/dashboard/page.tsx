@@ -1,6 +1,9 @@
 import { getUserFacility } from "@/lib/auth";
 import { createAuthClient } from "@/lib/auth";
 import Link from "next/link";
+import OnboardingChecklist from "@/components/for-facilities/dashboard/OnboardingChecklist";
+import DashboardTour from "@/components/for-facilities/dashboard/DashboardTour";
+import { computeOnboardingState } from "@/lib/onboarding";
 
 export default async function DashboardOverview() {
   const facility = await getUserFacility();
@@ -45,8 +48,23 @@ export default async function DashboardOverview() {
     );
   }
 
+  // Onboarding state — shown above the stats when profile isn't complete
+  // yet. The same computation powers the daily nag cron, so what the
+  // admin sees here matches what they'd get reminded about by email.
+  //
+  // TODO: citationResponseCount is 0 until citation-response UI ships
+  // in the profile editor. Treat the "respond to citations" step as
+  // pending for now — honest, since they actually haven't responded.
+  const onboarding = computeOnboardingState({
+    facility,
+    citationResponseCount: 0,
+  });
+
   return (
     <div>
+      {/* First-visit onboarding tour — gated by localStorage, client-only */}
+      <DashboardTour />
+
       <div className="mb-8">
         <h1 className="font-display text-2xl text-cs-blue-dark">
           {facility.name}
@@ -59,6 +77,17 @@ export default async function DashboardOverview() {
             </span>
           )}
         </p>
+      </div>
+
+      {/* Onboarding checklist — renders a progress bar + remaining
+          steps when profile is incomplete; a quiet green check when
+          it's 100% done. */}
+      <div className="mb-8">
+        <OnboardingChecklist
+          steps={onboarding.steps}
+          completionPercent={onboarding.completionPercent}
+          isComplete={onboarding.isComplete}
+        />
       </div>
 
       {/* Stats cards */}

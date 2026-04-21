@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageWrapper from "@/components/layout/PageWrapper";
-import StripeButton from "@/components/ui/StripeButton";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
 import NotVerifiedLabel from "@/components/ui/NotVerifiedLabel";
 import SelfLookupWidget from "@/components/for-facilities/SelfLookupWidget";
 import VerificationCounter from "@/components/for-facilities/VerificationCounter";
 import DashboardPreview from "@/components/for-facilities/DashboardPreview";
 import LoggedCTA from "@/components/for-facilities/LoggedCTA";
+
+// Note: StripeButton is no longer used on this page. Every CTA routes
+// through /for-facilities/claim which handles facility selection +
+// tier picking before opening Stripe Checkout. This was the fix that
+// closed the "webhook has no facility_id to link" bug.
+const CLAIM_PATH = "/for-facilities/claim";
 import { createClient } from "@/lib/supabase";
 
 export const metadata: Metadata = {
@@ -83,12 +88,12 @@ export default async function ForFacilitiesPage() {
           </p>
           <div className="mt-8">
             <LoggedCTA eventType="cta_click_verified" metadata={{ placement: "hero" }}>
-              <StripeButton
-                plan="verified_monthly"
-                className="rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
+              <Link
+                href={CLAIM_PATH}
+                className="inline-block rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
               >
                 Remove my warning — $297/month
-              </StripeButton>
+              </Link>
             </LoggedCTA>
             <p className="mt-3 text-sm text-cs-muted">
               Cancel anytime. No contracts. No setup fees.
@@ -399,12 +404,12 @@ export default async function ForFacilitiesPage() {
                 </ul>
 
                 <LoggedCTA eventType="cta_click_founding" metadata={{ placement: "pricing_grid" }}>
-                  <StripeButton
-                    plan="founding_monthly"
+                  <Link
+                    href={CLAIM_PATH}
                     className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
                   >
                     Claim Founding spot — $197/month
-                  </StripeButton>
+                  </Link>
                 </LoggedCTA>
               </div>
             )}
@@ -441,12 +446,12 @@ export default async function ForFacilitiesPage() {
               </ul>
 
               <LoggedCTA eventType="cta_click_claim" metadata={{ placement: "pricing_grid" }}>
-                <StripeButton
-                  plan="claim_monthly"
+                <Link
+                  href={CLAIM_PATH}
                   className="block w-full rounded-btn border border-cs-blue bg-white px-6 py-3 text-center text-sm font-medium text-cs-blue transition-colors hover:bg-cs-blue hover:text-white"
                 >
                   Claim my listing — $97/month
-                </StripeButton>
+                </Link>
               </LoggedCTA>
             </div>
 
@@ -489,12 +494,12 @@ export default async function ForFacilitiesPage() {
               </ul>
 
               <LoggedCTA eventType="cta_click_grow" metadata={{ placement: "pricing_grid" }}>
-                <StripeButton
-                  plan="verified_monthly"
+                <Link
+                  href={CLAIM_PATH}
                   className="block w-full rounded-btn bg-cs-blue px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-cs-blue-dark"
                 >
                   Remove my warning — $297/month
-                </StripeButton>
+                </Link>
               </LoggedCTA>
             </div>
           </div>
@@ -521,12 +526,12 @@ export default async function ForFacilitiesPage() {
           </p>
           <div className="mt-8">
             <LoggedCTA eventType="cta_click_verified" metadata={{ placement: "bottom_cta" }}>
-              <StripeButton
-                plan="verified_monthly"
-                className="rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
+              <Link
+                href={CLAIM_PATH}
+                className="inline-block rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
               >
                 Remove my warning — $297/month
-              </StripeButton>
+              </Link>
             </LoggedCTA>
             <p className="mt-3 text-sm text-[#8B9EC7]">
               Cancel anytime. No contracts. No setup fees.

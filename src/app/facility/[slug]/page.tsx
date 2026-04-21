@@ -268,6 +268,31 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
               website={facility.website}
               email={facility.email}
             />
+
+            {/* Claim-this-listing CTA — only shown on unverified pages.
+                Routes directly to the tier picker for THIS facility
+                (skipping the /claim landing's selector since we know
+                which facility). The public audience for this page is
+                families, but facility admins do visit their own page
+                regularly — this is the primary entry point for a
+                self-serve claim. */}
+            {!facility.is_verified && (
+              <a
+                href={`/for-facilities/claim/${facility.id}`}
+                className="block rounded-card border border-cs-lavender bg-cs-lavender-mist p-4 text-center transition-colors hover:bg-cs-lavender/20"
+              >
+                <p className="text-sm font-semibold text-cs-blue-dark">
+                  Are you the facility admin?
+                </p>
+                <p className="mt-1 text-xs text-cs-muted">
+                  Claim this listing to remove the warning, upload
+                  photos, and respond to citations.
+                </p>
+                <span className="mt-2 inline-block text-xs font-medium text-cs-blue">
+                  Claim this listing &rarr;
+                </span>
+              </a>
+            )}
           </div>
         </div>
 

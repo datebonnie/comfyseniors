@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageWrapper from "@/components/layout/PageWrapper";
-import StripeButton from "@/components/ui/StripeButton";
+
+// StripeButton no longer used here — Medicaid CTAs route through the
+// unified /for-facilities/claim flow so the Stripe session gets the
+// facility_id. Admin picks their facility via the selector there;
+// if they accept Medicare/Medicaid, the M/M tier appears in the
+// picker's tier grid.
+const CLAIM_PATH = "/for-facilities/claim";
 import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 export const metadata: Metadata = {
@@ -68,12 +74,12 @@ export default function MedicaidFacilitiesPage() {
             for you: $397 a month, no placement fees, ever.
           </p>
           <div className="mt-8">
-            <StripeButton
-              plan="medicaid_monthly"
-              className="rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
+            <Link
+              href={CLAIM_PATH}
+              className="inline-block rounded-btn bg-cs-blue px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-cs-blue-dark"
             >
               Get Listed — $397/month
-            </StripeButton>
+            </Link>
             <p className="mt-3 text-sm text-cs-muted">
               Cancel anytime. No contracts. No setup fees.
             </p>
@@ -253,12 +259,12 @@ export default function MedicaidFacilitiesPage() {
             operates.
           </p>
           <div className="mt-8">
-            <StripeButton
-              plan="medicaid_monthly"
-              className="rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
+            <Link
+              href={CLAIM_PATH}
+              className="inline-block rounded-btn bg-white px-8 py-4 text-lg font-semibold text-cs-blue-dark transition-colors hover:bg-cs-blue-light"
             >
               Get Listed — $397/month
-            </StripeButton>
+            </Link>
             <p className="mt-3 text-sm text-[#8B9EC7]">
               Cancel anytime. No contracts. No setup fees.
             </p>
