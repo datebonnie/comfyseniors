@@ -2,12 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { unsubscribeUrl } from "@/lib/unsubscribe-token";
 
 /**
- * Domain warmup cron — sends 10 varied emails per day from
- * hello@comfyseniors.com to a single recipient to build Resend
- * sender reputation before the real outreach campaign launches.
+ * Domain warmup cron — sends 10 varied emails per day from the
+ * outreach FROM address to a single recipient to build Resend
+ * sender reputation before a cold campaign launches.
  *
- * Triggered daily by Vercel Cron (see vercel.json).
- * Protected by CRON_SECRET env var.
+ * STATUS: DISABLED (as of the joincomfyseniors.com cutover).
+ *   Outreach warmup is now handled by Mailreach against
+ *   brandon@joincomfyseniors.com — a real third-party seed network
+ *   that simulates organic engagement across Gmail/Outlook/Yahoo/
+ *   iCloud at scale. This homegrown cron was a zero-budget
+ *   bootstrap that only hit a single Gmail inbox; Mailreach
+ *   replaces it end-to-end.
+ *
+ *   Route is kept intact (not deleted) in case we need to resurrect
+ *   it for a future domain or as a fallback. To re-enable: add this
+ *   path back to the `crons` array in vercel.json and the daily
+ *   schedule resumes. No other changes required — the CRON_SECRET
+ *   auth remains enforced.
+ *
+ * When active:
+ *   Triggered daily by Vercel Cron (see vercel.json).
+ *   Protected by CRON_SECRET env var.
  */
 
 const WARMUP_RECIPIENT = "brandol.monter@gmail.com";
