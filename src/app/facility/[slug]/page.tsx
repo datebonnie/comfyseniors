@@ -250,6 +250,13 @@ export default async function FacilityPage({ params }: FacilityPageProps) {
             <ViewCounter
               facilityId={facility.id}
               isVerified={facility.is_verified || facility.is_featured}
+              citationCount={facility.citation_count ?? 0}
+              hasPhotos={Boolean(facility.photos && facility.photos.length > 0)}
+              hasDescription={Boolean(
+                facility.description && facility.description.length >= 80
+              )}
+              hasPrice={Boolean(facility.price_min)}
+              hasPhone={Boolean(facility.phone)}
             />
             <ContactSidebar
               id={facility.id}
